@@ -86,8 +86,6 @@
         <header-file src="src/ios/src/ViewController.h" />
         <source-file src="src/ios/src/ViewController.m" />
 
-        <!-- <pod id="MapwizeUI" /> -->
-        <pod name="MapwizeUI" podspec="https://raw.githubusercontent.com/Mapwize/mapwize-ui-ios/master/MapwizeUI.podspec" />
-
+        <pod id="MapwizeUI"  version="1.1.0"/>
     </platform>
 </plugin>
