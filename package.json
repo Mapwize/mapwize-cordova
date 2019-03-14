@@ -1,0 +1,19 @@
+{
+    "version": "1.0.0",
+    "name": "mapwize-cordova-plugin",
+    "cordova_name": "Mapwize Plugin",
+    "description": "Mapwize Plugin",
+    "license": "Apache 2.0",
+    "repo": "",
+    "issue": "",
+    "keywords": [
+        "cordova",
+        "device"
+    ],
+    "platforms": [
+        "android",
+        "ios"
+    ],
+    "engines": [],
+    "englishdoc": ""
+}

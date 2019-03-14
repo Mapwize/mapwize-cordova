@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="mapwize-cordova-plugin"
+    version="1.0.0">
+    <name>Mapwize</name>
+    <description>Cordova Plugin Mapwize SDK</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,coolest</keywords>
+    <repo></repo>
+    <issue></issue>
+    <js-module src="www/Mapwize.js" name="Mapwize">
+        <clobbers target="Mapwize" />
+    </js-module>
+    <dependency id="cordova-plugin-cocoapod-support"/>
+
+    <!-- <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="FlashPlugin" >
+                <param name="android-package" value="com.halifone.flashfans.flashplugin.plugin.FlashPlugin"/>
+            </feature>
+        </config-file>
+	<config-file target="AndroidManifest.xml" parent="/manifest/application">
+	   <receiver android:name="com.halifone.flashfans.flashplugin.time.AutomaticTimeUpdateReceiver" android:exported="true">
+	       <intent-filter>
+		   <action android:name="android.intent.action.TIME_SET" />
+	       </intent-filter>
+	   </receiver>
+	</config-file>
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.CAMERA" />
+            <uses-permission android:name="android.permission.FLASHLIGHT" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-feature android:name="android.hardware.camera" />
+        </config-file>
+        <config-file parent="application" target="AndroidManifest.xml">
+            <service android:enabled="true" android:name="com.halifone.flashfans.flashplugin.service.FlashService" />
+            <service
+                android:name="com.halifone.flashfans.flashplugin.service.WakeService"
+                android:enabled="true"
+                android:exported="true"></service>
+        </config-file>
+        
+        <resource-file src="matt.mp3"  target="assets/matt.mp3"/>
+
+        <source-file src="src/android/FlashPlugin/app/src/FlashPlugin.java" target-dir="src/com/halifone/flashfans/flashplugin/plugin/" />
+        <source-file src="src/android/FlashPlugin/app/src/AutomaticTimeUpdateReceiver.java" target-dir="src/com/halifone/flashfans/flashplugin/time/" />
+        
+    </platform> -->
+
+    <platform name="ios">
+        <!-- set platform :ios, defaults to 7.0 -->
+        <preference name="MWZMAPWIZEAPIKEY"/>
+        
+        <config-file target="config.xml" parent="/*">
+            <feature name="Mapwize" >
+                <param name="ios-package" value="Mapwize" onload="true"/>
+                <param name="onload" value="true"/>
+            </feature>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="MWZMapwizeApiKey">
+          <string>$MWZMAPWIZEAPIKEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="MGLMapboxMetricsEnabledSettingShownInApp">
+          <string>YES</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="MGLMapboxAccessToken">
+          <string>pk.mapwize</string>
+        </config-file>
+
+        <pods-config ios-min-version="10.0" use-frameworks="true">
+            <!-- optionally add private spec sources -->
+            <!-- <source url="https://github.com/Mapwize/mapwize-ui-ios.git"/> -->
+        </pods-config>
+
+        <header-file src="src/ios/src/Constants.h" />
+        <source-file src="src/ios/src/Constants.m" />
+        <header-file src="src/ios/src/Mapwize.h" />
+        <source-file src="src/ios/src/Mapwize.m" />
+        <header-file src="src/ios/src/Serializer.h" />
+        <source-file src="src/ios/src/Serializer.m" />
+        <header-file src="src/ios/src/ViewController.h" />
+        <source-file src="src/ios/src/ViewController.m" />
+
+        <!-- <pod id="MapwizeUI" /> -->
+        <pod name="MapwizeUI" podspec="https://raw.githubusercontent.com/Mapwize/mapwize-ui-ios/master/MapwizeUI.podspec" />
+
+    </platform>
+</plugin>
