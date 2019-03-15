@@ -18,20 +18,16 @@
 @property (nonatomic, strong) NSString* fetchCallbackId;
 
 - (void)setCallback:(CDVInvokedUrlCommand*)command;
-
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command;
+
 - (void)selectPlace:(CDVInvokedUrlCommand*)command;
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command;
+
 - (void)unselectContent:(CDVInvokedUrlCommand*)command;
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict;
 - (MWZUniverse*) getUniverse:( NSArray * )universeDict;
-
-
-// - (void)initApp:(CDVInvokedUrlCommand*)command;
-// - (void)setCallback:(CDVInvokedUrlCommand*)command;
-// - (void)isBackgroundPlaying:(CDVInvokedUrlCommand*)command;
 
 
 @end

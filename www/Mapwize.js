@@ -55,7 +55,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 		console.log("MapwizeView: setCallback: FAILED");}, PLUGIN_NAME, "setCallback", []);
 }
 
-MapwizeView.prototype.selectPlace = function(id, success, failure) {
+MapwizeView.prototype.selectPlace = function(id, onCenter, success, failure) {
 	console.log("MapwizeView: selectPlace");
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlace: SUCCESS");
@@ -63,7 +63,7 @@ MapwizeView.prototype.selectPlace = function(id, success, failure) {
 			}, function(err) {
 				console.log("MapwizeView: selectPlace: FAILED");
 				failure(err);
-			}, PLUGIN_NAME, "selectPlace", [id]);
+			}, PLUGIN_NAME, "selectPlace", [id, onCenter]);
 }
 
 MapwizeView.prototype.selectPlaceList = function(id, success, failure) {

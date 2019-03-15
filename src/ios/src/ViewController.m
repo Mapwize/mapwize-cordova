@@ -22,8 +22,19 @@
 }
 
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn {
-    
-//    [self.mapwizeView selectPlace:place centerOn:centerOn];
+    [self.mapwizeView selectPlace:place centerOn:centerOn];
+}
+
+- (void) grantAccess:(NSString*) accessKey {
+    [self.mapwizeView grantAccess:accessKey success:^{
+        [self sendCallbackOK];
+    } failure:^(NSError * _Nonnull error) {
+        [self sendCallbackFailed];
+    }];
+}
+
+- (void) unselectContent:(BOOL) closeInfo {
+    [self.mapwizeView unselectContent:closeInfo];
 }
 
 - (void) setPlugin:(Mapwize*) plugin callbackId: (NSString*) callbackId {
@@ -107,6 +118,17 @@
     }
     return NO;
 }
+
+- (void) sendCallbackOK {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:_callbackId];
+}
+
+- (void) sendCallbackFailed {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:_callbackId];
+}
+
 
 - (void) sendCallback:(NSMutableDictionary*)dict {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK

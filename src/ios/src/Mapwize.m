@@ -15,7 +15,6 @@
 #import "MapwizeUI.h"
 
 
-
 @implementation Mapwize
 {
     BOOL enabled;
@@ -25,21 +24,6 @@
 }
 NSString* mCallbackId;
 
-// NSString *const ACTION_IS_AVAILABLE = @"isAvailable";
-// NSString *const ACTION_SET_FLASH = @"setFlash";
-
-
-
-// NSString *const kAPPBackgroundJsNamespace = @"cordova.plugins.backgroundMode";
-// NSString *const kAPPBackgroundEventActivate = @"activate";
-// NSString *const kAPPBackgroundEventDeactivate = @"deactivate";
-// NSString *const kAPPBackgroundEventFailure = @"failure";
-
-// FlashPluginImpl* mpPlugin;
-// NSString* mCallbackId;
-// AVAudioPlayer *audioPlayer;
-// BOOL enabled;
-
 
 /**
  * Initialize the plugin.
@@ -47,17 +31,12 @@ NSString* mCallbackId;
 - (void) pluginInitialize
 {
     NSLog(@"pluginInitialize...");
-//    [self disable:NULL];
-//    [self configureAudioPlayer];
-//    [self configureAudioSession];
-//    [self observeLifeCycle];
     viewController = [[ViewController alloc] init];
 }
 
 - (void)dealloc {
     NSLog(@"dealloc...");
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-//    delete mpPlugin;
 }
 
 - (void)setCallback:(CDVInvokedUrlCommand*)command {
@@ -122,10 +101,12 @@ NSString* mCallbackId;
         opts.centerOnPlaceId = centerOnPlaceId;
     }
     
+
     [viewController setOptions:opts];
     [self.viewController presentViewController:viewController
                                       animated:NO
                                     completion:nil];
+
     
     NSLog(@"createMapwizeView END...");
 }
@@ -170,9 +151,14 @@ NSString* mCallbackId;
 
 - (void)grantAccess:(CDVInvokedUrlCommand*)command {
     NSLog(@"grantAccess...");
+    NSString *accessKey = [command.arguments objectAtIndex:0];
+    [viewController grantAccess:accessKey];
 }
+
 - (void)unselectContent:(CDVInvokedUrlCommand*)command  {
     NSLog(@"unselectContent...");
+    BOOL closeInfo = [command.arguments objectAtIndex:0];
+    [viewController unselectContent:closeInfo];
 }
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {
