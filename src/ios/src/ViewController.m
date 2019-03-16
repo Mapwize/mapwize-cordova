@@ -25,6 +25,10 @@
     [self.mapwizeView selectPlace:place centerOn:centerOn];
 }
 
+- (void) selectPlaceList:(MWZPlaceList*) placeList {
+    [self.mapwizeView selectPlaceList:placeList];
+}
+
 - (void) grantAccess:(NSString*) accessKey {
     [self.mapwizeView grantAccess:accessKey success:^{
         [self sendCallbackOK];

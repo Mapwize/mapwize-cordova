@@ -101,13 +101,11 @@ NSString* mCallbackId;
         opts.centerOnPlaceId = centerOnPlaceId;
     }
     
-
     [viewController setOptions:opts];
     [self.viewController presentViewController:viewController
-                                      animated:NO
-                                    completion:nil];
+                         animated:NO
+                         completion:nil];
 
-    
     NSLog(@"createMapwizeView END...");
 }
 
@@ -128,26 +126,17 @@ NSString* mCallbackId;
 
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlaceList called...");
-    NSString *placesStr = [command.arguments objectAtIndex:0];
+    NSString *identifier = [command.arguments objectAtIndex:0];
     
-    NSData *data = [placesStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSURLSessionDataTask* task = [MWZApi getPlaceListWithId:identifier success:^(MWZPlaceList *placeList) {
+        NSLog(@"identifier...");
+        [viewController selectPlaceList:placeList];
+    } failure:^(NSError *error) {
+        NSLog(@"error...");
+    }];
     
-    NSError *jsonError;
-    NSLog(@"converting json...");
-    NSArray *json = [NSJSONSerialization JSONObjectWithData:data
-                                             options:NSJSONReadingMutableContainers
-                                             error:&jsonError];
-    
-//    NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
-//        NSLog(@"identifier...");
-//        [viewController selectPlace:place centerOn:centerOn];
-//    } failure:^(NSError *error) {
-//        NSLog(@"error...");
-//    }];
-//    
-//    [task resume];
+    [task resume];
 }
-
 
 - (void)grantAccess:(CDVInvokedUrlCommand*)command {
     NSLog(@"grantAccess...");
