@@ -15,5 +15,8 @@
         "ios"
     ],
     "engines": [],
-    "englishdoc": ""
+    "englishdoc": "",
+    "dependencies": {
+        "properties-parser": "^0.3.1"
+    }
 }
