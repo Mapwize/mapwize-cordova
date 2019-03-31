@@ -21,5 +21,8 @@ Mapwize.prototype.createMapwizeView = function(options, success, failure) {
 
 
 
+
+
+
 var mapwize = new Mapwize();
 module.exports = mapwize;

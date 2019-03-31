@@ -20,7 +20,11 @@
 @interface ViewController : UIViewController
 - (void)setOptions:(MWZOptions*)opts;
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn;
+- (void) selectPlaceList:(MWZPlaceList*) placeList;
 - (void) setPlugin:(Mapwize*) mapwize callbackId: (NSString*) callbackId;
+- (void) grantAccess:(NSString*) accessKey;
+- (void) unselectContent:(BOOL) closeInfo;
+
 
 - (void)viewDidLoad;
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place;

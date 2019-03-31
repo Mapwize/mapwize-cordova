@@ -15,7 +15,6 @@
 #import "MapwizeUI.h"
 
 
-
 @implementation Mapwize
 {
     BOOL enabled;
@@ -25,21 +24,6 @@
 }
 NSString* mCallbackId;
 
-// NSString *const ACTION_IS_AVAILABLE = @"isAvailable";
-// NSString *const ACTION_SET_FLASH = @"setFlash";
-
-
-
-// NSString *const kAPPBackgroundJsNamespace = @"cordova.plugins.backgroundMode";
-// NSString *const kAPPBackgroundEventActivate = @"activate";
-// NSString *const kAPPBackgroundEventDeactivate = @"deactivate";
-// NSString *const kAPPBackgroundEventFailure = @"failure";
-
-// FlashPluginImpl* mpPlugin;
-// NSString* mCallbackId;
-// AVAudioPlayer *audioPlayer;
-// BOOL enabled;
-
 
 /**
  * Initialize the plugin.
@@ -47,17 +31,12 @@ NSString* mCallbackId;
 - (void) pluginInitialize
 {
     NSLog(@"pluginInitialize...");
-//    [self disable:NULL];
-//    [self configureAudioPlayer];
-//    [self configureAudioSession];
-//    [self observeLifeCycle];
     viewController = [[ViewController alloc] init];
 }
 
 - (void)dealloc {
     NSLog(@"dealloc...");
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-//    delete mpPlugin;
 }
 
 - (void)setCallback:(CDVInvokedUrlCommand*)command {
@@ -124,9 +103,9 @@ NSString* mCallbackId;
     
     [viewController setOptions:opts];
     [self.viewController presentViewController:viewController
-                                      animated:NO
-                                    completion:nil];
-    
+                         animated:NO
+                         completion:nil];
+
     NSLog(@"createMapwizeView END...");
 }
 
@@ -147,32 +126,28 @@ NSString* mCallbackId;
 
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlaceList called...");
-    NSString *placesStr = [command.arguments objectAtIndex:0];
+    NSString *identifier = [command.arguments objectAtIndex:0];
     
-    NSData *data = [placesStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSURLSessionDataTask* task = [MWZApi getPlaceListWithId:identifier success:^(MWZPlaceList *placeList) {
+        NSLog(@"identifier...");
+        [viewController selectPlaceList:placeList];
+    } failure:^(NSError *error) {
+        NSLog(@"error...");
+    }];
     
-    NSError *jsonError;
-    NSLog(@"converting json...");
-    NSArray *json = [NSJSONSerialization JSONObjectWithData:data
-                                             options:NSJSONReadingMutableContainers
-                                             error:&jsonError];
-    
-//    NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
-//        NSLog(@"identifier...");
-//        [viewController selectPlace:place centerOn:centerOn];
-//    } failure:^(NSError *error) {
-//        NSLog(@"error...");
-//    }];
-//    
-//    [task resume];
+    [task resume];
 }
-
 
 - (void)grantAccess:(CDVInvokedUrlCommand*)command {
     NSLog(@"grantAccess...");
+    NSString *accessKey = [command.arguments objectAtIndex:0];
+    [viewController grantAccess:accessKey];
 }
+
 - (void)unselectContent:(CDVInvokedUrlCommand*)command  {
     NSLog(@"unselectContent...");
+    BOOL closeInfo = [command.arguments objectAtIndex:0];
+    [viewController unselectContent:closeInfo];
 }
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {
