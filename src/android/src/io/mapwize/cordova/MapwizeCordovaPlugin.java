@@ -23,7 +23,6 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mapwize.test.MainActivity;
 
 public class MapwizeCordovaPlugin extends CordovaPlugin {
 
@@ -386,16 +385,24 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
              if (CBK_MENU_BUTTONCLICK.equals(action)) {
                  Log.d(TAG, "Received: CBK_MENU_BUTTONCLICK");
                  sendCallbackEventOK(CBK_EVENT_DID_TAP_ON_MENU);
-             } else if (CBK_INFORMATION_BUTTONCLICK.equals(action)) {
+             } else if (CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON.equals(action)) {
                  Log.d(TAG, "Received: CBK_INFORMATION_BUTTONCLICK");
                  String json = intent.getStringExtra(CBK_ARGS);
                  sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, json);
+             } else if (CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON.equals(action)) {
+                 Log.d(TAG, "Received: CBK_INFORMATION_BUTTONCLICK");
+                 String json = intent.getStringExtra(CBK_ARGS);
+                 sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON, json);
              } else if (CBK_EVENT_DID_LOAD.equals(action)) {
                  Log.d(TAG, "Received: CBK_EVENT_DID_LOAD");
                  sendCallbackEventOK(CBK_EVENT_DID_LOAD);
              } else if (CBK_SELECT_PLACE.equals(action)) {
                  Log.d(TAG, "Received: CBK_SELECT_PLACE");
                  sendCallbackCmd(intent);
+             } else if (CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION.equals(action)) {
+                 Log.d(TAG, "Received: CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION");
+                 String json = intent.getStringExtra(CBK_ARGS);
+                 sendCallbackEventOK(CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION, json);
              } else if (CMD_SELECT_PLACELIST.equals(action)) {
                  Log.d(TAG, "Received: CBK_ON_FRAGMENT_READY");
                  sendCallbackCmd(intent);
@@ -403,6 +410,7 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
                  Log.d(TAG, "Received: CBK_ON_FRAGMENT_READY");
                  sendCallbackCmd(intent);
              }
+
          }
      }
 
@@ -454,5 +462,4 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
         LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
     }
-
 }

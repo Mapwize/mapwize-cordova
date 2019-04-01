@@ -29,31 +29,32 @@ export class HomePage {
         restrictContentToOrganizationId: "",
         centerOnVenueId: "56b20714c3fa800b00d8f0b5",
         centerOnPlaceId: "5bc49413bf0ed600114db212"
+      }, (result) => {
+        console.log("result: " + JSON.stringify(result));
+
+      }, (err) => {
+        console.log("err: " + JSON.stringify(err));
+
       });
     this.setCallbackClicked();
 
-    this.mapwiseView.selectPlace(
-        "5bc49413bf0ed600114db214", "false", (arg) => {
-          console.log("place selected successfully");
-        },
-        (err) => {
-          console.log("place selection failed: " + JSON.stringify(err));
-        }
-      );
-    this.mapwiseView.selectPlace(
-        "5bc49413bf0ed600114db21c", "false", (arg) => {
-          console.log("place selected successfully");
-        },
-        (err) => {
-          console.log("place selection failed: " + JSON.stringify(err));
-        }
-      );
   }
 
   selectPlaceClicked() {
     console.log("selectPlaceClicked...");
     this.mapwiseView.selectPlace(
-        "5bc49413bf0ed600114db212", true
+        "5bc49413bf0ed600114db212", true, 
+        (res) => {console.log("Select place successfully returned: " + JSON.stringify(res))},
+        (err) => {console.log("Select place failed err: " + JSON.stringify(err))}
+      );
+  } 
+
+  unselectClicked() {
+    console.log("unselectClicked...");
+    this.mapwiseView.unselectContent(
+        true,
+        (res) => {console.log("unselectContent successfully returned: " + JSON.stringify(res))},
+        (err) => {console.log("unselectContent failed err: " + JSON.stringify(err))}
       );
   } 
 

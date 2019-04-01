@@ -21,7 +21,6 @@ import io.indoorlocation.core.IndoorLocation;
 import io.indoorlocation.manual.ManualIndoorLocationProvider;
 import io.mapwize.mapwizecomponents.ui.MapwizeFragment;
 import io.mapwize.mapwizecomponents.ui.MapwizeFragmentUISettings;
-import io.mapwize.mapwizecomponents.ui.UIBehaviour;
 import io.mapwize.mapwizeformapbox.api.Api;
 import io.mapwize.mapwizeformapbox.api.ApiCallback;
 import io.mapwize.mapwizeformapbox.api.MapwizeObject;
@@ -39,6 +38,9 @@ import java.util.List;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_ARGS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_DID_LOAD;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_FIELD_ERR_LOCALIZED_MESSAGE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_FIELD_ERR_MESSAGE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_GRANT_ACCESS;
@@ -65,7 +67,7 @@ import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SELECT_PLACE_ID;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SUCCESS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_UNSELECT_CONTENT;
 
-public class MapwizeActivity extends AppCompatActivity implements MapwizeFragment.OnFragmentInteractionListener, UIBehaviour {
+public class MapwizeActivity extends AppCompatActivity implements MapwizeFragment.OnFragmentInteractionListener {
     private static final String TAG = "MapwizeActivity";
 
     private static final String OPT_FLOOR = "floor";
@@ -95,7 +97,6 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
         MapwizeFragmentUISettings uiSettings = new MapwizeFragmentUISettings.Builder().build();
         mapwizeFragment = MapwizeFragment.newInstance(opts, uiSettings);
-        mapwizeFragment.setUIBehaviour(this);
         FragmentManager fm = getSupportFragmentManager();
 
         FragmentTransaction ft = fm.beginTransaction();
@@ -182,9 +183,15 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     }
 
     @Override
-    public void onInformationButtonClick(Place place) {
-        Log.d(TAG, "onInformationButtonClick...");
-        sendCallbackEventOK(CBK_INFORMATION_BUTTONCLICK, place.toJSONString());
+    public void onInformationButtonClick(MapwizeObject mapwizeObject) {
+        if (mapwizeObject.getClass() == Place.class) {
+            sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, ((Place)mapwizeObject).toJSONString());
+        } else if (mapwizeObject.getClass() == PlaceList.class) {
+            sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON, ((PlaceList)mapwizeObject).toJSONString());
+        } else {
+            Log.d(TAG, "onInformationButtonClick, Object is not recognized...");
+        }
+
     }
 
     @Override
@@ -211,8 +218,16 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     }
 
     @Override
+    public void onFollowUserButtonClickWithoutLocation() {
+        Log.d(TAG, "onFollowUserButtonClickWithoutLocation...");
+        sendCallbackEventOK(CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION, "");
+    }
+
+    @Override
     public boolean shouldDisplayInformationButton(MapwizeObject mapwizeObject) {
         if(mapwizeObject.getClass() == Place.class) {
+            return true;
+        } else if(mapwizeObject.getClass() == PlaceList.class) {
             return true;
         }
 
@@ -441,7 +456,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                 Log.d(TAG, "Received: CMD_UNSELECT_CONTENT");
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        //mapwizeFragment.unselectContent(); //TODO: unselectContent is private now, need to change
+                        mapwizeFragment.unselectContent();
                     }
                 });
 
