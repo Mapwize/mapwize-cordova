@@ -4,10 +4,10 @@
     id="mapwize-cordova-plugin"
     version="1.0.0">
     <name>Mapwize</name>
-    <description>Cordova Plugin Mapwize SDK</description>
-    <license>Apache 2.0</license>
-    <keywords>cordova,coolest</keywords>
-    <repo></repo>
+    <description>Cordova Plugin for Mapwize</description>
+    <license>MIT</license>
+    <keywords>cordova,ionic,mapwize,indoor,building,map,maps</keywords>
+    <repo>https://github.com/Mapwize/mapwize-cordova</repo>
     <issue></issue>
 
     <preference name="MWZMAPWIZEAPIKEY"/>
@@ -96,7 +96,6 @@
     </platform>
     <engines>
       <engine name="cordova-android" version=">=8.0.0" />
-      <!-- <engine name="cordova-android" version=">=8.0.0" /> -->
     </engines>
 
 </plugin>

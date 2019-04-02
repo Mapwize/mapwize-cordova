@@ -1,5 +1,18 @@
-# mapwize-cordova
-Cordova plugin for Mapwize Indoor Maps
+# Mapwize Cordova Plugin
+
+Use this plugin to integrate native Mapwize indoor maps in your iOS and Android Cordova apps.
+
+This plugin is open-source. Don't hesitate to contribute to it!
+
+For documentation about Mapwize SDK objects like Venue, Place, MapOptions... Please refer to the Mapwize SDK documentation on [docs.mapwize.io](https://docs.mapwize.io).
+
+## Compatibility
+
+The plugin is compatible with Cordova 8 / cordova-ios 4.5+ / cordova-android 8.0+ / iOS 10+ / Android 5+.
+
+## Demo app
+
+A simple Ionic app using the plugin is available in this repository [mapwize-cordova-demo](https://github.com/Mapwize/mapwize-cordova-demo). It's a great way to see how it works.
 
 # 1. Installation
 
@@ -12,8 +25,6 @@ or from github
 ```
 ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" https://github.com/Mapwize/mapwize-cordova.git
 ```
-
-
 
 # 2. Setting up your ionic project
 
@@ -316,5 +327,3 @@ this.mapwiseView.unselectContent(
         (err) => {console.log("unselectContent failed err: " + err.message)}
       );
 ```
-
-### 

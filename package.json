@@ -3,19 +3,18 @@
     "name": "mapwize-cordova-plugin",
     "cordova_name": "Mapwize Plugin",
     "description": "Mapwize Plugin",
-    "license": "Apache 2.0",
-    "repo": "",
+    "license": "MIT",
+    "repo": "https://github.com/Mapwize/mapwize-cordova",
     "issue": "",
     "keywords": [
-        "cordova",
-        "device"
+        "cordova","ionic","mapwize","indoor","building","map","maps"
     ],
     "platforms": [
         "android",
         "ios"
     ],
     "engines": [],
-    "englishdoc": "",
+    "englishdoc": "https://docs.mapwize.io",
     "dependencies": {
         "properties-parser": "^0.3.1"
     }
