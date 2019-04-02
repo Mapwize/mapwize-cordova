@@ -8,6 +8,7 @@ function MapwizeView() {
 
 MapwizeView.prototype.callbacks;
 
+
 MapwizeView.prototype.setCallback = function(callbacks) {
 	console.log("MapwizeView: setCallback");
 	this.callbacks = callbacks;
@@ -33,7 +34,6 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 				console.log("Event not recognized... event: " + JSON.stringify(result.event));
 		}
 	}, function(result) {
-		/* alert("Error" + reply); */
 		console.log("MapwizeView: setCallback: FAILED");}, PLUGIN_NAME, "setCallback", []);
 }
 

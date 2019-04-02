@@ -89,8 +89,6 @@
         <source-file src="src/ios/src/Constants.m" />
         <header-file src="src/ios/src/Mapwize.h" />
         <source-file src="src/ios/src/Mapwize.m" />
-        <header-file src="src/ios/src/Serializer.h" />
-        <source-file src="src/ios/src/Serializer.m" />
         <header-file src="src/ios/src/ViewController.h" />
         <source-file src="src/ios/src/ViewController.m" />
 

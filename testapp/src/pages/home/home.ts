@@ -31,12 +31,15 @@ export class HomePage {
         centerOnPlaceId: "5bc49413bf0ed600114db212"
       }, (result) => {
         console.log("result: " + JSON.stringify(result));
+        // this.selectPlaceListClicked();   // Wrong
+        this.selectPlaceClicked(); // Correct
 
       }, (err) => {
         console.log("err: " + JSON.stringify(err));
 
       });
     this.setCallbackClicked();
+
 
   }
 
@@ -46,6 +49,15 @@ export class HomePage {
         "5bc49413bf0ed600114db212", true, 
         (res) => {console.log("Select place successfully returned: " + JSON.stringify(res))},
         (err) => {console.log("Select place failed err: " + JSON.stringify(err))}
+      );
+  }
+
+  selectPlaceListClicked() {
+    console.log("selectPlaceListClicked...");
+    this.mapwiseView.selectPlaceList(
+        "5784fc5f7f2a900b0055f603", 
+        (res) => {console.log("Select places successfully returned: " + JSON.stringify(res))},
+        (err) => {console.log("Select places failed err: " + JSON.stringify(err))}
       );
   } 
 
