@@ -12,7 +12,7 @@ export class HomePage {
   token: string;
 	syncPeriodInSec: number;
 
-  mapwiseView: any;
+  mapwizeView: any;
 
   constructor(public navCtrl: NavController) {
 
@@ -20,7 +20,7 @@ export class HomePage {
 
   createClicked() {
   	console.log("createClicked...");
-  	this.mapwiseView = Mapwize.createMapwizeView(
+  	this.mapwizeView = Mapwize.createMapwizeView(
       {
         floor: 0,
         language: "en",
@@ -29,23 +29,18 @@ export class HomePage {
         restrictContentToOrganizationId: "",
         centerOnVenueId: "56b20714c3fa800b00d8f0b5",
         centerOnPlaceId: "5bc49413bf0ed600114db212"
-      }, (result) => {
-        console.log("result: " + JSON.stringify(result));
-        // this.selectPlaceListClicked();   // Wrong
-        this.selectPlaceClicked(); // Correct
-
+      }, () => {
+        console.log("createMapwizeView success...");
       }, (err) => {
-        console.log("err: " + JSON.stringify(err));
+        console.log("createMapwizeView failed, err: " + JSON.stringify(err));
 
       });
     this.setCallbackClicked();
-
-
   }
 
   selectPlaceClicked() {
     console.log("selectPlaceClicked...");
-    this.mapwiseView.selectPlace(
+    this.mapwizeView.selectPlace(
         "5bc49413bf0ed600114db212", true, 
         (res) => {console.log("Select place successfully returned: " + JSON.stringify(res))},
         (err) => {console.log("Select place failed err: " + JSON.stringify(err))}
@@ -54,7 +49,7 @@ export class HomePage {
 
   selectPlaceListClicked() {
     console.log("selectPlaceListClicked...");
-    this.mapwiseView.selectPlaceList(
+    this.mapwizeView.selectPlaceList(
         "5784fc5f7f2a900b0055f603", 
         (res) => {console.log("Select places successfully returned: " + JSON.stringify(res))},
         (err) => {console.log("Select places failed err: " + JSON.stringify(err))}
@@ -63,7 +58,7 @@ export class HomePage {
 
   unselectClicked() {
     console.log("unselectClicked...");
-    this.mapwiseView.unselectContent(
+    this.mapwizeView.unselectContent(
         true,
         (res) => {console.log("unselectContent successfully returned: " + JSON.stringify(res))},
         (err) => {console.log("unselectContent failed err: " + JSON.stringify(err))}
@@ -72,11 +67,13 @@ export class HomePage {
 
   setCallbackClicked() {
     console.log("setCallbackClicked...");
-    this.mapwiseView.setCallback(
+    var dis = this;
+    this.mapwizeView.setCallback(
         {
           
           DidLoad: function(arg) {
             console.log("The cordova result(DidLoad): " + JSON.stringify(arg));
+            dis.selectPlaceListClicked();   // Wrong
           },
           DidTapOnFollowWithoutLocation: function(arg) {
             console.log("The cordova result(DidTapOnFollowWithoutLocation): " + JSON.stringify(arg));
@@ -87,8 +84,10 @@ export class HomePage {
           shouldShowInformationButtonFor: function(arg) {
             console.log("The cordova result(shouldShowInformationButtonFor): " + JSON.stringify(arg));
           },
-          TapOnPlaceInformationButton: function(arg) {
-            console.log("The cordova result: " + JSON.stringify(arg));
+          TapOnPlaceInformationButton: function(place) {
+            console.log("The cordova result: " + JSON.stringify(place));
+            console.log("The cordova result: " + place._id);
+
           },
           TapOnPlacesInformationButton: function(arg) {
             console.log("The cordova result(TapOnPlacesInformationButton): " + JSON.stringify(arg));

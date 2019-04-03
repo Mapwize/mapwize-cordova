@@ -33,10 +33,10 @@ import io.mapwize.mapwizeformapbox.map.MapwizePlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mapwize.test.R;
-
 import java.util.List;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_ARGS;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_CREATE_MAPWIZEVIEW;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_DID_LOAD;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON;
@@ -45,7 +45,6 @@ import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_FIELD_ERR_LOCALIZED_ME
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_FIELD_ERR_MESSAGE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_GRANT_ACCESS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_GRANT_ACCESS_SUCCESS;
-import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_INFORMATION_BUTTONCLICK;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_MENU_BUTTONCLICK;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SELECT_PLACE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SELECT_PLACELIST;
@@ -116,6 +115,8 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
         mActivity = this;
 
+        sendCmdEventOK(CBK_CREATE_MAPWIZEVIEW, "");
+
         Log.d(TAG, "onCreate...END");
     }
 
@@ -184,9 +185,10 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
     @Override
     public void onInformationButtonClick(MapwizeObject mapwizeObject) {
-        if (mapwizeObject.getClass() == Place.class) {
+        Log.d(TAG, "onInformationButtonClick...class: " + mapwizeObject.getClass() + ", className: " + mapwizeObject.getClass().getName() + ", Place.class: " + Place.class + ", Place.className: " + Place.class.getName());
+        if (mapwizeObject instanceof Place) {
             sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, ((Place)mapwizeObject).toJSONString());
-        } else if (mapwizeObject.getClass() == PlaceList.class) {
+        } else if (mapwizeObject instanceof PlaceList) {
             sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON, ((PlaceList)mapwizeObject).toJSONString());
         } else {
             Log.d(TAG, "onInformationButtonClick, Object is not recognized...");
@@ -253,6 +255,15 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     }
 
     /**
+     * Sends a success command event intended to be received by CordovaPlugin object
+     * @param action The command
+     * @param args   JSON string of the return params
+     */
+    void sendCmdEventErr(String action, String args) {
+        sendCmdEvent(action, args, false);
+    }
+
+    /**
      * Sends a failure command event intended to be received by CordovaPlugin object
      * @param action    The command
      * @param throwable The throwable to extract the error messages
@@ -284,6 +295,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
      * @param success The success of the command
      */
     void sendCmdEvent(String action, String args, boolean success) {
+        Log.d(TAG, "sendCmdEvent, action: " + action + ", success: " + success);
         Intent intent = new Intent(action);
         intent.putExtra(CMD_SUCCESS, success);
         if(args != null) {
@@ -298,6 +310,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
      * @param args    JSON string of the return params
      */
     void sendCallbackEventOK(String action, String args) {
+        Log.d(TAG, "sendCallbackEventOK...");
         sendCallbackEvent(action, args, true);
     }
 
@@ -307,6 +320,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
      * @param args    JSON string of the return params
      */
     void sendCallbackEventErr(String action, String args) {
+        Log.d(TAG, "sendCallbackEventErr...");
         sendCallbackEvent(action, args, false);
     }
 
@@ -376,9 +390,9 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                                     JSONObject json = new JSONObject();
                                     json.put(CBK_SELECT_PLACE_ID, id);
                                     json.put(CBK_SELECT_PLACE_CENTERON, centerOn);
-                                    sendCallbackEventOK(CBK_SELECT_PLACE, json.toString());
+                                    sendCmdEventOK(CBK_SELECT_PLACE, json.toString());
                                 } catch(JSONException e) {
-                                    sendCallbackEventErr(CBK_SELECT_PLACE, "");
+                                    sendCmdEventErr(CBK_SELECT_PLACE, "");
                                 }
                             }
                         });
@@ -387,7 +401,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                     @Override
                     public void onFailure(@Nullable Throwable throwable) {
                         Log.d(TAG, "onFailure, failed CMD_SELECT_PLACE...");
-                        sendCallbackEventErr(CBK_SELECT_PLACE, throwable);
+                        sendCmdEventErr(CBK_SELECT_PLACE, throwable);
                     }
                 });
 
@@ -407,9 +421,9 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                                     JSONObject json = new JSONObject();
                                     json.put(CBK_SELECT_PLACELIST_ID, id);
 
-                                    sendCallbackEventOK(CBK_SELECT_PLACELIST, json.toString());
+                                    sendCmdEventOK(CBK_SELECT_PLACELIST, json.toString());
                                 } catch(JSONException e) {
-                                    sendCallbackEventErr(CBK_SELECT_PLACELIST, "");
+                                    sendCmdEventErr(CBK_SELECT_PLACELIST, "");
                                 }
                             }
                         });
@@ -418,7 +432,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                     @Override
                     public void onFailure(@Nullable Throwable throwable) {
                         Log.d(TAG, "onFailure, failed CMD_SELECT_PLACE...");
-                        sendCallbackEventErr(CBK_SELECT_PLACELIST, throwable);
+                        sendCmdEventErr(CBK_SELECT_PLACELIST, throwable);
                     }
                 });
 
@@ -436,16 +450,16 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                                 try {
                                     JSONObject json = new JSONObject();
                                     json.put(CBK_GRANT_ACCESS_SUCCESS, aBoolean);
-                                    sendCallbackEventOK(CBK_GRANT_ACCESS, json.toString());
+                                    sendCmdEventOK(CBK_GRANT_ACCESS, json.toString());
                                 } catch (JSONException e) {
-                                    sendCallbackEventOK(CBK_GRANT_ACCESS, "");
+                                    sendCmdEventErr(CBK_GRANT_ACCESS, "");
                                 }
                             }
 
                             @Override
                             public void onFailure(@Nullable Throwable throwable) {
                                 Log.d(TAG, "onFailure, grantAccess failure...");
-                                sendCallbackEventErr(CBK_GRANT_ACCESS, throwable);
+                                sendCmdEventErr(CBK_GRANT_ACCESS, throwable);
                             }
                         });
                     }
@@ -468,5 +482,3 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
 
 }
-
-

@@ -21,7 +21,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "DidTapOnMenu":
 			case "shouldShowInformationButtonFor":
 			case "TapOnPlaceInformationButton":
-			case "TapOnPlacesInformationButton":
+			case "TapOnPlaceListInformationButton":
 				console.log("Handling event " + result.event + " result: " + result.arg);
 				if (!result.arg) {
 					callbacks[result.event]();

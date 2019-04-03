@@ -16,7 +16,7 @@ NSString *const CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION = @"DidTapOnFollowW
 NSString *const CBK_EVENT_DID_TAP_ON_MENU = @"DidTapOnMenu";
 NSString *const CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR = @"shouldShowInformationButtonFor";
 NSString *const CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON = @"TapOnPlaceInformationButton";
-NSString *const CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = @"TapOnPlacesInformationButton";
+NSString *const CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = @"TapOnPlaceListInformationButton";
 
 NSString *const CBK_FIELD_ERR_MESSAGE = @"message";
 NSString *const CBK_FIELD_ERR_LOCALIZED_MESSAGE = @"localizedMessage";
