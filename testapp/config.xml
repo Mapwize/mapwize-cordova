@@ -38,7 +38,7 @@
     <plugin name="cordova-plugin-customconfigparameters" spec="^3.0.0" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
     <plugin name="mapwize-cordova-plugin" spec="../mapwize-cordova">
-        <variable name="MWZMAPWIZEAPIKEY" value="49bbfb7a60b958d76bbf57fc674c93de" />
+        <variable name="MWZMAPWIZEAPIKEY" value="2b07d9bdd6088a500365d1cb056e506f" />
     </plugin>
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="8.0.0" />
