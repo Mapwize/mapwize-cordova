@@ -1,7 +1,0 @@
-{
-  "name": "synctest",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "ionic-angular"
-}
