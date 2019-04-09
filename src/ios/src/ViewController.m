@@ -1,8 +1,6 @@
 #import "Constants.h"
 #import "ViewController.h"
 #import "Mapwize.h"
-#import "Serializer.h"
-
 #import <MapwizeUI/MapwizeUI.h>
 
 @interface ViewController () <MWZMapwizeViewDelegate>
@@ -21,27 +19,50 @@
     _opts = opts;
 }
 
-- (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn {
-    [self.mapwizeView selectPlace:place centerOn:centerOn];
+- (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId: (NSString*) callbackId {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapwizeView selectPlace:place centerOn:centerOn];
+        NSDictionary *dict = @{ CBK_SELECT_PLACE_ID : place.identifier, CBK_SELECT_PLACE_CENTERON : centerOn ? @"true" : @"false"};
+        [self sendCommandCallback:dict callbackId:callbackId];
+    });
 }
 
-- (void) selectPlaceList:(MWZPlaceList*) placeList {
-    [self.mapwizeView selectPlaceList:placeList];
+//- (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.mapwizeView selectPlace:place centerOn:centerOn];
+//        NSString* json = [place toJSONString];
+//        NSDictionary *dict = @{ CBK_SELECT_PLACE_ID : place.identifier, CBK_SELECT_PLACE_CENTERON : centerOn ? @"true" : @"false"};
+//        [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON args:dict];
+//    });
+//
+//}
+
+- (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapwizeView selectPlaceList:placeList];
+        NSDictionary *dict = @{ CBK_SELECT_PLACELIST_ID : placeList.identifier};
+        [self sendCommandCallback:dict callbackId:callbackId];
+    });
 }
 
-- (void) grantAccess:(NSString*) accessKey {
-    [self.mapwizeView grantAccess:accessKey success:^{
-        [self sendCallbackOK];
-    } failure:^(NSError * _Nonnull error) {
-        [self sendCallbackFailed];
-    }];
+- (void) grantAccess:(NSString*) accessKey callbackId:(NSString*) callbackId {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapwizeView grantAccess:accessKey success:^{
+            [self sendCommandCallbackOK:callbackId];
+        } failure:^(NSError * _Nonnull error) {
+            [self sendCommandCallbackFailed:callbackId];
+        }];
+    });
 }
 
-- (void) unselectContent:(BOOL) closeInfo {
-    [self.mapwizeView unselectContent:closeInfo];
+- (void) unselectContent:(BOOL) closeInfo callbackId:(NSString*) callbackId {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapwizeView unselectContent:closeInfo];
+        [self sendCommandCallbackOK:callbackId];
+    });
 }
 
-- (void) setPlugin:(Mapwize*) plugin callbackId: (NSString*) callbackId {
+- (void) setPlugin:(Mapwize*) plugin callbackId:(NSString*) callbackId {
     _plugin = plugin;
     _callbackId = callbackId;
 }
@@ -91,12 +112,14 @@
 
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place {
     NSLog(@"didTapOnPlaceInformations");
-    [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON arg:[Serializer serializePlace:place]];
+    NSString* json = [place toJSONString];
+    [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON arg:json];
 }
 
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlaceList *)placeList {
     NSLog(@"didTapOnPlaceListInformations");
-    [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON arg:[Serializer serializePlaces:placeList]];
+    NSString* json = [placeList toJSONString];
+    [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON arg:json];
 }
 
 - (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZMapwizeView *)mapwizeView {
@@ -117,43 +140,52 @@
 - (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
     [self sendCallbackEvent:CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR]; //TODO: What to pass for argument? (type, object) ?
     if ([mapwizeObject isKindOfClass:MWZPlace.class]) {
-        
+        return YES;
+    } else if ([mapwizeObject isKindOfClass:MWZPlaceList.class]) {
         return YES;
     }
     return NO;
 }
 
-- (void) sendCallbackOK {
+- (void) sendCommandCallbackOK:(NSString*)callbackId  {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:_callbackId];
+    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
-- (void) sendCallbackFailed {
+- (void) sendCommandCallbackFailed:(NSString*)callbackId  {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:_callbackId];
+    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
 
-- (void) sendCallback:(NSMutableDictionary*)dict {
+- (void) sendCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                   messageAsDictionary:dict];
     [pluginResult setKeepCallback: [NSNumber numberWithBool:YES]];
-    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:_callbackId];
+    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
 - (void) sendCallbackEvent:(NSString*)event {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[CBK_FIELD_EVENT] = event;
-    
-    [self sendCallback:dict];
+    [self sendCallback:dict callbackId:_callbackId];
 }
 
 - (void) sendCallbackEvent:(NSString*)event arg:(NSString*)arg {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[CBK_FIELD_EVENT] = event;
     dict[CBK_FIELD_ARG] = arg;
-    
-    [self sendCallback:dict];
+    [self sendCallback:dict callbackId:_callbackId];
+}
+
+- (void) sendCommandCallback:(NSDictionary*)args callbackId:(NSString*)callbackId {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSError *err;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:args options:NSJSONWritingPrettyPrinted error:&err];
+    NSString* argStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//    dict[CBK_FIELD_EVENT] = event;
+    dict[CBK_FIELD_ARG] = argStr;
+    [self sendCallback:dict callbackId:callbackId];
 }
 
 

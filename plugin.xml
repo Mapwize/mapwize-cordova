@@ -9,50 +9,60 @@
     <keywords>cordova,coolest</keywords>
     <repo></repo>
     <issue></issue>
-    <js-module src="www/Mapwize.js" name="Mapwize">
-        <clobbers target="Mapwize" />
-    </js-module>
-    <dependency id="cordova-plugin-cocoapod-support"/>
 
-    <!-- <platform name="android">
+    <preference name="MWZMAPWIZEAPIKEY"/>
+
+    <js-module src="www/Mapwize.js" name="Mapwize" >
+        <clobbers target="window.Mapwize"/>
+    </js-module>
+
+    <js-module src="www/MapwizeView.js" name="MapwizeView" >
+        <clobbers target="window.MapwizeView" />
+    </js-module>
+    
+    <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="FlashPlugin" >
-                <param name="android-package" value="com.halifone.flashfans.flashplugin.plugin.FlashPlugin"/>
+            <feature name="Mapwize" >
+                <param name="android-package" value="io.mapwize.cordova.MapwizeCordovaPlugin"/>
             </feature>
         </config-file>
-	<config-file target="AndroidManifest.xml" parent="/manifest/application">
-	   <receiver android:name="com.halifone.flashfans.flashplugin.time.AutomaticTimeUpdateReceiver" android:exported="true">
-	       <intent-filter>
-		   <action android:name="android.intent.action.TIME_SET" />
-	       </intent-filter>
-	   </receiver>
-	</config-file>
-        <config-file parent="/*" target="AndroidManifest.xml">
-            <uses-permission android:name="android.permission.CAMERA" />
-            <uses-permission android:name="android.permission.FLASHLIGHT" />
-            <uses-permission android:name="android.permission.VIBRATE" />
-            <uses-permission android:name="android.permission.WAKE_LOCK" />
-            <uses-feature android:name="android.hardware.camera" />
-        </config-file>
-        <config-file parent="application" target="AndroidManifest.xml">
-            <service android:enabled="true" android:name="com.halifone.flashfans.flashplugin.service.FlashService" />
-            <service
-                android:name="com.halifone.flashfans.flashplugin.service.WakeService"
-                android:enabled="true"
-                android:exported="true"></service>
-        </config-file>
-        
-        <resource-file src="matt.mp3"  target="assets/matt.mp3"/>
 
-        <source-file src="src/android/FlashPlugin/app/src/FlashPlugin.java" target-dir="src/com/halifone/flashfans/flashplugin/plugin/" />
-        <source-file src="src/android/FlashPlugin/app/src/AutomaticTimeUpdateReceiver.java" target-dir="src/com/halifone/flashfans/flashplugin/time/" />
-        
-    </platform> -->
+        <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+          <meta-data android:name="MWZMAPWIZEAPIKEY" android:value="$MWZMAPWIZEAPIKEY" />
+        </config-file>
+        <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+            <activity android:name="io.mapwize.cordova.MapwizeActivity"
+                android:configChanges="orientation|screenSize" android:screenOrientation="portrait"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar" 
+                android:launchMode="singleInstance">
+            </activity>
+        </config-file>
 
+        <resource-file src="src/android/res/layout/activity_mapwize.xml" target="res/layout/activity_mapwize.xml" />
+        <resource-file src="src/android/res/layout/mapwize_bottom_view.xml" target="res/layout/mapwize_bottom_view.xml" />
+        <resource-file src="src/android/res/layout/mapwize_direction_button.xml" target="res/layout/mapwize_direction_button.xml" />
+        <resource-file src="src/android/res/layout/mapwize_fragment.xml" target="res/layout/mapwize_fragment.xml" />
+        <resource-file src="src/android/res/layout/mapwize_information_button.xml" target="res/layout/mapwize_information_button.xml" />
+        <resource-file src="src/android/res/layout/mapwize_languages_alert.xml" target="res/layout/mapwize_languages_alert.xml" />
+        <resource-file src="src/android/res/layout/mapwize_search_bar.xml" target="res/layout/mapwize_search_bar.xml" />
+        <resource-file src="src/android/res/layout/mapwize_search_direction_bar.xml" target="res/layout/mapwize_search_direction_bar.xml" />
+        <resource-file src="src/android/res/layout/mapwize_search_result_item.xml" target="res/layout/mapwize_search_result_item.xml" />
+        <resource-file src="src/android/res/layout/mapwize_search_results_list.xml" target="res/layout/mapwize_search_results_list.xml" />
+        <resource-file src="src/android/res/layout/mapwize_text_item.xml" target="res/layout/mapwize_text_item.xml" />
+        <resource-file src="src/android/res/layout/mapwize_universes_alert.xml" target="res/layout/mapwize_universes_alert.xml" />
+
+        <resource-file src="src/android/res/values/colors.xml" target="res/values/colors.xml" />
+        <resource-file src="src/android/res/values/strings2.xml" target="res/values/strings2.xml" />
+        <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
+        <source-file src="src/android/src/io/mapwize/cordova/MapwizeActivity.java" target-dir="src/io/mapwize/cordova/" />
+        <source-file src="src/android/src/io/mapwize/cordova/MapwizeCordovaPlugin.java" target-dir="src/io/mapwize/cordova/" />
+        <source-file src="src/android/src/io/mapwize/cordova/MarshMallowPermission.java" target-dir="src/io/mapwize/cordova/" />
+
+        <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
+        <hook type="after_prepare" src="scripts/after_prepare.js" />
+    </platform>
     <platform name="ios">
-        <!-- set platform :ios, defaults to 7.0 -->
-        <preference name="MWZMAPWIZEAPIKEY"/>
-        
+        <dependency id="cordova-plugin-cocoapod-support"/>
         <config-file target="config.xml" parent="/*">
             <feature name="Mapwize" >
                 <param name="ios-package" value="Mapwize" onload="true"/>
@@ -73,19 +83,20 @@
         </config-file>
 
         <pods-config ios-min-version="10.0" use-frameworks="true">
-            <!-- optionally add private spec sources -->
-            <!-- <source url="https://github.com/Mapwize/mapwize-ui-ios.git"/> -->
         </pods-config>
 
         <header-file src="src/ios/src/Constants.h" />
         <source-file src="src/ios/src/Constants.m" />
         <header-file src="src/ios/src/Mapwize.h" />
         <source-file src="src/ios/src/Mapwize.m" />
-        <header-file src="src/ios/src/Serializer.h" />
-        <source-file src="src/ios/src/Serializer.m" />
         <header-file src="src/ios/src/ViewController.h" />
         <source-file src="src/ios/src/ViewController.m" />
 
         <pod id="MapwizeUI"  version="1.1.0"/>
     </platform>
+    <engines>
+      <engine name="cordova-android" version=">=8.0.0" />
+      <!-- <engine name="cordova-android" version=">=8.0.0" /> -->
+    </engines>
+
 </plugin>

@@ -103,10 +103,12 @@ NSString* mCallbackId;
     
     [viewController setOptions:opts];
     [self.viewController presentViewController:viewController
-                         animated:NO
-                         completion:nil];
+                    animated:NO
+                    completion:nil];
 
     NSLog(@"createMapwizeView END...");
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
@@ -116,7 +118,7 @@ NSString* mCallbackId;
     
     NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
-        [viewController selectPlace:place centerOn:centerOn];
+        [viewController selectPlace:place centerOn:centerOn callbackId:command.callbackId];
     } failure:^(NSError *error) {
         NSLog(@"error...");
     }];
@@ -130,7 +132,7 @@ NSString* mCallbackId;
     
     NSURLSessionDataTask* task = [MWZApi getPlaceListWithId:identifier success:^(MWZPlaceList *placeList) {
         NSLog(@"identifier...");
-        [viewController selectPlaceList:placeList];
+        [viewController selectPlaceList:placeList callbackId:command.callbackId];
     } failure:^(NSError *error) {
         NSLog(@"error...");
     }];
@@ -141,13 +143,13 @@ NSString* mCallbackId;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command {
     NSLog(@"grantAccess...");
     NSString *accessKey = [command.arguments objectAtIndex:0];
-    [viewController grantAccess:accessKey];
+    [viewController grantAccess:accessKey callbackId:command.callbackId];
 }
 
 - (void)unselectContent:(CDVInvokedUrlCommand*)command  {
     NSLog(@"unselectContent...");
     BOOL closeInfo = [command.arguments objectAtIndex:0];
-    [viewController unselectContent:closeInfo];
+    [viewController unselectContent:closeInfo callbackId:command.callbackId];
 }
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {

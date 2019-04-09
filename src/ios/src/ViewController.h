@@ -19,20 +19,19 @@
 
 @interface ViewController : UIViewController
 - (void)setOptions:(MWZOptions*)opts;
-- (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn;
-- (void) selectPlaceList:(MWZPlaceList*) placeList;
-- (void) setPlugin:(Mapwize*) mapwize callbackId: (NSString*) callbackId;
-- (void) grantAccess:(NSString*) accessKey;
-- (void) unselectContent:(BOOL) closeInfo;
-
+- (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId:(NSString*) callbackId;
+- (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId;
+- (void) setPlugin:(Mapwize*) mapwize callbackId:(NSString*) callbackId;
+- (void) grantAccess:(NSString*) accessKey callbackId:(NSString*) callbackId;
+- (void) unselectContent:(BOOL) closeInfo callbackId:(NSString*) callbackId;
 
 - (void)viewDidLoad;
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place;
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlaceList *)placeList;
 - (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZMapwizeView *)mapwizeView;
 - (void)mapwizeViewDidTapOnMenu:(MWZMapwizeView *)mapwizeView;
-- (void) mapwizeViewDidLoad:(MWZMapwizeView*) mapwizeView;
-- (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject;
+- (void)mapwizeViewDidLoad:(MWZMapwizeView*) mapwizeView;
+- (BOOL)mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject;
 @end
 
 #endif
