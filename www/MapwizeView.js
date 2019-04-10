@@ -37,6 +37,17 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 		console.log("MapwizeView: setCallback: FAILED");}, PLUGIN_NAME, "setCallback", []);
 }
 
+MapwizeView.prototype.close = function(success, failure) {
+	console.log("MapwizeView: close");
+	exec(function(result) { 
+				console.log("MapwizeView: close: SUCCESS");
+				success(result);
+			}, function(err) {
+				console.log("MapwizeView: close: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "closeMapwizeView", []);
+}
+
 MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
 	console.log("MapwizeView: selectPlace");
 	exec(function(result) { 

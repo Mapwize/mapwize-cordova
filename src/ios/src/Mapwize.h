@@ -20,6 +20,7 @@
 - (void)setCallback:(CDVInvokedUrlCommand*)command;
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command;
 
+- (void)closeMapwizeView:(CDVInvokedUrlCommand*)command;
 - (void)selectPlace:(CDVInvokedUrlCommand*)command;
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command;

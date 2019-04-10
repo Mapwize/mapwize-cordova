@@ -111,6 +111,16 @@ NSString* mCallbackId;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+
+
+- (void)closeMapwizeView:(CDVInvokedUrlCommand*)command {
+    NSLog(@"closeMapwizeView called...");
+    [self.viewController dismissViewControllerAnimated:NO completion:nil];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlace called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
