@@ -273,6 +273,8 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             JSONObject json = new JSONObject();
             String message = throwable.getMessage();
             String locMessage = throwable.getLocalizedMessage();
+            Log.d(TAG, "sendCallbackEventErr, message: " + message);
+            
             if(message != null) {
                 json.put(CMD_FIELD_ERR_MESSAGE, message);
             }
@@ -334,6 +336,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             JSONObject json = new JSONObject();
             String message = throwable.getMessage();
             String locMessage = throwable.getLocalizedMessage();
+            Log.d(TAG, "sendCallbackEventErr, message: " + message);
             if(message != null) {
                 json.put(CBK_FIELD_ERR_MESSAGE, message);
             }

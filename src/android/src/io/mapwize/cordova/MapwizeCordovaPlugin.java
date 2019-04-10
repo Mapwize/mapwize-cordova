@@ -34,6 +34,7 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private static final String ACTION_MAPWIZE_SELECTPLACELIST = "selectPlaceList";
     private static final String ACTION_MAPWIZE_GRANTACCESS = "grantAccess";
     private static final String ACTION_MAPWIZE_UNSELECT_CONTENT = "unselectContent";
+    private static final String ACTION_MAPWIZE_CLOSE = "closeMapwizeView";
 
     public static final String OPTIONS_STR = "optionStr";
 
@@ -91,6 +92,8 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON = "TapOnPlaceInformationButton";
     public static final String CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = "TapOnPlaceListInformationButton";
 
+    public static final int MAPWIZEVIEW_REQUEST_ID = 12122; // Number random enough
+
     BroadcastReceiver mCbkReceiver;
 
     private CallbackContext mCallback = null;
@@ -98,6 +101,8 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private CallbackContext mSelectPlaceCallback = null;
     private CallbackContext mSelectPlaceListCallback = null;
     private CallbackContext mCreateMapwizeViewCallback = null;
+
+    private Intent mMapwizeViewIntent = null;
 
     /**
      * Constructor.
@@ -194,9 +199,16 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_UNSELECT_CONTENT received: ");
             unselectContent(args, callbackContext);
 
+        } else if (ACTION_MAPWIZE_CLOSE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_CLOSE received: ");
+            closeMapwizeView(args, callbackContext);
+
         } else {
             Log.d(TAG, String.format("Action is not handled %s ", action));
         }
+
+
+
 
         return true;
     }
@@ -212,13 +224,13 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             String optionsStr = args.getString(0);
             mCreateMapwizeViewCallback = context;
 
-            Intent intent = new Intent(cordova.getActivity().getApplication().getApplicationContext(), MapwizeActivity.class);
-            intent.putExtra(OPTIONS_STR, optionsStr);
+            mMapwizeViewIntent = new Intent(cordova.getActivity().getApplication().getApplicationContext(), MapwizeActivity.class);
+            mMapwizeViewIntent.putExtra(OPTIONS_STR, optionsStr);
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    cordova.getActivity().startActivity(intent);
+                    cordova.getActivity().startActivityForResult(mMapwizeViewIntent, MapwizeCordovaPlugin.MAPWIZEVIEW_REQUEST_ID);
                     sendCallbackCmdOK(null, mCreateMapwizeViewCallback);
                 }
             });
@@ -298,6 +310,29 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Delegates the unselectContent function to MapwizeView
+     * @param args
+     * @param context
+     */
+    void closeMapwizeView(JSONArray args, CallbackContext context) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+//                cordova.getActivity().startActivityForResult(mMapwizeViewIntent, MapwizeCordovaPlugin.MAPWIZEVIEW_REQUEST_ID);
+//                sendCallbackCmdOK(null, mCreateMapwizeViewCallback);
+
+                cordova.getActivity().finishActivity(MAPWIZEVIEW_REQUEST_ID);
+                PluginResult result = new PluginResult(PluginResult.Status.OK);
+                context.sendPluginResult(result);
+
+            }
+        });
+
+
     }
 
     /**
