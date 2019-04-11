@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -121,6 +122,26 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     }
 
     /**
+     * Called on activity resume
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mapwizePlugin != null) {
+            mapwizePlugin.onResume();
+        }
+    }
+
+    /**
+     * Called on activity pause
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapwizePlugin.onPause();
+    }
+
+    /**
      * Creates a MapOptions from a json string
      * @param optStr the json string
      * @return
@@ -131,38 +152,40 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             JSONObject json = new JSONObject(optStr);
             MapOptions.Builder builder = new MapOptions.Builder();
 
-            Double floor = json.getDouble(OPT_FLOOR);
+            Double floor = json.optDouble(OPT_FLOOR);
             if (floor != null) {
                 builder.floor(floor);
             }
 
-            String lang = json.getString(OPT_LANG);
-            if (lang != null) {
+            String lang = json.optString(OPT_LANG);
+            if (!TextUtils.isEmpty(lang)) {
                 builder.language(lang);
             }
 
-            String universeId = json.getString(OPT_UNIVERSE_ID); //TODO: is it and ID???
-            if (universeId != null) {
+            String universeId = json.optString(OPT_UNIVERSE_ID); //TODO: is it and ID???
+            if (!TextUtils.isEmpty(universeId)) {
                 builder.universe(universeId);
             }
 
-            String restrictToVenue = json.getString(OPT_RESTRICT_CONTENT_TO_VENUE_ID);
-            if (restrictToVenue != null) {
+            String restrictToVenue = json.optString(OPT_RESTRICT_CONTENT_TO_VENUE_ID);
+            if (!TextUtils.isEmpty(restrictToVenue)) {
                 builder.restrictContentToVenue(restrictToVenue);
             }
 
-            String restrictToOrg = json.getString(OPT_RESTRICT_CONTENT_TO_ORG_ID);
-            if (restrictToOrg != null) {
+            String restrictToOrg = json.optString(OPT_RESTRICT_CONTENT_TO_ORG_ID);
+            if (!TextUtils.isEmpty(restrictToOrg)) {
                 builder.restrictContentToOrganization(restrictToOrg);
             }
 
-            String centerOnVenueId = json.getString(OPT_CENTER_ON_VENUE_ID); //TODO: is it and ID???
-            if (centerOnVenueId != null) {
+            String centerOnVenueId = json.optString(OPT_CENTER_ON_VENUE_ID); //TODO: is it and ID???
+            if (!TextUtils.isEmpty(centerOnVenueId)) {
+                Log.d(TAG, "added centerOnVenueId: " + centerOnVenueId);
                 builder.centerOnVenue(centerOnVenueId);
             }
 
-            String centerOnPlaceId = json.getString(OPT_CENTER_ON_PLACE_ID); //TODO: is it and ID???
-            if (centerOnPlaceId != null) {
+            String centerOnPlaceId = json.optString(OPT_CENTER_ON_PLACE_ID); //TODO: is it and ID???
+            if (!TextUtils.isEmpty(centerOnPlaceId)) {
+                Log.d(TAG, "added centerOnPlaceId: " +centerOnPlaceId);
                 builder.centerOnPlace(centerOnPlaceId);
             }
 
@@ -203,8 +226,8 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         this.mapwizePlugin = mapwizePlugin;
         this.locationProvider = new ManualIndoorLocationProvider();
         Log.d(TAG, "onFragmentReady...1");
-        this.mapwizePlugin.setLocationProvider(this.locationProvider);
-        Log.d(TAG, "onFragmentReady...2");
+        // this.mapwizePlugin.setLocationProvider(this.locationProvider);
+        // Log.d(TAG, "onFragmentReady...2");
         this.mapwizePlugin.addOnLongClickListener(new MapwizePlugin.OnLongClickListener() {
             @Override
             public void onLongClickEvent(@NonNull ClickEvent clickEvent) {
