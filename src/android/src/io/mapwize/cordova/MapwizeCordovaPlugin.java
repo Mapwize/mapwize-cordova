@@ -144,7 +144,17 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         filter.addAction(CBK_UNSELECT_CONTENT);
 
         LocalBroadcastManager.getInstance(cordova.getActivity()).registerReceiver(mCbkReceiver, filter);
+        cordova.setActivityResultCallback(this);
     }
+
+    public void onActivityResult(int requestCode, int resultCode,
+        Intent intent) {
+        Log.d(TAG, "onActivityResult...");
+
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+
 
     /**
      * Returns the api key stored in AndroidManifest.xml
