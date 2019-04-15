@@ -35,6 +35,7 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private static final String ACTION_MAPWIZE_GRANTACCESS = "grantAccess";
     private static final String ACTION_MAPWIZE_UNSELECT_CONTENT = "unselectContent";
     private static final String ACTION_MAPWIZE_CLOSE = "closeMapwizeView";
+    private static final String ACTION_MAPWIZE_SETPLACESTYLE = "setPlaceStyle";
 
     public static final String OPTIONS_STR = "optionStr";
 
@@ -42,6 +43,10 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CMD_SELECT_PLACE = "selectPlace";
     public static final String CMD_SELECT_PLACE_ID = "identifier";
     public static final String CMD_SELECT_PLACE_CENTERON = "centerOn";
+
+    public static final String CMD_SET_PLACE_STYLE = "setPlace";
+    public static final String CMD_SET_PLACE_STYLE_ID = "identifier";
+    public static final String CMD_SET_PLACE_STYLE_STYLE = "style";
 
     public static final String CMD_SELECT_PLACELIST = "selectPlaceList";
     public static final String CMD_SELECT_PLACELIST_ID = "identifier";
@@ -76,6 +81,10 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_SELECT_PLACE_ID = "identifier";
     public static final String CBK_SELECT_PLACE_CENTERON = "centerOn";
 
+    public static final String CBK_SET_PLACE_STYLE = "setPlaceStyleCbk";
+    public static final String CBK_SET_PLACE_STYLE_ID = "identifier";
+    public static final String CBK_SET_PLACE_STYLE_STYLE = "style";
+
     public static final String CBK_SELECT_PLACELIST = "selectPlaceListCbk";
     public static final String CBK_SELECT_PLACELIST_ID = "identifier";
 
@@ -88,9 +97,14 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_EVENT_DID_LOAD = "DidLoad";
     public static final String CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION = "DidTapOnFollowWithoutLocation";
     public static final String CBK_EVENT_DID_TAP_ON_MENU = "DidTapOnMenu";
-    public static final String CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR = "shouldShowInformationButtonFor";
+    public static final String CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR = "ShouldShowInformationButtonFor";
     public static final String CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON = "TapOnPlaceInformationButton";
     public static final String CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = "TapOnPlaceListInformationButton";
+    public static final String CBK_EVENT_CLOSE_BUTTON_CLICKED = "TapOnCloseButton";
+
+
+
+
 
     public static final int MAPWIZEVIEW_REQUEST_ID = 12122; // Number random enough
 
@@ -101,6 +115,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private CallbackContext mSelectPlaceCallback = null;
     private CallbackContext mSelectPlaceListCallback = null;
     private CallbackContext mCreateMapwizeViewCallback = null;
+    private CallbackContext mSetPlaceStyleCallback = null;
+
+
 
     private Intent mMapwizeViewIntent = null;
 
@@ -136,10 +153,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         filter.addAction(CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR);
         filter.addAction(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON);
+        filter.addAction(CBK_EVENT_CLOSE_BUTTON_CLICKED);
 
         filter.addAction(CBK_CREATE_MAPWIZEVIEW);
         filter.addAction(CBK_SELECT_PLACE);
         filter.addAction(CBK_SELECT_PLACELIST);
+        filter.addAction(CBK_SET_PLACE_STYLE);
         filter.addAction(CBK_GRANT_ACCESS);
         filter.addAction(CBK_UNSELECT_CONTENT);
 
@@ -213,6 +232,10 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_CLOSE received: ");
             closeMapwizeView(args, callbackContext);
 
+        } else if (ACTION_MAPWIZE_SETPLACESTYLE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_SETPLACESTYLE received: ");
+            setPlaceStyle(args, callbackContext);
+
         } else {
             Log.d(TAG, String.format("Action is not handled %s ", action));
         }
@@ -279,6 +302,28 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             Intent intent = new Intent(CMD_SELECT_PLACE);
             intent.putExtra(CMD_SELECT_PLACE_ID, id);
             intent.putExtra(CMD_SELECT_PLACE_CENTERON, centerOn);
+            LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Delegates selectPlace function to MapwizeView
+     * @param args
+     * @param context
+     */
+    void setPlaceStyle(JSONArray args, CallbackContext context) {
+        try {
+            String id = args.getString(0);
+            String style = args.getString(1);
+            mSetPlaceStyleCallback = context;
+
+            Log.d(TAG, "setPlace, id: " + id);
+
+            Intent intent = new Intent(CMD_SET_PLACE_STYLE);
+            intent.putExtra(CMD_SET_PLACE_STYLE_ID, id);
+            intent.putExtra(CMD_SET_PLACE_STYLE_STYLE, style);
             LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -490,9 +535,16 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
                 Log.d(TAG, "Received: CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION");
                 String json = intent.getStringExtra(CBK_ARGS);
                 sendCallbackEventOK(CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION, json);
+            } else if (CBK_EVENT_CLOSE_BUTTON_CLICKED.equals(action)) {
+                Log.d(TAG, "Received: CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION");
+                String json = intent.getStringExtra(CBK_ARGS);
+                sendCallbackEventOK(CBK_EVENT_CLOSE_BUTTON_CLICKED, json);
             } else if (CBK_SELECT_PLACE.equals(action)) {
                 Log.d(TAG, "Received: CBK_SELECT_PLACE");
                 sendCallbackCmd(intent, mSelectPlaceCallback);
+            } else if (CBK_SET_PLACE_STYLE.equals(action)) {
+                Log.d(TAG, "Received: CBK_SET_PLACE_STYLE");
+                sendCallbackCmd(intent, mSetPlaceStyleCallback);
             } else if (CBK_SELECT_PLACELIST.equals(action)) {
                 Log.d(TAG, "Received: CBK_SELECT_PLACELIST");
                 sendCallbackCmd(intent, mSelectPlaceListCallback);

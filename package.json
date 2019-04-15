@@ -7,7 +7,13 @@
     "repo": "https://github.com/Mapwize/mapwize-cordova",
     "issue": "",
     "keywords": [
-        "cordova","ionic","mapwize","indoor","building","map","maps"
+        "cordova",
+        "ionic",
+        "mapwize",
+        "indoor",
+        "building",
+        "map",
+        "maps"
     ],
     "platforms": [
         "android",
@@ -16,6 +22,7 @@
     "engines": [],
     "englishdoc": "https://docs.mapwize.io",
     "dependencies": {
+        "fs-extra": "^7.0.1",
         "properties-parser": "^0.3.1"
     }
 }

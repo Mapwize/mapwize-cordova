@@ -22,6 +22,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "shouldShowInformationButtonFor":
 			case "TapOnPlaceInformationButton":
 			case "TapOnPlaceListInformationButton":
+			case "TapOnCloseButton":
 				console.log("Handling event " + result.event + " result: " + result.arg);
 				if (!result.arg) {
 					callbacks[result.event]();
@@ -68,6 +69,17 @@ MapwizeView.prototype.selectPlaceList = function(id, success, failure) {
 				console.log("MapwizeView: selectPlaceList: FAILED");
 				failure(err);
 			}, PLUGIN_NAME, "selectPlaceList", [id]);
+}
+
+MapwizeView.prototype.setPlaceStyle = function(id, style, success, failure) {
+	console.log("MapwizeView: setPlaceStyle");
+	exec(function(result) { 
+				console.log("MapwizeView: setPlaceStyle: SUCCESS");
+				success(result);
+			}, function(err) {
+				console.log("MapwizeView: setPlaceStyle: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "setPlaceStyle", [id, style]);
 }
 
 MapwizeView.prototype.grantAccess = function(accessKey, success, failure) {
