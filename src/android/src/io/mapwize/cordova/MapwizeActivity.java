@@ -21,6 +21,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mapbox.mapboxsdk.maps.MapboxMap;
+
+import io.mapwize.mapwizeformapbox.api.Parser;
 import io.mapwize.mapwizeformapbox.api.Style;
 
 import io.indoorlocation.core.IndoorLocation;
@@ -230,17 +232,10 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     private Style getStyleFromStr(String jsonStr) {
         Log.d(TAG, "getStyleFromStr...");
         try {
-            JSONObject json = new JSONObject(jsonStr);
-            String markerUrl = json.optString(STYLE_MARKERURL);
-
-            Style.Builder builder = new Style.Builder();
-            builder.setMarkerUrl(markerUrl);
-
-            Style style = builder.build();
+            Style style = Parser.parseStyle(jsonStr);
             return style;
 
         } catch (JSONException e) {
-
             return null;
         }
     }
