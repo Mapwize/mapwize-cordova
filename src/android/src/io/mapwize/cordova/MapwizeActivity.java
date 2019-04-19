@@ -22,9 +22,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
-import io.mapwize.mapwizeformapbox.api.Parser;
-import io.mapwize.mapwizeformapbox.api.Style;
-
 import io.indoorlocation.core.IndoorLocation;
 import io.indoorlocation.manual.ManualIndoorLocationProvider;
 import io.mapwize.mapwizecomponents.ui.MapwizeFragment;
@@ -32,16 +29,18 @@ import io.mapwize.mapwizecomponents.ui.MapwizeFragmentUISettings;
 import io.mapwize.mapwizeformapbox.api.Api;
 import io.mapwize.mapwizeformapbox.api.ApiCallback;
 import io.mapwize.mapwizeformapbox.api.MapwizeObject;
+import io.mapwize.mapwizeformapbox.api.Parser;
 import io.mapwize.mapwizeformapbox.api.Place;
 import io.mapwize.mapwizeformapbox.api.PlaceList;
+import io.mapwize.mapwizeformapbox.api.Style;
 import io.mapwize.mapwizeformapbox.map.ClickEvent;
 import io.mapwize.mapwizeformapbox.map.MapOptions;
 import io.mapwize.mapwizeformapbox.map.MapwizePlugin;
 
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mapwize.test.R;
-import java.util.List;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_ARGS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_CREATE_MAPWIZEVIEW;
@@ -104,7 +103,10 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate...");
-        setContentView(R.layout.activity_mapwize);
+        String package_name = getApplication().getPackageName();
+        setContentView(getApplication().getResources().getIdentifier("activity_mapwize", "layout", package_name));
+        // setContentView(R.layout.activity_mapwize);
+
         Intent intent = getIntent();
         String optStr = intent.getStringExtra(MapwizeCordovaPlugin.OPTIONS_STR);
         boolean showClose = false;
@@ -130,7 +132,8 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         FragmentManager fm = getSupportFragmentManager();
 
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.fragmentContainer, mapwizeFragment);
+        ft.add(getApplication().getResources().getIdentifier("fragmentContainer", "id", package_name), mapwizeFragment);
+        // ft.add(R.id.fragmentContainer, mapwizeFragment);
         ft.commit();
 
         mCbkReceiver = new CbkReceiver();
@@ -148,7 +151,8 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         mActivity = this;
 
         // Always cast your custom Toolbar here, and set it as the ActionBar.
-        Toolbar tb = (Toolbar) findViewById(R.id.imgtoolbar);
+        // Toolbar tb = (Toolbar) findViewById(R.id.imgtoolbar);
+        Toolbar tb = (Toolbar) findViewById(getApplication().getResources().getIdentifier("imgtoolbar", "id", package_name));
         setSupportActionBar(tb);
 
         // Get the ActionBar here to configure the way it behaves.
@@ -159,7 +163,9 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
         }
 
-        ImageButton button = findViewById(R.id.imageButton);
+        // ImageButton button = findViewById(R.id.imageButton);
+        ImageButton button = findViewById(getApplication().getResources().getIdentifier("imageButton", "id", package_name));
+        
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -63,7 +63,7 @@ this.mapwizeView = Mapwize.createMapwizeView(
         restrictContentToOrganizationId: "",
         centerOnVenueId: "xxxxxxxxxxxxxxxxxxxxxxxx",
         centerOnPlaceId: "xxxxxxxxxxxxxxxxxxxxxxxx",
-        showCloseButton: "true"
+        showCloseButton: true
       }, () => {
         // Handle  successfull creation
       }, (err) => {

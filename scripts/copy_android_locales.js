@@ -9,7 +9,12 @@ module.exports = function(ctx) {
     var platformRes = path.join(ctx.opts.projectRoot, 'platforms/android/app/src/main/res');
     var platformSource = path.join(ctx.opts.projectRoot, 'languages/android');
 
-    console.log("source: " + platformSource + " dest: " + platformRes);
-    fs.copySync(platformSource, platformRes);
+    if (fs.pathExistsSync(platformRes) && fs.pathExistsSync(platformSource)) {
+        console.log("source: " + platformSource + " dest: " + platformRes);
+        fs.copySync(platformSource, platformRes);
+    } else {
+        console.log("no locales");
+    }
+    
 
 }

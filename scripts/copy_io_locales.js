@@ -10,6 +10,14 @@ module.exports = function(ctx) {
     var platformRes = path.join(ctx.opts.projectRoot, 'platforms/ios');
     var platformSource = path.join(ctx.opts.projectRoot, 'languages/ios');
 
+    if (fs.pathExistsSync(platformRes) && fs.pathExistsSync(platformSource)) {
+        console.log("source: " + platformSource + " dest: " + platformRes);
+        fs.copySync(platformSource, platformRes);
+    } else {
+        console.log("no locales");
+        return;
+    }
+
     var getXcodeProjPath = function(root) {
         files = fs.readdirSync(root);
         var projectDir = null;
