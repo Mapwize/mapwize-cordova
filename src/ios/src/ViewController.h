@@ -18,7 +18,9 @@
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController
+//@interface ViewController : UINavigationController
 - (void)setOptions:(MWZOptions*)opts;
+- (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId;
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId:(NSString*) callbackId;
 - (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId;
 - (void) setPlugin:(Mapwize*) mapwize callbackId:(NSString*) callbackId;

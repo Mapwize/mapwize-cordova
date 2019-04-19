@@ -79,7 +79,7 @@ MapwizeView.prototype.setPlaceStyle = function(id, style, success, failure) {
 			}, function(err) {
 				console.log("MapwizeView: setPlaceStyle: FAILED");
 				failure(err);
-			}, PLUGIN_NAME, "setPlaceStyle", [id, style]);
+			}, PLUGIN_NAME, "setPlaceStyle", [id, JSON.stringify(style)]);
 }
 
 MapwizeView.prototype.grantAccess = function(accessKey, success, failure) {

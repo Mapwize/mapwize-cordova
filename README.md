@@ -375,9 +375,12 @@ this.mapwizeView.setPlaceStyle(
 
 For localized texts,
 
-1. Create directory named 'languages' in the root directory of your ionic project
-2. Create value-<<2-letter country code>> directories for each language
-3. Create a translation content file named "strings2.xml" with the following content (the values to be translated):
+The localization files should be placed in directories named 'languages/ios' and 'languages/android' under the root directory of your ionic project
+
+## 3.1. Android localization
+
+1. Create value-<<2-letter country code>> directories for each language
+2. Create a translation content file named "strings2.xml" with the following content (the values to be translated):
 
 ```
 <?xml version="1.0" encoding="utf-8"?>
@@ -399,6 +402,30 @@ For localized texts,
     <string name="starting_point">Starting point</string>
     <string name="destination">Destination</string>
 </resources>
+```
+
+## 3.2. Android localization
+
+1. Create <<2-letter country code>>.lproj directories for each language
+2. Create a translation content file named "Localizable.strings" with the following content (the values to be translated):
+
+```
+"Direction" = "Direction";
+"Information" = "Information";
+"Search a venue..." = "Search a venue...";
+"Entering in %@..." = "Entering in %@...";
+"Search in %@..." = "Search in %@...";
+"Destination" = "Destination";
+"Starting point" = "Starting point";
+"Current location" = "Current location";
+"No results" = "No results";
+"Floor %@" = "Floor %@";
+"Universes" = "Universes";
+"Choose an universe to display it on the map" = "Choose a universe to display it on the map";
+"Languages" = "Languages";
+"Choose your preferred language" = "Choose your preferred language";
+"Cancel" = "Cancel";
+
 ```
 
 Configure and run the ionic project the usual way. The localization takes the default device language to select the proper localization file.

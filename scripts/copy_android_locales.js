@@ -7,7 +7,7 @@ module.exports = function(ctx) {
     var path = ctx.requireCordovaModule('path');
 
     var platformRes = path.join(ctx.opts.projectRoot, 'platforms/android/app/src/main/res');
-    var platformSource = path.join(ctx.opts.projectRoot, 'languages');
+    var platformSource = path.join(ctx.opts.projectRoot, 'languages/android');
 
     console.log("source: " + platformSource + " dest: " + platformRes);
     fs.copySync(platformSource, platformRes);
