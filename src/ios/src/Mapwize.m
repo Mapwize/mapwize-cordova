@@ -19,8 +19,8 @@
 {
     BOOL enabled;
     NSNotification *_notification;
-    ViewController* viewController;
-    
+    UINavigationController* navController;
+    ViewController* viewCtrl;
 }
 NSString* mCallbackId;
 
@@ -31,7 +31,6 @@ NSString* mCallbackId;
 - (void) pluginInitialize
 {
     NSLog(@"pluginInitialize...");
-    viewController = [[ViewController alloc] init];
 }
 
 - (void)dealloc {
@@ -42,11 +41,19 @@ NSString* mCallbackId;
 - (void)setCallback:(CDVInvokedUrlCommand*)command {
     NSLog(@"setCallback called...");
     mCallbackId = command.callbackId;
-    [viewController setPlugin:self callbackId:mCallbackId];
+    [viewCtrl setPlugin:self callbackId:mCallbackId];
+    NSLog(@"setCallback called...END");
 }
 
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"createMapwizeView called...");
+    BOOL showCloseButton = YES;
+    
+    viewCtrl = [[ViewController alloc] init];
+    if (showCloseButton == YES) {
+        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
+    }
+    
     NSString *optionsStr = [command.arguments objectAtIndex:0];
     NSData *data = [optionsStr dataUsingEncoding:NSUTF8StringEncoding];
 
@@ -56,7 +63,7 @@ NSString* mCallbackId;
                                  options:NSJSONReadingMutableContainers
                                    error:&jsonError];
     NSLog(@"creating opts...");
-    MWZOptions *opts = [[MWZOptions alloc] init];
+    MWZUIOptions *opts = [[MWZUIOptions alloc] init];
     
     NSLog(@"getting floor...");
     NSNumber* floor = json[@"floor"];
@@ -101,14 +108,57 @@ NSString* mCallbackId;
         opts.centerOnPlaceId = centerOnPlaceId;
     }
     
-    [viewController setOptions:opts];
-    [self.viewController presentViewController:viewController
-                    animated:NO
-                    completion:nil];
+    NSLog(@"getting centerOnLocation...");
+    NSDictionary* centerOnLocation = json[@"centerOnLocation"];
+    if (centerOnLocation != nil) {
+        MWZLatLngFloor* latlng = [MWZApiResponseParser parseLatLng:centerOnLocation]; //TODO: need a MWZLatLngFloor parser
+        opts.centerOnLocation = latlng;
+    } else {
+        opts.centerOnLocation = nil;
+    }
+    
+    [viewCtrl setOptions:opts];
+    
+    NSLog(@"getting addChildViewController...");
+    NSLog(@"getting presentViewController...");
+    
+    if (showCloseButton == YES) {
+        [self.viewController presentViewController:navController
+                                          animated:NO
+                                        completion:nil];
+    } else {
+        [self.viewController presentViewController:viewCtrl
+                                          animated:NO
+                                        completion:nil];
+    }
 
     NSLog(@"createMapwizeView END...");
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+
+- (void)closeMapwizeView:(CDVInvokedUrlCommand*)command {
+    NSLog(@"closeMapwizeView called...");
+    [self.viewController dismissViewControllerAnimated:NO completion:nil];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setPlaceStyle:(CDVInvokedUrlCommand*)command {
+    NSLog(@"setPlaceStyle called...");
+    NSString *identifier = [command.arguments objectAtIndex:0];
+    NSString *styleStr = [command.arguments objectAtIndex:1];
+    
+    NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
+        NSLog(@"identifier...");
+        [self->viewCtrl setPlaceStyle:place style:styleStr callbackId:command.callbackId];
+    } failure:^(NSError *error) {
+        NSLog(@"error...");
+    }];
+    
+    [task resume];
 }
 
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
@@ -118,7 +168,7 @@ NSString* mCallbackId;
     
     NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
-        [viewController selectPlace:place centerOn:centerOn callbackId:command.callbackId];
+        [viewCtrl selectPlace:place centerOn:centerOn callbackId:command.callbackId];
     } failure:^(NSError *error) {
         NSLog(@"error...");
     }];
@@ -132,7 +182,7 @@ NSString* mCallbackId;
     
     NSURLSessionDataTask* task = [MWZApi getPlaceListWithId:identifier success:^(MWZPlaceList *placeList) {
         NSLog(@"identifier...");
-        [viewController selectPlaceList:placeList callbackId:command.callbackId];
+        [viewCtrl selectPlaceList:placeList callbackId:command.callbackId];
     } failure:^(NSError *error) {
         NSLog(@"error...");
     }];
@@ -143,13 +193,13 @@ NSString* mCallbackId;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command {
     NSLog(@"grantAccess...");
     NSString *accessKey = [command.arguments objectAtIndex:0];
-    [viewController grantAccess:accessKey callbackId:command.callbackId];
+    [viewCtrl grantAccess:accessKey callbackId:command.callbackId];
 }
 
 - (void)unselectContent:(CDVInvokedUrlCommand*)command  {
     NSLog(@"unselectContent...");
     BOOL closeInfo = [command.arguments objectAtIndex:0];
-    [viewController unselectContent:closeInfo callbackId:command.callbackId];
+    [viewCtrl unselectContent:closeInfo callbackId:command.callbackId];
 }
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {

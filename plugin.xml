@@ -54,12 +54,14 @@
         <resource-file src="src/android/res/values/colors.xml" target="res/values/colors.xml" />
         <resource-file src="src/android/res/values/strings2.xml" target="res/values/strings2.xml" />
         <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
+        <resource-file src="src/android/res/drawable/ic_close_24dp.png" target="res/drawable/ic_close_24dp.png" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeActivity.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeCordovaPlugin.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MarshMallowPermission.java" target-dir="src/io/mapwize/cordova/" />
 
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <hook type="after_prepare" src="scripts/after_prepare.js" />
+        <hook type="after_prepare" src="scripts/copy_android_locales.js" />
     </platform>
     <platform name="ios">
         <dependency id="cordova-plugin-cocoapod-support"/>
@@ -92,8 +94,12 @@
         <header-file src="src/ios/src/ViewController.h" />
         <source-file src="src/ios/src/ViewController.m" />
 
+        <hook type="after_prepare" src="scripts/copy_io_locales.js" />
+
         <pod id="MapwizeUI"  version="1.1.0"/>
     </platform>
+    <!-- <dependency id="cordova-plugin-localization-strings" version="3.0.1"/> -->
+
     <engines>
       <engine name="cordova-android" version=">=8.0.0" />
     </engines>

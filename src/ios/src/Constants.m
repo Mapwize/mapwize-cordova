@@ -21,6 +21,9 @@ NSString *const CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = @"TapOnPlaceListInf
 NSString *const CBK_FIELD_ERR_MESSAGE = @"message";
 NSString *const CBK_FIELD_ERR_LOCALIZED_MESSAGE = @"localizedMessage";
 
+NSString *const CBK_SET_PLACE_STYLE = @"setPlaceStyleCbk";
+NSString *const CBK_SET_PLACE_STYLE_ID = @"identifier";;
+
 NSString *const CBK_SELECT_PLACE = @"selectPlaceCbk";
 NSString *const CBK_SELECT_PLACE_ID = @"identifier";
 NSString *const CBK_SELECT_PLACE_CENTERON = @"centerOn";

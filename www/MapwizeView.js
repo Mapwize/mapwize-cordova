@@ -22,6 +22,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "shouldShowInformationButtonFor":
 			case "TapOnPlaceInformationButton":
 			case "TapOnPlaceListInformationButton":
+			case "TapOnCloseButton":
 				console.log("Handling event " + result.event + " result: " + result.arg);
 				if (!result.arg) {
 					callbacks[result.event]();
@@ -35,6 +36,17 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 		}
 	}, function(result) {
 		console.log("MapwizeView: setCallback: FAILED");}, PLUGIN_NAME, "setCallback", []);
+}
+
+MapwizeView.prototype.close = function(success, failure) {
+	console.log("MapwizeView: close");
+	exec(function(result) { 
+				console.log("MapwizeView: close: SUCCESS");
+				success(result);
+			}, function(err) {
+				console.log("MapwizeView: close: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "closeMapwizeView", []);
 }
 
 MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
@@ -57,6 +69,17 @@ MapwizeView.prototype.selectPlaceList = function(id, success, failure) {
 				console.log("MapwizeView: selectPlaceList: FAILED");
 				failure(err);
 			}, PLUGIN_NAME, "selectPlaceList", [id]);
+}
+
+MapwizeView.prototype.setPlaceStyle = function(id, style, success, failure) {
+	console.log("MapwizeView: setPlaceStyle");
+	exec(function(result) { 
+				console.log("MapwizeView: setPlaceStyle: SUCCESS");
+				success(result);
+			}, function(err) {
+				console.log("MapwizeView: setPlaceStyle: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "setPlaceStyle", [id, JSON.stringify(style)]);
 }
 
 MapwizeView.prototype.grantAccess = function(accessKey, success, failure) {

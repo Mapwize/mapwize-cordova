@@ -14,7 +14,9 @@ The plugin is compatible with Cordova 8 / cordova-ios 4.5+ / cordova-android 8.0
 
 A simple Ionic app using the plugin is available in this repository [mapwize-cordova-demo](https://github.com/Mapwize/mapwize-cordova-demo). It's a great way to see how it works.
 
-# 1. Installation
+# 1. Preparation
+
+## 1.1. Installing plugin
 
 ```
 ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" mapwize-cordova-plugin
@@ -26,7 +28,7 @@ or from github
 ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" https://github.com/Mapwize/mapwize-cordova.git
 ```
 
-# 2. Setting up your ionic project
+## 1.2. Setting up your ionic project
 
 To use the plugin, declare Mapwize symbol for your components.
 
@@ -60,7 +62,8 @@ this.mapwizeView = Mapwize.createMapwizeView(
         restrictContentToVenueId: "",
         restrictContentToOrganizationId: "",
         centerOnVenueId: "xxxxxxxxxxxxxxxxxxxxxxxx",
-        centerOnPlaceId: "xxxxxxxxxxxxxxxxxxxxxxxx"
+        centerOnPlaceId: "xxxxxxxxxxxxxxxxxxxxxxxx",
+        showCloseButton: true
       }, () => {
         // Handle  successfull creation
       }, (err) => {
@@ -327,3 +330,102 @@ this.mapwiseView.unselectContent(
         (err) => {console.log("unselectContent failed err: " + err.message)}
       );
 ```
+
+### 2.3.5 setPlaceStyle(id, style, successFn, failureFn)
+
+Sets the style of the given Place.
+
+```
+id: id of the Place object
+style: the style of the Place of the following JSON format:
+{
+    "markerUrl": "https://res.cloudinary.com/contexeo/image/upload/v1548842542/Lego/meeting-red.png",
+    "markerDisplay": true,
+    "fillColor": "#d90a1b",
+    "fillOpacity": 0.5,
+    "strokeColor": "#d90a1b",
+    "strokeOpacity": 1,
+    "strokeWidth": 2
+}
+
+successFn(place): returns the Place object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+
+
+```
+this.mapwizeView.setPlaceStyle(
+            place._id,
+            {
+                "markerUrl": "https://res.cloudinary.com/contexeo/image/upload/v1548842542/Lego/meeting-red.png",
+                "markerDisplay": true,
+                "fillColor": "#d90a1b",
+                "fillOpacity": 0.5,
+                "strokeColor": "#d90a1b",
+                "strokeOpacity": 1,
+                "strokeWidth": 2
+            },
+            (res) => {console.log("MapwizeView setPlaceStyle successfully returned: " + JSON.stringify(res))},
+            (err) => {console.log("MapwizeView setPlaceStyle failed err: " + JSON.stringify(err))}
+          );
+```
+
+# 3. Localization
+
+For localized texts,
+
+The localization files should be placed in directories named 'languages/ios' and 'languages/android' under the root directory of your ionic project
+
+## 3.1. Android localization
+
+1. Create value-<<2-letter country code>> directories for each language
+2. Create a translation content file named "strings2.xml" with the following content (the values to be translated):
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- <string name="app_name">MapwizeUIComponents</string> -->
+    <!-- Strings used by Mapwize Fragment. You can use them to translate the Fragment
+    text or change them.
+    Those values override the default strings value found in mapwizecomponent project-->
+    <string name="time_placeholder">%1$d min</string>
+    <string name="floor_placeholder">Floor %1$s</string>
+    <string name="search_in_placeholder">Search in %1$s…</string>
+    <string name="search_venue">Search a venue…</string>
+    <string name="loading_venue_placeholder">Loading %1$s…</string>
+    <string name="current_location">Current location</string>
+    <string name="choose_language">Choose your language</string>
+    <string name="choose_universe">Choose your universe</string>
+    <string name="direction">Direction</string>
+    <string name="information">Information</string>
+    <string name="starting_point">Starting point</string>
+    <string name="destination">Destination</string>
+</resources>
+```
+
+## 3.2. Android localization
+
+1. Create <<2-letter country code>>.lproj directories for each language
+2. Create a translation content file named "Localizable.strings" with the following content (the values to be translated):
+
+```
+"Direction" = "Direction";
+"Information" = "Information";
+"Search a venue..." = "Search a venue...";
+"Entering in %@..." = "Entering in %@...";
+"Search in %@..." = "Search in %@...";
+"Destination" = "Destination";
+"Starting point" = "Starting point";
+"Current location" = "Current location";
+"No results" = "No results";
+"Floor %@" = "Floor %@";
+"Universes" = "Universes";
+"Choose an universe to display it on the map" = "Choose a universe to display it on the map";
+"Languages" = "Languages";
+"Choose your preferred language" = "Choose your preferred language";
+"Cancel" = "Cancel";
+
+```
+
+Configure and run the ionic project the usual way. The localization takes the default device language to select the proper localization file.

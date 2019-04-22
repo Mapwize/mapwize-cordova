@@ -3,7 +3,8 @@
 #import "Mapwize.h"
 #import <MapwizeUI/MapwizeUI.h>
 
-@interface ViewController () <MWZMapwizeViewDelegate>
+//@interface ViewController () <MWZMapwizeViewDelegate, UIBarPositioningDelegate>
+@interface ViewController () <MWZMapwizeViewDelegate, UINavigationBarDelegate>
 
 @property (nonatomic, retain) MWZMapwizeView* mapwizeView;
 @property (nonatomic, retain) MWZOptions* opts;
@@ -14,9 +15,26 @@
 
 @implementation ViewController
 
+BOOL showCloseButton;
+
+-(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
+    NSLog(@"positionForBar called...");
+//    return UIBarPositionTopAttached;
+    return UIBarPositionTop;
+}
+
 - (void)setOptions:(MWZOptions*)opts {
     NSLog(@"setOptions, viewController...");
     _opts = opts;
+}
+
+- (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId {
+    MWZStyle* styleObj = [MWZApiResponseParser parseStyleWith:style];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapwizeView.mapwizePlugin setStyle:styleObj forPlace:place];
+        NSDictionary *dict = @{ CBK_SET_PLACE_STYLE_ID : place.identifier};
+        [self sendCommandCallback:dict callbackId:callbackId];
+    });
 }
 
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId: (NSString*) callbackId {
@@ -26,16 +44,6 @@
         [self sendCommandCallback:dict callbackId:callbackId];
     });
 }
-
-//- (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.mapwizeView selectPlace:place centerOn:centerOn];
-//        NSString* json = [place toJSONString];
-//        NSDictionary *dict = @{ CBK_SELECT_PLACE_ID : place.identifier, CBK_SELECT_PLACE_CENTERON : centerOn ? @"true" : @"false"};
-//        [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON args:dict];
-//    });
-//
-//}
 
 - (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -63,23 +71,46 @@
 }
 
 - (void) setPlugin:(Mapwize*) plugin callbackId:(NSString*) callbackId {
+    NSLog(@"setPlugin...");
     _plugin = plugin;
     _callbackId = callbackId;
+    NSLog(@"setPlugin...END");
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    NSLog(@"viewDidAppear...");
+    UINavigationBar* navibar = self.navigationController.navigationBar;
+    
+    if (navibar != nil) {
+        NSLog(@"Navi is not null...");
+    }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"viewDidLoad...");
     MWZMapwizeViewUISettings* settings = [[MWZMapwizeViewUISettings alloc] init];
     settings.followUserButtonIsHidden = NO;
     settings.menuButtonIsHidden = NO;
+    
+    BOOL showCloseButton = YES;
     //settings.mainColor = [UIColor orangeColor];           // Change main color to Orange
     
     self.mapwizeView = [[MWZMapwizeView alloc] initWithFrame:self.view.frame
-                                               mapwizeOptions:_opts
-                                               uiSettings:settings];
+                                              mapwizeOptions:_opts
+                                                  uiSettings:settings];
     self.mapwizeView.delegate = self;
     self.mapwizeView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    NSLog(@"self.topLayoutGuide.length: %lf", self.topLayoutGuide.length);
+    if (showCloseButton == YES) {
+        UIBarButtonItem* doneBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(onTapDone:)];
+        self.navigationItem.rightBarButtonItem = doneBtn;
+    }
+    
     [self.view addSubview:self.mapwizeView];
+
     [[NSLayoutConstraint constraintWithItem:self.mapwizeView
                                   attribute:NSLayoutAttributeLeft
                                   relatedBy:NSLayoutRelationEqual
@@ -108,6 +139,13 @@
                                   attribute:NSLayoutAttributeRight
                                  multiplier:1.0f
                                    constant:0.0f] setActive:YES];
+    NSLog(@"viewDidLoad...END");
+    
+}
+
+- (void)onTapDone:(id)sender {
+    NSLog(@"onTapDone");
+    [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
 }
 
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place {
@@ -183,7 +221,7 @@
     NSError *err;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:args options:NSJSONWritingPrettyPrinted error:&err];
     NSString* argStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-//    dict[CBK_FIELD_EVENT] = event;
+    //    dict[CBK_FIELD_EVENT] = event;
     dict[CBK_FIELD_ARG] = argStr;
     [self sendCallback:dict callbackId:callbackId];
 }
