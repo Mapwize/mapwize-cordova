@@ -146,6 +146,7 @@ BOOL showCloseButton;
 - (void)onTapDone:(id)sender {
     NSLog(@"onTapDone");
     [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    [self sendCallbackEvent:CBK_EVENT_CLOSE_BUTTON_CLICKED];
 }
 
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place {

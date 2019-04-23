@@ -36,3 +36,5 @@ NSString *const CBK_GRANT_ACCESS_TOKEN = @"token";
 NSString *const CBK_GRANT_ACCESS_SUCCESS = @"success";
 
 NSString *const CBK_UNSELECT_CONTENT = @"unselectContentCbk";
+
+NSString *const CBK_EVENT_CLOSE_BUTTON_CLICKED = @"TapOnCloseButton";
