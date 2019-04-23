@@ -12,7 +12,7 @@
 #import <Cordova/CDV.h>
 #import "Mapwize.h"
 #import "ViewController.h"
-#import "MapwizeUI.h"
+#import <MapwizeUI/MapwizeUI.h>
 
 
 @implementation Mapwize
