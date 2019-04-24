@@ -2,8 +2,19 @@
 var exec = cordova.exec;
 var PLUGIN_NAME = "Mapwize"
 
-function OfflineManager() {
-	console.log("OfflineManager: is created");
+
+OfflineManager.prototype.styleURL;
+
+function OfflineManager(styleURL) {
+	console.log("OfflineManager: is created, styleURL: " + styleURL);
+	this.styleURL = styleURL;
+	exec(function(result) { 
+				console.log("OfflineManager: init: SUCCESS");
+				// success(result);
+			}, function(err) {
+				console.log("OfflineManager: init: FAILED");
+				// failure(err);
+			}, PLUGIN_NAME, "initOfflineManager", [styleURL]);
 }
 
 OfflineManager.prototype.removeDataForVenue = function(venueId, universeId, success, failure) {
@@ -32,7 +43,7 @@ OfflineManager.prototype.isOfflineForVenue = function(venueId, universeId, succe
 	console.log("OfflineManager: isOfflineForVenue");
 	exec(function(result) { 
 				console.log("OfflineManager: isOfflineForVenue: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("OfflineManager: isOfflineForVenue: FAILED");
 				failure(err);
@@ -43,7 +54,7 @@ OfflineManager.prototype.getOfflineVenues = function(success, failure) {
 	console.log("OfflineManager: getOfflineVenues");
 	exec(function(result) { 
 				console.log("OfflineManager: getOfflineVenues: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("OfflineManager: getOfflineVenues: FAILED");
 				failure(err);
@@ -54,7 +65,7 @@ OfflineManager.prototype.getOfflineUniversesForVenue = function(venueId, success
 	console.log("OfflineManager: getOfflineUniversesForVenue");
 	exec(function(result) { 
 				console.log("OfflineManager: getOfflineUniversesForVenue: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("OfflineManager: getOfflineUniversesForVenue: FAILED");
 				failure(err);

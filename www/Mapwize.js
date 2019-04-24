@@ -18,9 +18,9 @@ Mapwize.prototype.createMapwizeView = function(options, success, failure) {
 	return new MapwizeView();
 }
 
-Mapwize.prototype.createOfflineManager = function(success, failure) {
+Mapwize.prototype.createOfflineManager = function(styleUrl, success, failure) {
 	console.log("Mapwize: createOfflineManager...");
-	return new OfflineManager();
+	return new OfflineManager(styleUrl);
 }
 
 Mapwize.prototype.createApiManager = function(success, failure) {

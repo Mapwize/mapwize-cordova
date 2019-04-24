@@ -111,7 +111,7 @@ static Mapwize* plugin;
     [task resume];
 }
 
-+ (void)getPlacesWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId {
++ (void)getPlaceWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId {
     NSURLSessionDataTask* task = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSURLSessionDataTask* subtask = [MWZApi getPlacesWithAlias:alias venue:venue success:^(MWZPlace *place) {
             NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
