@@ -66,6 +66,8 @@
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeActivity.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeCordovaPlugin.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MarshMallowPermission.java" target-dir="src/io/mapwize/cordova/" />
+        <source-file src="src/android/src/io/mapwize/cordova/ApiManager.java" target-dir="src/io/mapwize/cordova/" />
+        <source-file src="src/android/src/io/mapwize/cordova/OfflineManager.java" target-dir="src/io/mapwize/cordova/" />
 
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <hook type="after_prepare" src="scripts/after_prepare.js" />

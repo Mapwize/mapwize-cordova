@@ -11,6 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import io.mapwize.mapwizeformapbox.api.Api;
 
 import com.onehilltech.metadata.ManifestMetadata;
 
@@ -36,6 +37,16 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private static final String ACTION_MAPWIZE_UNSELECT_CONTENT = "unselectContent";
     private static final String ACTION_MAPWIZE_CLOSE = "closeMapwizeView";
     private static final String ACTION_MAPWIZE_SETPLACESTYLE = "setPlaceStyle";
+
+    private static final String ACTION_OFFLINEMANAGER_INIT = "initOfflineManager";
+    private static final String ACTION_OFFLINEMANAGER_REMOVE_DATA_FOR_VENUE = "removeDataForVenue";
+    private static final String ACTION_OFFLINEMANAGER_DOWNLOAD_DATA_FOR_VENUE = "downloadDataForVenue";
+    private static final String ACTION_OFFLINEMANAGER_IS_OFFLINE_FOR_VENUE = "isOfflineForVenue";
+    private static final String ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES = "getOfflineVenues";
+    private static final String ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE = "getOfflineUniversesForVenue";
+
+    private static final String ACTION_API_GET_PLACE_WITH_ALIAS = "getPlaceWithAlias";
+
 
     public static final String OPTIONS_STR = "optionStr";
 
@@ -103,9 +114,6 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_EVENT_CLOSE_BUTTON_CLICKED = "TapOnCloseButton";
 
 
-
-
-
     public static final int MAPWIZEVIEW_REQUEST_ID = 12122; // Number random enough
 
     BroadcastReceiver mCbkReceiver;
@@ -116,10 +124,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private CallbackContext mSelectPlaceListCallback = null;
     private CallbackContext mCreateMapwizeViewCallback = null;
     private CallbackContext mSetPlaceStyleCallback = null;
-
-
-
     private Intent mMapwizeViewIntent = null;
+
+    OfflineManager mOfflineManager;
 
     /**
      * Constructor.
@@ -154,7 +161,6 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         filter.addAction(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_CLOSE_BUTTON_CLICKED);
-
         filter.addAction(CBK_CREATE_MAPWIZEVIEW);
         filter.addAction(CBK_SELECT_PLACE);
         filter.addAction(CBK_SELECT_PLACELIST);
@@ -164,16 +170,15 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
         LocalBroadcastManager.getInstance(cordova.getActivity()).registerReceiver(mCbkReceiver, filter);
         cordova.setActivityResultCallback(this);
+        ApiManager.initManager(cordova.getActivity());
     }
 
     public void onActivityResult(int requestCode, int resultCode,
-        Intent intent) {
+                                 Intent intent) {
         Log.d(TAG, "onActivityResult...");
 
         super.onActivityResult(requestCode, resultCode, intent);
     }
-
-
 
     /**
      * Returns the api key stored in AndroidManifest.xml
@@ -235,13 +240,34 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         } else if (ACTION_MAPWIZE_SETPLACESTYLE.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_SETPLACESTYLE received: ");
             setPlaceStyle(args, callbackContext);
+        } else if (ACTION_OFFLINEMANAGER_INIT.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_INIT received: ");
+            initOfflineManager(args, callbackContext);
+        } else if (ACTION_OFFLINEMANAGER_REMOVE_DATA_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_REMOVE_DATA_FOR_VENUE received: ");
+            removeDataForVenue(args, callbackContext);
 
+        } else if (ACTION_OFFLINEMANAGER_DOWNLOAD_DATA_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_DOWNLOAD_DATA_FOR_VENUE received: ");
+            downloadDataForVenue(args, callbackContext);
+
+        } else if (ACTION_OFFLINEMANAGER_IS_OFFLINE_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_IS_OFFLINE_FOR_VENUE received: ");
+            isOfflineForVenue(args, callbackContext);
+
+        } else if (ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES received: ");
+            getOfflineVenues(args, callbackContext);
+
+        } else if (ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE received: ");
+            getOfflineUniversesForVenue(args, callbackContext);
+        } else if (ACTION_API_GET_PLACE_WITH_ALIAS.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GET_PLACE_WITH_ALIAS received: ");
+            getPlaceWithAlias(args, callbackContext);
         } else {
             Log.d(TAG, String.format("Action is not handled %s ", action));
         }
-
-
-
 
         return true;
     }
@@ -609,4 +635,105 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
         LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
     }
+
+    // OfflineManager
+
+    /**
+     * Delegates the initOfflineManager function to OfflineManager
+     * @param args
+     * @param context
+     */
+    void initOfflineManager(JSONArray args, CallbackContext context) {
+        try {
+            String styleUrl = args.getString(0);
+            mOfflineManager = new OfflineManager(cordova.getActivity(), styleUrl);
+        } catch (JSONException e) {
+            sendCallbackCmdErr("Init failed", "Init failed", context);
+        }
+
+    }
+
+    void removeDataForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            String universeId = args.getString(1);
+            mOfflineManager.removeDataForVenue(venueId, universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void downloadDataForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            String universeId = args.getString(1);
+            mOfflineManager.downloadDataForVenue(venueId, universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void isOfflineForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            String universeId = args.getString(1);
+            mOfflineManager.isOfflineForVenue(venueId, universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void getOfflineVenues(JSONArray args, CallbackContext context) {
+        mOfflineManager.getOfflineVenues(context);
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void getOfflineUniversesForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            mOfflineManager.getOfflineUniversesForVenue(venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [getPlaceWithAlias description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void getPlaceWithAlias(JSONArray args, CallbackContext context) {
+        try {
+            String alias = args.getString(0);
+            String venueId = args.getString(1);
+            ApiManager.getPlaceWithAlias(alias, venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
 }
