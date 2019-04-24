@@ -10,6 +10,8 @@
 #define Mapwize_h
 
 #import <Cordova/CDV.h>
+
+
 @class MWZUniverse;
 
 
@@ -25,12 +27,34 @@
 - (void)selectPlace:(CDVInvokedUrlCommand*)command;
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command;
-
 - (void)unselectContent:(CDVInvokedUrlCommand*)command;
-
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict;
 - (MWZUniverse*) getUniverse:( NSArray * )universeDict;
 
+// Offline manager
+- (void) removeDataForVenue:(CDVInvokedUrlCommand*)command;
+- (void) downloadDataForVenue:(CDVInvokedUrlCommand*)command;
+- (void) isOfflineForVenue:(CDVInvokedUrlCommand*)command;
+- (void) getOfflineVenues:(CDVInvokedUrlCommand*)command;
+- (void) getOfflineUniversesForVenue:(CDVInvokedUrlCommand*)command;
+
+// API Manager
+- (void)getVenueWithId:(CDVInvokedUrlCommand*)command;
+- (void)getVenuesWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getVenueWithName:(CDVInvokedUrlCommand*)command;
+- (void)getVenueWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceWithId:(CDVInvokedUrlCommand*)command;
+- (void)getPlacesWithName:(CDVInvokedUrlCommand*)command;
+- (void)getPlacesWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlacesWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListWithId:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListsWithName:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListsWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListsWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getUniverseWithId:(CDVInvokedUrlCommand*)command;
+- (void)getUniversesWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getAccessibleUniversesWithVenue:(CDVInvokedUrlCommand*)command;
+- (void)searchWithParams:(CDVInvokedUrlCommand*)command;
 
 @end
 

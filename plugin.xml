@@ -87,6 +87,10 @@
         <pods-config ios-min-version="10.0" use-frameworks="true">
         </pods-config>
 
+        <header-file src="src/ios/src/ApiManager.h" />
+        <source-file src="src/ios/src/ApiManager.m" />
+        <header-file src="src/ios/src/OfflineManager.h" />
+        <source-file src="src/ios/src/OfflineManager.m" />
         <header-file src="src/ios/src/Constants.h" />
         <source-file src="src/ios/src/Constants.m" />
         <header-file src="src/ios/src/Mapwize.h" />

@@ -1,4 +1,3 @@
-//var exec = require('cordova/exec');
 var exec = cordova.exec;
 
 var PLUGIN_NAME = "Mapwize"
@@ -19,10 +18,15 @@ Mapwize.prototype.createMapwizeView = function(options, success, failure) {
 	return new MapwizeView();
 }
 
+Mapwize.prototype.createOfflineManager = function(success, failure) {
+	console.log("Mapwize: createOfflineManager...");
+	return new OfflineManager();
+}
 
-
-
-
+Mapwize.prototype.createApiManager = function(success, failure) {
+	console.log("Mapwize: createApiManager...");
+	return new ApiManager();
+}
 
 var mapwize = new Mapwize();
 module.exports = mapwize;
