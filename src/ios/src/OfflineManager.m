@@ -33,7 +33,7 @@
     NSLog(@"removeDataForVenue...");
     NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSLog(@"removeDataForVenue, venue received...");
-        NSURLSessionDataTask* universeTask = [MWZApi getUniverseWithId:universeId success:^(MWZUniverse *universe) {
+        [self getUniverse:venue universeId:universeId  success:^(MWZUniverse *universe) {
             NSLog(@"universe received...");
             [self.offlineManager removeDataForVenue:venue universe:universe];
             [self sendCommandCallbackOK:callbackId];
@@ -41,7 +41,6 @@
             NSLog(@"Failed to receive universe...");
             [self sendCommandCallbackFailed:callbackId];
         }];
-        [universeTask resume];
       } failure:^(NSError *error) {
           NSLog(@"Failed to receive venue...");
           [self sendCommandCallbackFailed:callbackId];
@@ -106,7 +105,7 @@
     NSLog(@"isOfflineForVenue...");
     NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSLog(@"isOfflineForVenue, venue received...");
-        NSURLSessionDataTask* universeTask = [MWZApi getUniverseWithId:universeId success:^(MWZUniverse *universe) {
+        [self getUniverse:venue universeId:universeId success:^(MWZUniverse *universe) {
             NSLog(@"universe received...");
             BOOL isOffline = [self.offlineManager isOfflineForVenue:venue universe:universe];
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -116,8 +115,6 @@
             NSLog(@"Failed to receive universe...");
             [self sendCommandCallbackFailed:callbackId];
         }];
-        
-        [universeTask resume];
     } failure:^(NSError *error) {
         NSLog(@"Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
@@ -137,7 +134,7 @@
 }
 
 - (void) getOfflineUniversesForVenue:(NSString*) venueId callbackId:(NSString*) callbackId {
-    NSURLSessionDataTask* universeTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
+    NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSLog(@"getOfflineUniversesForVenue, venue received...");
         NSArray<MWZUniverse*>* universes =[self.offlineManager getOfflineUniversesForVenue:venue];
         NSString* result = [self universes2JsonArray:universes];
@@ -149,7 +146,7 @@
         [self sendCommandCallbackFailed:callbackId];
     }];
     
-    [universeTask resume];
+    [venueTask resume];
 }
 
 - (NSString*) venues2JsonArray:(NSArray<MWZVenue*>*) array {
