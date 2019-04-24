@@ -34,15 +34,15 @@
     NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSLog(@"removeDataForVenue, venue received...");
         [self getUniverse:venue universeId:universeId  success:^(MWZUniverse *universe) {
-            NSLog(@"universe received...");
+            NSLog(@"removeDataForVenue, universe received...");
             [self.offlineManager removeDataForVenue:venue universe:universe];
             [self sendCommandCallbackOK:callbackId];
         } failure:^(NSError *error) {
-            NSLog(@"Failed to receive universe...");
+            NSLog(@"removeDataForVenue, Failed to receive universe...");
             [self sendCommandCallbackFailed:callbackId];
         }];
       } failure:^(NSError *error) {
-          NSLog(@"Failed to receive venue...");
+          NSLog(@"removeDataForVenue, Failed to receive venue...");
           [self sendCommandCallbackFailed:callbackId];
       }];
     
@@ -58,46 +58,25 @@
         [self getUniverse:venue universeId:universeId success:^(MWZUniverse *universe) {
             NSLog(@"downloadDataForVenue, universe received...");
             [self.offlineManager downloadDataForVenue:venue universe:universe success:^{
-                NSLog(@"Success...");
+                NSLog(@"downloadDataForVenue, Success...");
                 [self sendCommandCallbackOK:callbackId];
             } progress:^(int count) {
-                NSLog(@"In progress...%d", count);
+                NSLog(@"downloadDataForVenue, In progress...%d", count);
+                NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+                dict[CBK_FIELD_ARG] = [NSString stringWithFormat:@"%d", count];
+                [self sendCommandDictCallbackKeep:dict callbackId:callbackId];
             } failure:^(NSError * _Nonnull error) {
-                NSLog(@"Failue...");
+                NSLog(@"downloadDataForVenue, Failure...");
                 [self sendCommandCallbackFailed:callbackId];
             }];
         } failure:^(NSError *error) {
-            NSLog(@"Failed to receive universe...");
+            NSLog(@"downloadDataForVenue, Failed to receive universe...");
             [self sendCommandCallbackFailed:callbackId];
         }];
     } failure:^(NSError *error) {
-        NSLog(@"Failed to receive venue...");
+        NSLog(@"downloadDataForVenue, Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
     }];
-    [venueTask resume];
-}
-
-- (void) getUniverse:(MWZVenue*)venue universeId:(NSString*)universeId  success:(void (^)(MWZUniverse* universe)) success failure:(void (^)(NSError* error)) failure {
-    NSURLSessionDataTask* venueTask = [MWZApi getAccessibleUniversesWithVenue:venue success:^(NSArray<MWZUniverse *> *universes) {
-        for(MWZUniverse* univ in universes){
-            NSLog(@"Comparing universe %@ with %@", univ.identifier, universeId);
-            if ([univ.identifier isEqualToString:universeId]) {
-                success(univ);
-                return;
-            }
-        }
-        
-        NSLog(@"getUniverse, no universe found...");
-        NSError *error = [NSError errorWithDomain:@"offlinemanager"
-                                           code:100
-                                       userInfo:@{
-                                                  NSLocalizedDescriptionKey:@"Failed to get Universe"
-                                                  }];
-        failure(error);
-    } failure:^(NSError *error) {
-        failure(error);
-    }];
-    
     [venueTask resume];
 }
 
@@ -106,17 +85,17 @@
     NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSLog(@"isOfflineForVenue, venue received...");
         [self getUniverse:venue universeId:universeId success:^(MWZUniverse *universe) {
-            NSLog(@"universe received...");
+            NSLog(@"isOfflineForVenue, universe received...");
             BOOL isOffline = [self.offlineManager isOfflineForVenue:venue universe:universe];
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
             dict[CBK_FIELD_ARG] = isOffline ? @"true" : @"false";
             [self sendCommandDictCallback:dict callbackId:callbackId];
         } failure:^(NSError *error) {
-            NSLog(@"Failed to receive universe...");
+            NSLog(@"isOfflineForVenue, Failed to receive universe...");
             [self sendCommandCallbackFailed:callbackId];
         }];
     } failure:^(NSError *error) {
-        NSLog(@"Failed to receive venue...");
+        NSLog(@"isOfflineForVenue, Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
     }];
     
@@ -142,8 +121,32 @@
         dict[CBK_FIELD_ARG] = result;
         [self sendCommandDictCallback:dict callbackId:callbackId];
     } failure:^(NSError *error) {
-        NSLog(@"Failed to receive venue...");
+        NSLog(@"getOfflineUniversesForVenue, Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
+    }];
+    
+    [venueTask resume];
+}
+
+- (void) getUniverse:(MWZVenue*)venue universeId:(NSString*)universeId  success:(void (^)(MWZUniverse* universe)) success failure:(void (^)(NSError* error)) failure {
+    NSURLSessionDataTask* venueTask = [MWZApi getAccessibleUniversesWithVenue:venue success:^(NSArray<MWZUniverse *> *universes) {
+        for(MWZUniverse* univ in universes){
+            NSLog(@"Comparing universe %@ with %@", univ.identifier, universeId);
+            if ([univ.identifier isEqualToString:universeId]) {
+                success(univ);
+                return;
+            }
+        }
+        
+        NSLog(@"getUniverse, no universe found...");
+        NSError *error = [NSError errorWithDomain:@"offlinemanager"
+                                             code:100
+                                         userInfo:@{
+                                                    NSLocalizedDescriptionKey:@"Failed to get Universe"
+                                                    }];
+        failure(error);
+    } failure:^(NSError *error) {
+        failure(error);
     }];
     
     [venueTask resume];
@@ -176,6 +179,13 @@
 - (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                   messageAsDictionary:dict];
+    [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
+
+- (void) sendCommandDictCallbackKeep:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                  messageAsDictionary:dict];
+    [pluginResult setKeepCallback: [NSNumber numberWithBool:YES]];
     [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 

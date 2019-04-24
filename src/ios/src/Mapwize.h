@@ -44,8 +44,8 @@
 - (void)getVenueWithName:(CDVInvokedUrlCommand*)command;
 - (void)getVenueWithAlias:(CDVInvokedUrlCommand*)command;
 - (void)getPlaceWithId:(CDVInvokedUrlCommand*)command;
-- (void)getPlacesWithName:(CDVInvokedUrlCommand*)command;
-- (void)getPlacesWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceWithName:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceWithAlias:(CDVInvokedUrlCommand*)command;
 - (void)getPlacesWithFilter:(CDVInvokedUrlCommand*)command;
 - (void)getPlaceListWithId:(CDVInvokedUrlCommand*)command;
 - (void)getPlaceListsWithName:(CDVInvokedUrlCommand*)command;

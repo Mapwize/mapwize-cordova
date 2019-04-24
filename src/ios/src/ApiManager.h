@@ -19,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)getVenueWithName:(NSString*) name callbackId:(NSString*) callbackId;
 + (void)getVenueWithAlias:(NSString*) alias callbackId:(NSString*) callbackId;
 + (void)getPlaceWithId:(NSString*) identifier callbackId:(NSString*) callbackId;
-+ (void)getPlacesWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId;
-+ (void)getPlacesWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId;
++ (void)getPlaceWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId;
++ (void)getPlaceWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId;
 + (void)getPlacesWithFilter:(NSString*) filterStr callbackId:(NSString*) callbackId;
 + (void)getPlaceListWithId:(NSString*) identifier callbackId:(NSString*) callbackId;
 + (void)getPlaceListsWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId;
@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)getUniverseWithId:(NSString*) identifier callbackId:(NSString*) callbackId;
 + (void)getUniversesWithFilter:(NSString*) filterStr callbackId:(NSString*) callbackId;
 + (void)getAccessibleUniversesWithVenue:(NSString*) venueId callbackId:(NSString*) callbackId;
-+ (void)searchWithParams:(NSString*) searchParams callbackId:(NSString*) callbackId;
++ (void)searchWithParams:(NSString*) searchParamsStr callbackId:(NSString*) callbackId;
 
 //+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
 //+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;

@@ -227,9 +227,8 @@ NSString* mCallbackId;
 - (void) initOfflineManager:(CDVInvokedUrlCommand*)command {
     NSLog(@"initOfflineManager called...");
     NSString *styleURL = [command.arguments objectAtIndex:0];
+    NSLog(@"initOfflineManager styleURL %@...", styleURL);
     offlineManager = [[OfflineManager alloc] init];
-    
-//    [offlineManager initManager:self styleURL:styleURL];
     [offlineManager initManager:self styleURL:styleURL];
 }
 
@@ -269,71 +268,71 @@ NSString* mCallbackId;
 // API Manager
 
 - (void)getVenueWithId:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getVenueWithId called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
     
     [ApiManager getVenueWithId:identifier callbackId:command.callbackId];
 }
 - (void)getVenuesWithFilter:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getVenuesWithFilter called...");
     NSString *filterStr = [command.arguments objectAtIndex:0];
     
     [ApiManager getVenuesWithFilter:filterStr callbackId:command.callbackId];
 }
 
 - (void)getVenueWithName:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getVenueWithName called...");
     NSString *name = [command.arguments objectAtIndex:0];
     
     [ApiManager getVenueWithName:name callbackId:command.callbackId];
 }
 
 - (void)getVenueWithAlias:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getVenueWithAlias called...");
     NSString *alias = [command.arguments objectAtIndex:0];
     
     [ApiManager getVenueWithAlias:alias callbackId:command.callbackId];
 }
 
 - (void)getPlaceWithId:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getPlaceWithId called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
     
     [ApiManager getPlaceWithId:identifier callbackId:command.callbackId];
 }
 
-- (void)getPlacesWithName:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+- (void)getPlaceWithName:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceWithName called...");
     NSString *name = [command.arguments objectAtIndex:0];
     NSString *venueId = [command.arguments objectAtIndex:1];
     
-    [ApiManager getPlacesWithName:name venue:venueId callbackId:command.callbackId];
+    [ApiManager getPlaceWithName:name venue:venueId callbackId:command.callbackId];
 }
 
-- (void)getPlacesWithAlias:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+- (void)getPlaceWithAlias:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceWithAlias called...");
     NSString *alias = [command.arguments objectAtIndex:0];
     NSString *venueId = [command.arguments objectAtIndex:1];
     
-    [ApiManager getPlacesWithAlias:alias venue:venueId callbackId:command.callbackId];
+    [ApiManager getPlaceWithAlias:alias venue:venueId callbackId:command.callbackId];
 }
 
 - (void)getPlacesWithFilter:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getPlacesWithFilter called...");
     NSString *filter = [command.arguments objectAtIndex:0];
     
     [ApiManager getPlacesWithFilter:filter callbackId:command.callbackId];
 }
 
 - (void)getPlaceListWithId:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getPlaceListWithId called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
     
     [ApiManager getPlaceListWithId:identifier callbackId:command.callbackId];
 }
 
 - (void)getPlaceListsWithName:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getPlaceListsWithName called...");
     NSString *name = [command.arguments objectAtIndex:0];
     NSString *venueId = [command.arguments objectAtIndex:1];
     
@@ -341,7 +340,7 @@ NSString* mCallbackId;
 }
 
 - (void)getPlaceListsWithAlias:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getPlaceListsWithAlias called...");
     NSString *alias = [command.arguments objectAtIndex:0];
     NSString *venueId = [command.arguments objectAtIndex:1];
     
@@ -349,35 +348,35 @@ NSString* mCallbackId;
 }
 
 - (void)getPlaceListsWithFilter:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getPlaceListsWithFilter called...");
     NSString *filterStr = [command.arguments objectAtIndex:0];
     
     [ApiManager getPlaceListsWithFilter:filterStr callbackId:command.callbackId];
 }
 
 - (void)getUniverseWithId:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getUniverseWithId called...");
     NSString *universeId = [command.arguments objectAtIndex:0];
     
     [ApiManager getUniverseWithId:universeId callbackId:command.callbackId];
 }
 
 - (void)getUniversesWithFilter:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getUniversesWithFilter called...");
     NSString *filterStr = [command.arguments objectAtIndex:0];
     
     [ApiManager getUniversesWithFilter:filterStr callbackId:command.callbackId];
 }
 
 - (void)getAccessibleUniversesWithVenue:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"getAccessibleUniversesWithVenue called...");
     NSString *venueId = [command.arguments objectAtIndex:0];
     
     [ApiManager getAccessibleUniversesWithVenue:venueId callbackId:command.callbackId];
 }
 
 - (void)searchWithParams:(CDVInvokedUrlCommand*)command {
-    NSLog(@"setPlaceStyle called...");
+    NSLog(@"searchWithParams called...");
     NSString *searchParams = [command.arguments objectAtIndex:0];
     
     [ApiManager searchWithParams:searchParams callbackId:command.callbackId];

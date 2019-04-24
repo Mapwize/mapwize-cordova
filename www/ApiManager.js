@@ -56,7 +56,7 @@ ApiManager.prototype.getPlaceWithId = function(id, success, failure) {
 		failure(err);
 	}, PLUGIN_NAME, "getPlaceWithId", [id]);
 }
-ApiManager.prototype.getPlacesWithName = function(name, venueId, success, failure) {
+ApiManager.prototype.getPlaceWithName = function(name, venueId, success, failure) {
 	console.log("ApiManager: getPlacesWithName...");
 	exec(function(result) {
 		console.log("ApiManager: getPlacesWithName: SUCCESS");
@@ -64,7 +64,7 @@ ApiManager.prototype.getPlacesWithName = function(name, venueId, success, failur
 	}, function(err) {
 		console.log("ApiManager: getPlacesWithName: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getPlacesWithName", [name, venueId]);
+	}, PLUGIN_NAME, "getPlaceWithName", [name, venueId]);
 }
 ApiManager.prototype.getPlaceWithAlias = function(alias, venueId, success, failure) {
 	console.log("ApiManager: getPlaceWithAlias...");

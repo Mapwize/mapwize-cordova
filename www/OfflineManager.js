@@ -32,7 +32,11 @@ OfflineManager.prototype.downloadDataForVenue = function(venueId, universeId, su
 	console.log("OfflineManager: downloadDataForVenue");
 	exec(function(result) { 
 				console.log("OfflineManager: downloadDataForVenue: SUCCESS");
-				success(result);
+				if (result && !isNaN(result.arg)) {
+					progress(result.arg);
+				} else {
+					success();
+				}
 			}, function(err) {
 				console.log("OfflineManager: downloadDataForVenue: FAILED");
 				failure(err);
