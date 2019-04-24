@@ -1,9 +1,8 @@
 //
-//  FlashPlugin.h
-//  FlashDemo
+//  Mapwize.h
+//  Mapwize Tester
 //
-//  Created by Blum László on 27/07/15.
-//  Copyright (c) 2015 Halifone Ltd. All rights reserved.
+//  Created by Laszlo Blum on 2019. 04. 23..
 //
 
 #ifndef Mapwize_h

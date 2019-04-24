@@ -19,6 +19,14 @@
     <js-module src="www/MapwizeView.js" name="MapwizeView" >
         <clobbers target="window.MapwizeView" />
     </js-module>
+
+    <js-module src="www/OfflineManager.js" name="OfflineManager" >
+        <clobbers target="window.OfflineManager" />
+    </js-module>
+
+    <js-module src="www/ApiManager.js" name="ApiManager" >
+        <clobbers target="window.ApiManager" />
+    </js-module>
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">

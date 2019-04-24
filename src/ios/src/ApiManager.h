@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ApiManager : NSObject
-+ (void) initManager:(Mapwize*) plugin;
++ (void) initManager:(Mapwize*) mapwizePlugin;
 
 + (void)getVenueWithId:(NSString*) identifier callbackId:(NSString*) callbackId;
 + (void)getVenuesWithFilter:(NSString*) filterStr callbackId:(NSString*) callbackId;

@@ -11,8 +11,6 @@
 
 
 @interface ApiManager ()
-@property (class) Mapwize* plugin;
-
 + (NSString*) venues2JsonArray:(NSArray<MWZVenue*>*) array;
 + (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId;
 + (void) sendCommandCallback:(NSDictionary*)args callbackId:(NSString*)callbackId;
@@ -27,12 +25,12 @@
 
 
 @implementation ApiManager
+static Mapwize* plugin;
 
-
-
-
-+ (void) initManager:(Mapwize*) plugin {
-    self.plugin = plugin;
++ (void) initManager:(Mapwize*) mapwizePlugin {
+    NSLog(@"ApiManager, initManager...");
+    plugin = mapwizePlugin;
+    NSLog(@"ApiManager, initManager...END...");
 }
 
 + (void)getVenueWithId:(NSString*) identifier callbackId:(NSString*) callbackId {
@@ -322,12 +320,12 @@
  + (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
      CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                    messageAsDictionary:dict];
-     [self.plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+     [plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
  }
 
 + (void) sendCommandCallbackOK:(NSString*)callbackId  {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+    [plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
 + (void) sendCommandCallback:(NSDictionary*)args callbackId:(NSString*)callbackId {
@@ -342,7 +340,7 @@
 
 + (void) sendCommandCallbackFailed:(NSString*)callbackId  {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [ApiManager.plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+    [plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
 + (MWZApiFilter*) deserializeApiFilter:(NSString*)filterStr  {

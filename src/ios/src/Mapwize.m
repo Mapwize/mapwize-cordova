@@ -1,13 +1,11 @@
 //
-//  FlashPlugin.m
-//  FlashDemo
+//  Mapwize.m
+//  Mapwize Tester
 //
-//  Created by Blum László on 27/07/15.
-//  Copyright (c) 2015 Halifone Ltd. All rights reserved.
+//  Created by Laszlo Blum on 2019. 04. 23..
 //
 
 #import <Foundation/Foundation.h>
-
 #import <AVFoundation/AVFoundation.h>
 #import <Cordova/CDV.h>
 #import "Mapwize.h"
@@ -15,7 +13,6 @@
 #import "OfflineManager.h"
 #import "ApiManager.h"
 #import "MapwizeUI.h"
-
 
 @implementation Mapwize
 {
@@ -27,13 +24,18 @@
 }
 NSString* mCallbackId;
 
-
 /**
  * Initialize the plugin.
  */
 - (void) pluginInitialize
 {
     NSLog(@"pluginInitialize...");
+    viewCtrl = [[ViewController alloc] init];
+    offlineManager = [[OfflineManager alloc] init];
+    [offlineManager initManager:self];
+    
+    NSLog(@"ApiManager initManager called...");
+    [ApiManager initManager:self];
 }
 
 - (void)dealloc {
@@ -52,12 +54,6 @@ NSString* mCallbackId;
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"createMapwizeView called...");
     BOOL showCloseButton = YES;
-    
-    viewCtrl = [[ViewController alloc] init];
-    offlineManager = [[OfflineManager alloc] init];
-    [offlineManager initManager:self];
-    
-    [ApiManager initManager:self];
     
     if (showCloseButton == YES) {
         navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
