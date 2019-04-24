@@ -31,8 +31,6 @@ NSString* mCallbackId;
 {
     NSLog(@"pluginInitialize...");
     viewCtrl = [[ViewController alloc] init];
-    offlineManager = [[OfflineManager alloc] init];
-    [offlineManager initManager:self];
     
     NSLog(@"ApiManager initManager called...");
     [ApiManager initManager:self];
@@ -226,6 +224,15 @@ NSString* mCallbackId;
 }
 
 // Offline Manager
+- (void) initOfflineManager:(CDVInvokedUrlCommand*)command {
+    NSLog(@"initOfflineManager called...");
+    NSString *styleURL = [command.arguments objectAtIndex:0];
+    offlineManager = [[OfflineManager alloc] init];
+    
+//    [offlineManager initManager:self styleURL:styleURL];
+    [offlineManager initManager:self styleURL:styleURL];
+}
+
 - (void) removeDataForVenue:(CDVInvokedUrlCommand*)command {
     NSLog(@"removeDataForVenue called...");
     NSString *venueId = [command.arguments objectAtIndex:0];

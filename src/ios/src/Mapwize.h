@@ -31,6 +31,7 @@
 - (MWZUniverse*) getUniverse:( NSArray * )universeDict;
 
 // Offline manager
+- (void) initOfflineManager:(CDVInvokedUrlCommand*)command;
 - (void) removeDataForVenue:(CDVInvokedUrlCommand*)command;
 - (void) downloadDataForVenue:(CDVInvokedUrlCommand*)command;
 - (void) isOfflineForVenue:(CDVInvokedUrlCommand*)command;

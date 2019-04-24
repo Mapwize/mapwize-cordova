@@ -22,10 +22,11 @@
 
 
 //- (void) initManager:(MGLMapView*) mapView plugin:(Mapwize*) plugin {
-- (void) initManager:(Mapwize*) plugin {
+- (void) initManager:(Mapwize*) plugin styleURL:(NSString*) styleURL {
     self.plugin = plugin;
-//    self.mapView = mapView;
-    self.offlineManager = [[MWZOfflineManager alloc] init];
+    NSURL* url = [NSURL URLWithString:[styleURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+
+    self.offlineManager = [[MWZOfflineManager alloc] initWithStyleUrl:url];
 }
 
 - (void) removeDataForVenue:(NSString*) venueId universe:(NSString*) universeId callbackId:(NSString*) callbackId {

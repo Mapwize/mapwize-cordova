@@ -66,15 +66,15 @@ ApiManager.prototype.getPlacesWithName = function(name, venueId, success, failur
 		failure(err);
 	}, PLUGIN_NAME, "getPlacesWithName", [name, venueId]);
 }
-ApiManager.prototype.getPlacesWithAlias = function(alias, venueId, success, failure) {
-	console.log("ApiManager: getPlacesWithAlias...");
+ApiManager.prototype.getPlaceWithAlias = function(alias, venueId, success, failure) {
+	console.log("ApiManager: getPlaceWithAlias...");
 	exec(function(result) {
-		console.log("ApiManager: getPlacesWithAlias: SUCCESS");
+		console.log("ApiManager: getPlaceWithAlias: SUCCESS");
 		success(result);
 	}, function(err) {
-		console.log("ApiManager: getPlacesWithAlias: FAILED");
+		console.log("ApiManager: getPlaceWithAlias: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getPlacesWithAlias", [alias, venueId]);
+	}, PLUGIN_NAME, "getPlaceWithAlias", [alias, venueId]);
 }
 ApiManager.prototype.getPlacesWithFilter = function(filter, success, failure) {
 	console.log("ApiManager: getPlacesWithFilter...");
