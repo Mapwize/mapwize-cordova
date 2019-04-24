@@ -19,7 +19,7 @@ BOOL showCloseButton;
 
 -(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     NSLog(@"positionForBar called...");
-//    return UIBarPositionTopAttached;
+    //    return UIBarPositionTopAttached;
     return UIBarPositionTop;
 }
 
@@ -105,12 +105,17 @@ BOOL showCloseButton;
     
     NSLog(@"self.topLayoutGuide.length: %lf", self.topLayoutGuide.length);
     if (showCloseButton == YES) {
-        UIBarButtonItem* doneBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(onTapDone:)];
-        self.navigationItem.rightBarButtonItem = doneBtn;
+        UIBarButtonItem* doneBtn = [[UIBarButtonItem alloc]
+                                    initWithTitle:NSLocalizedString(@"Back", comment: nil)
+                                    style:UIBarButtonItemStylePlain
+                                    target:self
+                                    action:@selector(onTapDone:)];
+
+        self.navigationItem.leftBarButtonItem = doneBtn;
     }
     
     [self.view addSubview:self.mapwizeView];
-
+    
     [[NSLayoutConstraint constraintWithItem:self.mapwizeView
                                   attribute:NSLayoutAttributeLeft
                                   relatedBy:NSLayoutRelationEqual
