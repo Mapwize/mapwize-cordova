@@ -136,7 +136,7 @@ public class OfflineManager {
                             @Override
                             public void onProgress(int i) {
                                 Log.d(TAG, "onProgress...");
-                                sendCallbackCmd("" + i, context);
+                                sendCallbackCmdKeep("" + i, context);
                             }
 
                             @Override
@@ -290,6 +290,25 @@ public class OfflineManager {
                         json.put(CBK_FIELD_ARG, args);
                     }
                     PluginResult result = new PluginResult(PluginResult.Status.OK, json);
+                    context.sendPluginResult(result);
+                } catch (JSONException e) {
+                    PluginResult result = new PluginResult(PluginResult.Status.ERROR);
+                    context.sendPluginResult(result);
+                }
+            }
+        });
+    }
+
+    private void sendCallbackCmdKeep(String args, CallbackContext context) {
+        mActivity.runOnUiThread(new Runnable() {
+            public void run() {
+                JSONObject json = new JSONObject();
+                try {
+                    if (args != null) {
+                        json.put(CBK_FIELD_ARG, args);
+                    }
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, json);
+                    result.setKeepCallback(true);
                     context.sendPluginResult(result);
                 } catch (JSONException e) {
                     PluginResult result = new PluginResult(PluginResult.Status.ERROR);
