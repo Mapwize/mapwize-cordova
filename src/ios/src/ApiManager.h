@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)getPlaceWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId;
 + (void)getPlacesWithFilter:(NSString*) filterStr callbackId:(NSString*) callbackId;
 + (void)getPlaceListWithId:(NSString*) identifier callbackId:(NSString*) callbackId;
-+ (void)getPlaceListsWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId;
-+ (void)getPlaceListsWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId;
++ (void)getPlaceListWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId;
++ (void)getPlaceListWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId;
 + (void)getPlaceListsWithFilter:(NSString*) filterStr callbackId:(NSString*) callbackId;
 + (void)getUniverseWithId:(NSString*) identifier callbackId:(NSString*) callbackId;
 + (void)getUniversesWithFilter:(NSString*) filterStr callbackId:(NSString*) callbackId;

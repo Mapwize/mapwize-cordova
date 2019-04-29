@@ -48,8 +48,8 @@
 - (void)getPlaceWithAlias:(CDVInvokedUrlCommand*)command;
 - (void)getPlacesWithFilter:(CDVInvokedUrlCommand*)command;
 - (void)getPlaceListWithId:(CDVInvokedUrlCommand*)command;
-- (void)getPlaceListsWithName:(CDVInvokedUrlCommand*)command;
-- (void)getPlaceListsWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListWithName:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListWithAlias:(CDVInvokedUrlCommand*)command;
 - (void)getPlaceListsWithFilter:(CDVInvokedUrlCommand*)command;
 - (void)getUniverseWithId:(CDVInvokedUrlCommand*)command;
 - (void)getUniversesWithFilter:(CDVInvokedUrlCommand*)command;

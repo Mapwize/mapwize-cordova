@@ -157,7 +157,7 @@ static Mapwize* plugin;
     
 }
 
-+ (void)getPlaceListsWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId {
++ (void)getPlaceListWithName:(NSString*) name venue:(NSString*) venueId callbackId:(NSString*) callbackId {
     NSURLSessionDataTask* task = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSURLSessionDataTask* subtask = [MWZApi getPlaceListsWithName:name venue:venue success:^(MWZPlaceList *placeList) {
             NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
@@ -175,7 +175,7 @@ static Mapwize* plugin;
     [task resume];
 }
 
-+ (void)getPlaceListsWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId {
++ (void)getPlaceListWithAlias:(NSString*) alias venue:(NSString*) venueId callbackId:(NSString*) callbackId {
     NSURLSessionDataTask* task = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
         NSURLSessionDataTask* subtask = [MWZApi getPlaceListsWithAlias:alias venue:venue success:^(MWZPlaceList *placeList) {
             NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];

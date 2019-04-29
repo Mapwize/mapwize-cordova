@@ -96,25 +96,25 @@ ApiManager.prototype.getPlaceListWithId = function(id, success, failure) {
 		failure(err);
 	}, PLUGIN_NAME, "getPlaceListWithId", [id]);
 }
-ApiManager.prototype.getPlaceListsWithName = function(name, venueId, success, failure) {
-	console.log("ApiManager: getPlaceListsWithName...");
+ApiManager.prototype.getPlaceListWithName = function(name, venueId, success, failure) {
+	console.log("ApiManager: getPlaceListWithName...");
 	exec(function(result) {
-		console.log("ApiManager: getPlaceListsWithName: SUCCESS");
+		console.log("ApiManager: getPlaceListWithName: SUCCESS");
 		success(result);
 	}, function(err) {
-		console.log("ApiManager: getPlaceListsWithName: FAILED");
+		console.log("ApiManager: getPlaceListWithName: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getPlaceListsWithName", [name, venueId]);
+	}, PLUGIN_NAME, "getPlaceListWithName", [name, venueId]);
 }
-ApiManager.prototype.getPlaceListsWithAlias = function(alias, venueId, success, failure) {
-	console.log("ApiManager: getPlaceListsWithAlias...");
+ApiManager.prototype.getPlaceListWithAlias = function(alias, venueId, success, failure) {
+	console.log("ApiManager: getPlaceListWithAlias...");
 	exec(function(result) {
-		console.log("ApiManager: getPlaceListsWithAlias: SUCCESS");
+		console.log("ApiManager: getPlaceListWithAlias: SUCCESS");
 		success(result);
 	}, function(err) {
-		console.log("ApiManager: getPlaceListsWithAlias: FAILED");
+		console.log("ApiManager: getPlaceListWithAlias: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getPlaceListsWithAlias", [alias, venueId]);
+	}, PLUGIN_NAME, "getPlaceListWithAlias", [alias, venueId]);
 }
 ApiManager.prototype.getPlaceListsWithFilter = function(filter, success, failure) {
 	console.log("ApiManager: getPlaceListsWithFilter...");
@@ -167,13 +167,60 @@ ApiManager.prototype.searchWithParams = function(searchParams, success, failure)
 	}, PLUGIN_NAME, "searchWithParams", [searchParams]);
 }
 
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to waypoints:(NSArray<id<MWZDirectionPoint>>*) waypoints isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos waypoints:(NSArray<id<MWZDirectionPoint>>*) waypoints isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDistanceWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos isAccessible:(BOOL) isAccessible sortByTravelTime:(BOOL) sort callbackId:(NSString*) callbackId;
+ApiManager.prototype.getDirectionWithFrom = function(directionPointFrom, directionPointTo, isAccessible, success, failure) {
+	console.log("ApiManager: getDirectionWithFrom...");
+	exec(function(result) {
+		console.log("ApiManager: getDirectionWithFrom: SUCCESS");
+		success(result);
+	}, function(err) {
+		console.log("ApiManager: getDirectionWithFrom: FAILED");
+		failure(err);
+	}, PLUGIN_NAME, "getDirectionWithFrom", [directionPointFrom, directionPointTo, isAccessible]);
+}
 
+ApiManager.prototype.getDirectionWithDirectionPointsFrom = function(directionPointFrom, directionPointsListTo, isAccessible, success, failure) {
+	console.log("ApiManager: getDirectionWithDirectionPointsFrom...");
+	exec(function(result) {
+		console.log("ApiManager: getDirectionWithDirectionPointsFrom: SUCCESS");
+		success(result);
+	}, function(err) {
+		console.log("ApiManager: getDirectionWithDirectionPointsFrom: FAILED");
+		failure(err);
+	}, PLUGIN_NAME, "getDirectionWithDirectionPointsFrom", [directionPointFrom, directionPointsListTo, isAccessible]);
+}
 
+ApiManager.prototype.getDirectionWithWayPointsFrom = function(directionPointFrom, directionPointTo, waypointsList, bool1, bool2, success, failure) {
+	console.log("ApiManager: getDirectionWithWayPointsFrom...");
+	exec(function(result) {
+		console.log("ApiManager: getDirectionWithWayPointsFrom: SUCCESS");
+		success(result);
+	}, function(err) {
+		console.log("ApiManager: getDirectionWithWayPointsFrom: FAILED");
+		failure(err);
+	}, PLUGIN_NAME, "getDirectionWithWayPointsFrom", [directionPointFrom, directionPointTo, waypointsList, bool1, bool2]);
+}
+
+ApiManager.prototype.getDirectionWithDirectionAndWayPointsFrom = function(directionPointFrom, directionpointsToList, waypointsList, bool1, bool2, success, failure) {
+	console.log("ApiManager: getDirectionWithDirectionAndWayPointsFrom...");
+	exec(function(result) {
+		console.log("ApiManager: getDirectionWithDirectionAndWayPointsFrom: SUCCESS");
+		success(result);
+	}, function(err) {
+		console.log("ApiManager: getDirectionWithDirectionAndWayPointsFrom: FAILED");
+		failure(err);
+	}, PLUGIN_NAME, "getDirectionWithDirectionAndWayPointsFrom", [directionPointFrom, directionpointsToList, waypointsList, bool1, bool2]);
+}
+
+ApiManager.prototype.getDistanceWithFrom = function(directionPointFrom, directionpointsToList, bool1, bool2, success, failure) {
+	console.log("ApiManager: getDistanceWithFrom...");
+	exec(function(result) {
+		console.log("ApiManager: getDistanceWithFrom: SUCCESS");
+		success(result);
+	}, function(err) {
+		console.log("ApiManager: getDistanceWithFrom: FAILED");
+		failure(err);
+	}, PLUGIN_NAME, "getDistanceWithFrom", [directionPointFrom, directionpointsToList, bool1, bool2]);
+}
 
 module.exports = ApiManager;
 

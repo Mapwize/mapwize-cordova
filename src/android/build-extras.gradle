@@ -12,7 +12,7 @@ android {
 	}
 
 	dependencies {
-	  implementation ("io.mapwize.indoormaps:MapwizeForMapbox:2.1.8") {
+	  implementation ("io.mapwize.indoormaps:MapwizeForMapbox:2.1.9") {
 	      transitive = true
 	  }
 

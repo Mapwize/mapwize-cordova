@@ -331,20 +331,20 @@ NSString* mCallbackId;
     [ApiManager getPlaceListWithId:identifier callbackId:command.callbackId];
 }
 
-- (void)getPlaceListsWithName:(CDVInvokedUrlCommand*)command {
-    NSLog(@"getPlaceListsWithName called...");
+- (void)getPlaceListWithName:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceListWithName called...");
     NSString *name = [command.arguments objectAtIndex:0];
     NSString *venueId = [command.arguments objectAtIndex:1];
     
-    [ApiManager getPlaceListsWithName:name venue:venueId callbackId:command.callbackId];
+    [ApiManager getPlaceListWithName:name venue:venueId callbackId:command.callbackId];
 }
 
-- (void)getPlaceListsWithAlias:(CDVInvokedUrlCommand*)command {
-    NSLog(@"getPlaceListsWithAlias called...");
+- (void)getPlaceListWithAlias:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceListWithAlias called...");
     NSString *alias = [command.arguments objectAtIndex:0];
     NSString *venueId = [command.arguments objectAtIndex:1];
     
-    [ApiManager getPlaceListsWithAlias:alias venue:venueId callbackId:command.callbackId];
+    [ApiManager getPlaceListWithAlias:alias venue:venueId callbackId:command.callbackId];
 }
 
 - (void)getPlaceListsWithFilter:(CDVInvokedUrlCommand*)command {

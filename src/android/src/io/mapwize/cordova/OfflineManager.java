@@ -72,51 +72,6 @@ public class OfflineManager {
 
     public void downloadDataForVenue(String venueId, String universeId, CallbackContext context) {
         Log.d(TAG, "downloadDataForVenue...");
-//        Api.getVenue(venueId, new ApiCallback<Venue>() {
-//            @Override
-//            public void onSuccess(@Nullable Venue venue) {
-//                Log.d(TAG, "success, getting venue, downloadDataForVenue...");
-//                Api.getUniverse(universeId, new ApiCallback<Universe>() {
-//                    @Override
-//                    public void onSuccess(@Nullable Universe universe) {
-//                        Log.d(TAG, "success, getting universe, downloadDataForVenue...");
-//                        mOfflineManager.downloadData(venue, universe, new io.mapwize.mapwizeformapbox.api.OfflineManager.DownloadTaskListener() {
-//
-//                            @Override
-//                            public void onSuccess() {
-//                                Log.d(TAG, "onSuccess...");
-//                                sendCallbackCmdOK(context);
-//                            }
-//
-//                            @Override
-//                            public void onProgress(int i) {
-//                                Log.d(TAG, "onProgress...");
-//                                sendCallbackCmd("" + i, context);
-//                            }
-//
-//                            @Override
-//                            public void onFailure(Exception e) {
-//                                Log.d(TAG, "onFailure...");
-//                                sendCallbackCmdError(context);
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@Nullable Throwable throwable) {
-//                        Log.d(TAG, "failure, getting universe, downloadDataForVenue...");
-//                        sendCallbackCmdError(context);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onFailure(@Nullable Throwable throwable) {
-//                Log.d(TAG, "failure, getting venue, downloadDataForVenue...");
-//                sendCallbackCmdError(context);
-//            }
-//        });
-
         Api.getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
