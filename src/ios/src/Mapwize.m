@@ -382,5 +382,50 @@ NSString* mCallbackId;
     [ApiManager searchWithParams:searchParams callbackId:command.callbackId];
 }
 
+- (void)getDirectionWithFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointTo = [command.arguments objectAtIndex:1];
+    BOOL     isAccessible = [command.arguments objectAtIndex:2];
+    [ApiManager getDirectionWithFrom:directionPointFrom to:directionPointTo isAccessible:isAccessible callbackId:command.callbackId];
+}
+
+- (void)getDirectionWithDirectionPointsFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithDirectionPointsFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointsListTo = [command.arguments objectAtIndex:1];
+    BOOL     isAccessible = [command.arguments objectAtIndex:2];
+    [ApiManager getDirectionWithDirectionPointsFrom:directionPointFrom to:directionPointsListTo isAccessible:isAccessible callbackId:command.callbackId];
+}
+- (void)getDirectionWithWayPointsFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithWayPointsFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointTo = [command.arguments objectAtIndex:1];
+    NSString *wayPointsList = [command.arguments objectAtIndex:2];
+    BOOL     isAccessible = [command.arguments objectAtIndex:3];
+    BOOL     bool2 = [command.arguments objectAtIndex:4];
+    [ApiManager getDirectionWithWayPointsFrom:directionPointFrom to:directionPointTo waypointsList:wayPointsList bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+}
+
+- (void)getDirectionWithDirectionAndWayPointsFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithWayPointsFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointListTo = [command.arguments objectAtIndex:1];
+    NSString *wayPointsList = [command.arguments objectAtIndex:2];
+    BOOL     isAccessible = [command.arguments objectAtIndex:3];
+    BOOL     bool2 = [command.arguments objectAtIndex:4];
+    
+    [ApiManager getDirectionWithDirectionAndWayPointsFrom:directionPointFrom tos:directionPointListTo waypointsList:wayPointsList bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+}
+
+
+- (void)getDistanceWithFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDistanceWithFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointsListTo = [command.arguments objectAtIndex:1];
+    BOOL     isAccessible = [command.arguments objectAtIndex:2];
+    BOOL     bool2 = [command.arguments objectAtIndex:3];
+    [ApiManager getDistanceWithFrom:directionPointFrom directionpointsToListStr:directionPointsListTo bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+}
 
 @end

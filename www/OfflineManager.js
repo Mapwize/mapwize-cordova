@@ -10,7 +10,7 @@ function OfflineManager(styleURL) {
 	this.styleURL = styleURL;
 	exec(function(result) { 
 				console.log("OfflineManager: init: SUCCESS");
-				// success(result);
+				// success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("OfflineManager: init: FAILED");
 				// failure(err);
@@ -21,7 +21,7 @@ OfflineManager.prototype.removeDataForVenue = function(venueId, universeId, succ
 	console.log("OfflineManager: close");
 	exec(function(result) { 
 				console.log("OfflineManager: close: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("OfflineManager: close: FAILED");
 				failure(err);

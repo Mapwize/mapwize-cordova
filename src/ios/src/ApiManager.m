@@ -252,22 +252,95 @@ static Mapwize* plugin;
     MWZSearchParams* searchParams = [MWZApiResponseParser parseSearchParams:searchParamsStr];
     [MWZApi searchWithParams:searchParams success:^(NSArray<id<MWZObject>> *searchResponse) {
         NSLog(@"Search succeeded...");
+        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+        NSString* json = [ApiManager objectList2JsonArray:searchResponse];
+        dict[CBK_FIELD_ARG] = json;
+        [ApiManager sendCommandDictCallback:dict callbackId:callbackId];
     } failure:^(NSError *error) {
         NSLog(@"Search failed...");
     }];
-    
-    
 }
 
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId {
-//
-//}
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to waypoints:(NSArray<id<MWZDirectionPoint>>*) waypoints isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDirectionWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos waypoints:(NSArray<id<MWZDirectionPoint>>*) waypoints isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
-//+ (void)getDistanceWithFrom:(id<MWZDirectionPoint>) from tos:(NSArray<id<MWZDirectionPoint>>*) tos isAccessible:(BOOL) isAccessible sortByTravelTime:(BOOL) sort callbackId:(NSString*) callbackId;
++ (void)getDirectionWithFrom:(NSString*) directionPointFromStr to:(NSString*) directionPointToStr isAccessible:(BOOL)isAccessible callbackId:(NSString*) callbackId {
+    id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
+    id<MWZDirectionPoint> to = [MWZApiResponseParser parseDirectionPoint:directionPointToStr];
+    [MWZApi getDirectionWithFrom:from to:to isAccessible:isAccessible success:^(MWZDirection *direction) {
+        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+        NSString* json = [direction toJSONString];
+        dict[CBK_FIELD_ARG] = json;
+        [ApiManager sendCommandDictCallback:dict callbackId:callbackId];
+    } failure:^(NSError *error) {
+        [ApiManager sendCommandCallbackFailed:callbackId];
+    }];
+}
+
++ (void)getDirectionWithDirectionPointsFrom:(NSString*) directionPointFromStr to:(NSString*) directionPointsListToStr isAccessible:(BOOL)isAccessible callbackId:(NSString*) callbackId {
+    id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
+    NSArray<id<MWZDirectionPoint>>* toList = [MWZApiResponseParser parseDirectionPoints:directionPointsListToStr];
+    [MWZApi getDirectionWithFrom:from tos:toList isAccessible:isAccessible success:^(MWZDirection *direction) {
+        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+        NSString* json = [direction toJSONString];
+        dict[CBK_FIELD_ARG] = json;
+        [ApiManager sendCommandDictCallback:dict callbackId:callbackId];
+    } failure:^(NSError *error) {
+        [ApiManager sendCommandCallbackFailed:callbackId];
+    }];
+}
+
++ (void)getDirectionWithWayPointsFrom:(NSString*) directionPointFromStr to:(NSString*) directionPointToStr waypointsList:(NSString*) wayPointsListToStr bool1:(BOOL)bool1 bool2:(BOOL)bool2 callbackId:(NSString*) callbackId {
+    id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
+    id<MWZDirectionPoint> to = [MWZApiResponseParser parseDirectionPoint:directionPointToStr];
+    NSArray<id<MWZDirectionPoint>>* waypointsList = [MWZApiResponseParser parseDirectionPoints:wayPointsListToStr];
+    [MWZApi getDirectionWithFrom:from to:to waypoints:waypointsList isAccessible:bool1 success:^(MWZDirection *direction) {
+        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+        NSString* json = [direction toJSONString];
+        dict[CBK_FIELD_ARG] = json;
+        [ApiManager sendCommandDictCallback:dict callbackId:callbackId];
+    } failure:^(NSError *error) {
+        [ApiManager sendCommandCallbackFailed:callbackId];
+    }];
+}
+
++ (void)getDirectionWithDirectionAndWayPointsFrom:(NSString*) directionPointFromStr tos:(NSString*) directionPointsListToStr waypointsList:(NSString*) wayPointsListToStr bool1:(BOOL)bool1 bool2:(BOOL)bool2 callbackId:(NSString*) callbackId {
+    id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
+    NSArray<id<MWZDirectionPoint>>* toList = [MWZApiResponseParser parseDirectionPoints:directionPointsListToStr];
+    NSArray<id<MWZDirectionPoint>>* waypointsList = [MWZApiResponseParser parseDirectionPoints:wayPointsListToStr];
+    [MWZApi getDirectionWithFrom:from tos:toList waypoints:waypointsList isAccessible:bool1 success:^(MWZDirection *direction) {
+        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+        NSString* json = [direction toJSONString];
+        dict[CBK_FIELD_ARG] = json;
+        [ApiManager sendCommandDictCallback:dict callbackId:callbackId];
+    } failure:^(NSError *error) {
+        [ApiManager sendCommandCallbackFailed:callbackId];
+    }];
+}
+
++ (void)getDistanceWithFrom:(NSString*) directionPointFromStr directionpointsToListStr:(NSString*) directionpointsToListStr bool1:(BOOL)bool1 bool2:(BOOL)bool2 callbackId:(NSString*) callbackId {
+    NSLog(@"getDistanceWithFrom...");
+    id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
+    NSArray<id<MWZDirectionPoint>>* toList = [MWZApiResponseParser parseDirectionPoints:directionpointsToListStr];
+    [MWZApi getDistanceWithFrom:from tos:toList isAccessible:bool1 sortByTravelTime:bool2 success:^(MWZDistanceResponse *distance) {
+        NSLog(@"getDistanceWithFrom returned...");
+        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+        NSString* json = [distance toJSONString];
+        dict[CBK_FIELD_ARG] = json;
+        [ApiManager sendCommandDictCallback:dict callbackId:callbackId];
+    } failure:^(NSError *error) {
+        [ApiManager sendCommandCallbackFailed:callbackId];
+    }];
+}
 
 
++ (NSString*) objectList2JsonArray:(NSArray<id<MWZObject>> *) array {
+    NSMutableArray* ma = [[NSMutableArray alloc] init];
+    for(id<MWZObject> object in array) {
+        NSString* vstr = [object toJSONString];
+        [ma addObject:vstr];
+    }
+    NSString* csString = [ma componentsJoinedByString:@","];
+    NSString* jsonString = [NSString stringWithFormat:@"[%@]", csString];
+    return jsonString;
+}
 
  + (NSString*) placeLists2JsonArray:(NSArray<MWZPlaceList*>*) array {
      NSMutableArray* ma = [[NSMutableArray alloc] init];
@@ -275,7 +348,6 @@ static Mapwize* plugin;
          NSString* vstr = [placeList toJSONString];
          [ma addObject:vstr];
      }
-     
      NSString* csString = [ma componentsJoinedByString:@","];
      NSString* jsonString = [NSString stringWithFormat:@"[%@]", csString];
      return jsonString;
@@ -288,7 +360,6 @@ static Mapwize* plugin;
         NSString* vstr = [venue toJSONString];
         [ma addObject:vstr];
     }
-    
     NSString* csString = [ma componentsJoinedByString:@","];
     NSString* jsonString = [NSString stringWithFormat:@"[%@]", csString];
     return jsonString;
@@ -300,7 +371,6 @@ static Mapwize* plugin;
         NSString* vstr = [venue toJSONString];
         [ma addObject:vstr];
     }
-    
     NSString* csString = [ma componentsJoinedByString:@","];
     NSString* jsonString = [NSString stringWithFormat:@"[%@]", csString];
     return jsonString;
@@ -312,12 +382,10 @@ static Mapwize* plugin;
         NSString* vstr = [venue toJSONString];
         [ma addObject:vstr];
     }
-    
     NSString* csString = [ma componentsJoinedByString:@","];
     NSString* jsonString = [NSString stringWithFormat:@"[%@]", csString];
     return jsonString;
 }
-
 
  + (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
      CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
@@ -335,7 +403,6 @@ static Mapwize* plugin;
     NSError *err;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:args options:NSJSONWritingPrettyPrinted error:&err];
     NSString* argStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    //    dict[CBK_FIELD_EVENT] = event;
     dict[CBK_FIELD_ARG] = argStr;
     [self sendCommandDictCallback:dict callbackId:callbackId];
 }

@@ -42,7 +42,7 @@ MapwizeView.prototype.close = function(success, failure) {
 	console.log("MapwizeView: close");
 	exec(function(result) { 
 				console.log("MapwizeView: close: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("MapwizeView: close: FAILED");
 				failure(err);
@@ -53,7 +53,7 @@ MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
 	console.log("MapwizeView: selectPlace");
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlace: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("MapwizeView: selectPlace: FAILED");
 				failure(err);
@@ -64,7 +64,7 @@ MapwizeView.prototype.selectPlaceList = function(id, success, failure) {
 	console.log("MapwizeView: selectPlaceList");
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlaceList: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("MapwizeView: selectPlaceList: FAILED");
 				failure(err);
@@ -75,7 +75,7 @@ MapwizeView.prototype.setPlaceStyle = function(id, style, success, failure) {
 	console.log("MapwizeView: setPlaceStyle");
 	exec(function(result) { 
 				console.log("MapwizeView: setPlaceStyle: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("MapwizeView: setPlaceStyle: FAILED");
 				failure(err);
@@ -86,7 +86,7 @@ MapwizeView.prototype.grantAccess = function(accessKey, success, failure) {
 	console.log("MapwizeView: grantAccess");
 	exec(function(result) { 
 				console.log("MapwizeView: grantAccess: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("MapwizeView: grantAccess: FAILED");
 				failure(err);
@@ -97,7 +97,7 @@ MapwizeView.prototype.unselectContent = function(closeInfo, success, failure) {
 	console.log("MapwizeView: unselectContent");
 	exec(function(result) { 
 				console.log("MapwizeView: unselectContent: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("MapwizeView: unselectContent: FAILED");
 				failure(err);

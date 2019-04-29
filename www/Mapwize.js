@@ -10,7 +10,7 @@ Mapwize.prototype.createMapwizeView = function(options, success, failure) {
 	console.log("Mapwize: createMapwizeView...");
 	exec(function(result) { 
 				console.log("Mapwize: selectPlace: SUCCESS");
-				success(result);
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("Mapwize: selectPlace: FAILED");
 				failure(err);

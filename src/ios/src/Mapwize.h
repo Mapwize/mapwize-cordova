@@ -56,6 +56,13 @@
 - (void)getAccessibleUniversesWithVenue:(CDVInvokedUrlCommand*)command;
 - (void)searchWithParams:(CDVInvokedUrlCommand*)command;
 
+
+- (void)getDirectionWithFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDirectionWithDirectionPointsFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDirectionWithWayPointsFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDirectionWithDirectionAndWayPointsFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDistanceWithFrom:(CDVInvokedUrlCommand*)command;
+
 @end
 
 
