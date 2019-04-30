@@ -377,8 +377,8 @@ public class ApiManager {
     public static void getDirectionWithFrom(String directionPointFrom, String directionPointTo, boolean isAccessible, CallbackContext context) {
         Log.d(TAG, "searchWithParams...");
         try {
-            DirectionPoint from = Parser.parserDirectionPoint(directionPointFrom);
-            DirectionPoint to = Parser.parserDirectionPoint(directionPointTo);
+            DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
+            DirectionPoint to = Parser.parseDirectionPoint(directionPointTo);
             Api.getDirection(from, to, isAccessible, new ApiCallback<Direction>() {
                 @Override
                 public void onSuccess(@Nullable Direction direction) {
@@ -400,7 +400,7 @@ public class ApiManager {
     public static void getDirectionWithDirectionPointsFrom(String directionPointFrom, String directionPointsListTo, boolean isAccessible, CallbackContext context) {
         Log.d(TAG, "getDirectionWithFrom...");
         try {
-            DirectionPoint from = Parser.parserDirectionPoint(directionPointFrom);
+            DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             List<DirectionPoint> toList = stringList2DirectionPointList(directionPointsListTo);
             Api.getDirection(from, toList, isAccessible, new ApiCallback<Direction>() {
                 @Override
@@ -424,8 +424,8 @@ public class ApiManager {
     public static void getDirectionWithWayPointsFrom(String directionPointFrom, String directionPointTo, String waypointsList, boolean bool1, boolean bool2, CallbackContext context) {
         Log.d(TAG, "getDirectionWithFrom...");
         try {
-            DirectionPoint from = Parser.parserDirectionPoint(directionPointFrom);
-            DirectionPoint to = Parser.parserDirectionPoint(directionPointTo);
+            DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
+            DirectionPoint to = Parser.parseDirectionPoint(directionPointTo);
             List<DirectionPoint> waypointsObj = stringList2DirectionPointList(waypointsList);
             Api.getDirection(from, to, waypointsObj, bool1, bool2, new ApiCallback<Direction>() {
                 @Override
@@ -449,7 +449,7 @@ public class ApiManager {
     public static void getDirectionWithDirectionAndWayPointsFrom(String directionPointFrom, String directionpointsToList, String waypointsList, boolean bool1, boolean bool2, CallbackContext context) {
         Log.d(TAG, "getDirectionWithFrom...");
         try {
-            DirectionPoint from = Parser.parserDirectionPoint(directionPointFrom);
+            DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             List<DirectionPoint> to = stringList2DirectionPointList(directionpointsToList);
             List<DirectionPoint> waypointsObj = stringList2DirectionPointList(waypointsList);
 
@@ -475,7 +475,7 @@ public class ApiManager {
     public static void getDistanceWithFrom(String directionPointFrom, String directionpointsToList, boolean bool1, boolean bool2, CallbackContext context) {
         Log.d(TAG, "getDistanceWithFrom...");
         try {
-            DirectionPoint from = Parser.parserDirectionPoint(directionPointFrom);
+            DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             List<DirectionPoint> to = stringList2DirectionPointList(directionpointsToList);
 
             Api.getDistances(from, to, bool1, bool2, new ApiCallback<DistanceResponse>() {
@@ -498,7 +498,7 @@ public class ApiManager {
     }
 
     public static void searchWithParams(String searchParamsStr, CallbackContext context) {
-        Log.d(TAG, "searchWithParams...");
+        Log.d(TAG, "searchWithParams..." + searchParamsStr);
         try {
             SearchParams searchParams = Parser.parseSearchParams(searchParamsStr);
             Api.search(searchParams, new ApiCallback<List<MapwizeObject>>() {
@@ -626,7 +626,7 @@ public class ApiManager {
 
             for (int i = 0; i < directions.length(); i++) {
                 JSONObject direction = directions.getJSONObject(i);
-                dpl.add(Parser.parserDirectionPoint(direction.toString()));
+                dpl.add(Parser.parseDirectionPoint(direction.toString()));
 
             }
 

@@ -158,6 +158,15 @@ ApiManager.prototype.getAccessibleUniversesWithVenue = function(venueId, success
 }
 ApiManager.prototype.searchWithParams = function(searchParams, success, failure) {
 	console.log("ApiManager: searchWithParams...");
+	if (searchParams) {
+		if (!searchParams.objectClass) {
+			console.log("ApiManager: searchWithParams, adding objectClass...");
+			searchParams.objectClass = ['place', 'placeList', 'venue'];
+		};
+	} else {
+		searchParams = {objectClass: []};
+	}
+	
 	exec(function(result) {
 		console.log("ApiManager: searchWithParams: SUCCESS");
 		success(JSON.parse(result.arg));
