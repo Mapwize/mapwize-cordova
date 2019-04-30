@@ -23,6 +23,8 @@
 @implementation ViewController
 
 BOOL showCloseButton;
+BOOL showInfoButtonForPlaces;
+BOOL showInfoButtonForPlaceLists;
 
 -(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     NSLog(@"positionForBar called...");
@@ -30,9 +32,12 @@ BOOL showCloseButton;
     return UIBarPositionTop;
 }
 
-- (void)setOptions:(MWZOptions*)opts {
+- (void)setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists {
     NSLog(@"setOptions, viewController...");
     _opts = opts;
+    showInfoButtonForPlaces = showInformationButtonForPlaces;
+    showInfoButtonForPlaceLists = showInformationButtonForPlaceLists;
+
 }
 
 - (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId {
@@ -183,11 +188,33 @@ BOOL showCloseButton;
 }
 
 - (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
+    NSLog(@"shouldShowInformationButtonFor...");
     [self sendCallbackEvent:CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR]; //TODO: What to pass for argument? (type, object) ?
+    
     if ([mapwizeObject isKindOfClass:MWZPlace.class]) {
-        return YES;
+        NSDictionary* data = [(MWZPlace*)mapwizeObject data];
+        if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] == nil) {
+            if (showInfoButtonForPlaces) {
+                return YES;
+            }
+            return NO;
+        } else {
+            return data[CORDOVA_SHOW_INFORMATION_BUTTON];
+        }
     } else if ([mapwizeObject isKindOfClass:MWZPlaceList.class]) {
-        return YES;
+        NSLog(@"shouldShowInformationButtonFor, MWZPlaceList...");
+        NSDictionary* data = [(MWZPlaceList*)mapwizeObject data];
+        if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] == nil) {
+            NSLog(@"shouldShowInformationButtonFor, CORDOVA_SHOW_INFORMATION_BUTTON nil...");
+            if (showInfoButtonForPlaceLists) {
+                NSLog(@"shouldShowInformationButtonFor, CORDOVA_SHOW_INFORMATION_BUTTON, showInfoButtonForPlaceLists...");
+                return YES;
+            }
+            return NO;
+        } else {
+            NSLog(@"shouldShowInformationButtonFor, CORDOVA_SHOW_INFORMATION_BUTTON, showInfoButtonForPlaceLists...");
+            return data[CORDOVA_SHOW_INFORMATION_BUTTON];
+        }
     }
     return NO;
 }

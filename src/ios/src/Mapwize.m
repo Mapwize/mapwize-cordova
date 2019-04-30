@@ -13,6 +13,7 @@
 #import "OfflineManager.h"
 #import "ApiManager.h"
 #import "MapwizeUI.h"
+#import "Constants.h"
 
 @implementation Mapwize
 {
@@ -21,6 +22,8 @@
     UINavigationController* navController;
     ViewController* viewCtrl;
     OfflineManager* offlineManager;
+    BOOL showInformationButtonForPlaces;
+    BOOL showInformationButtonForPlaceLists;
 }
 NSString* mCallbackId;
 
@@ -53,20 +56,32 @@ NSString* mCallbackId;
     NSLog(@"createMapwizeView called...");
     BOOL showCloseButton = YES;
     
-    if (showCloseButton == YES) {
-        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
-    }
+    BOOL showInformationButtonForPlaces = YES;
+    BOOL showInformationButtonForPlaceLists = YES;
+    
     
     NSString *optionsStr = [command.arguments objectAtIndex:0];
     NSData *data = [optionsStr dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *jsonError;
-    NSLog(@"converting json...");
+    NSLog(@"converting json...%@", optionsStr);
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                  options:NSJSONReadingMutableContainers
                                    error:&jsonError];
     NSLog(@"creating opts...");
     MWZUIOptions *opts = [[MWZUIOptions alloc] init];
+    
+    NSLog(@"getting showInformationButtonForPlaces...");
+    if ([json objectForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACES] != nil) {
+        NSLog(@"setting showInformationButtonForPlaces...");
+        showInformationButtonForPlaces = json[OPT_SHOW_INFO_BUTTON_FOR_PLACES];
+    }
+    
+    NSLog(@"getting showInformationButtonForPlaces...");
+    if ([json objectForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS] != nil) {
+        NSLog(@"setting showInformationButtonForPlaces...");
+        showInformationButtonForPlaceLists = json[OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS];
+    }
     
     NSLog(@"getting floor...");
     NSNumber* floor = json[@"floor"];
@@ -120,7 +135,16 @@ NSString* mCallbackId;
         opts.centerOnLocation = nil;
     }
     
-    [viewCtrl setOptions:opts];
+    NSLog(@"showCloseButton...");
+//    showCloseButton = json[@"showCloseButton"];
+    
+    showCloseButton =  [[json valueForKey:@"showCloseButton"] boolValue];
+    
+    if (showCloseButton == YES) {
+        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
+    }
+    
+    [viewCtrl setOptions:opts showInformationButtonForPlaces:showInformationButtonForPlaces showInformationButtonForPlaceLists:showInformationButtonForPlaceLists];
     
     NSLog(@"getting addChildViewController...");
     NSLog(@"getting presentViewController...");
