@@ -18,7 +18,8 @@
 
 @interface ViewController : UIViewController
 //@interface ViewController : UINavigationController
-- (void)setOptions:(MWZOptions*)opts;
+- (void)setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists;
+
 - (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId;
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId:(NSString*) callbackId;
 - (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId;
