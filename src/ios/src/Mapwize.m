@@ -74,13 +74,13 @@ NSString* mCallbackId;
     NSLog(@"getting showInformationButtonForPlaces...");
     if ([json objectForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACES] != nil) {
         NSLog(@"setting showInformationButtonForPlaces...");
-        showInformationButtonForPlaces = json[OPT_SHOW_INFO_BUTTON_FOR_PLACES];
+        showInformationButtonForPlaces = [[json valueForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACES] boolValue];
     }
     
     NSLog(@"getting showInformationButtonForPlaces...");
     if ([json objectForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS] != nil) {
         NSLog(@"setting showInformationButtonForPlaces...");
-        showInformationButtonForPlaceLists = json[OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS];
+        showInformationButtonForPlaceLists = [[json valueForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS] boolValue];
     }
     
     NSLog(@"getting floor...");

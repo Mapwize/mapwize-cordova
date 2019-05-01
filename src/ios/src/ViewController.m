@@ -189,31 +189,20 @@ BOOL showInfoButtonForPlaceLists;
 
 - (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
     NSLog(@"shouldShowInformationButtonFor...");
-   
+    NSDictionary* data = [mapwizeObject data];
+    
+    if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] != nil) {
+        BOOL cordovaOn = [[data valueForKey:CORDOVA_SHOW_INFORMATION_BUTTON] boolValue];
+        return cordovaOn;
+    }
+
     if ([mapwizeObject isKindOfClass:MWZPlace.class]) {
-        NSDictionary* data = [(MWZPlace*)mapwizeObject data];
-        if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] == nil) {
-            if (showInfoButtonForPlaces) {
-                return YES;
-            }
-            return NO;
-        } else {
-            return data[CORDOVA_SHOW_INFORMATION_BUTTON];
-        }
+        NSLog(@"shouldShowInformationButtonFor, MWZPlace...");
+        return showInfoButtonForPlaces;
+
     } else if ([mapwizeObject isKindOfClass:MWZPlaceList.class]) {
         NSLog(@"shouldShowInformationButtonFor, MWZPlaceList...");
-        NSDictionary* data = [(MWZPlaceList*)mapwizeObject data];
-        if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] == nil) {
-            NSLog(@"shouldShowInformationButtonFor, CORDOVA_SHOW_INFORMATION_BUTTON nil...");
-            if (showInfoButtonForPlaceLists) {
-                NSLog(@"shouldShowInformationButtonFor, CORDOVA_SHOW_INFORMATION_BUTTON, showInfoButtonForPlaceLists...");
-                return YES;
-            }
-            return NO;
-        } else {
-            NSLog(@"shouldShowInformationButtonFor, CORDOVA_SHOW_INFORMATION_BUTTON, showInfoButtonForPlaceLists...");
-            return data[CORDOVA_SHOW_INFORMATION_BUTTON];
-        }
+        return showInfoButtonForPlaceLists;
     }
     return NO;
 }
