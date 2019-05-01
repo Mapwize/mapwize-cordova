@@ -19,7 +19,6 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "DidLoad":
 			case "DidTapOnFollowWithoutLocation":
 			case "DidTapOnMenu":
-			case "shouldShowInformationButtonFor":
 			case "TapOnPlaceInformationButton":
 			case "TapOnPlaceListInformationButton":
 			case "TapOnCloseButton":

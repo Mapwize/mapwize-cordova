@@ -189,8 +189,7 @@ BOOL showInfoButtonForPlaceLists;
 
 - (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
     NSLog(@"shouldShowInformationButtonFor...");
-    [self sendCallbackEvent:CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR]; //TODO: What to pass for argument? (type, object) ?
-    
+   
     if ([mapwizeObject isKindOfClass:MWZPlace.class]) {
         NSDictionary* data = [(MWZPlace*)mapwizeObject data];
         if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] == nil) {

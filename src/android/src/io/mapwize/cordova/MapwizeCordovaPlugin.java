@@ -132,7 +132,6 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_EVENT_DID_LOAD = "DidLoad";
     public static final String CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION = "DidTapOnFollowWithoutLocation";
     public static final String CBK_EVENT_DID_TAP_ON_MENU = "DidTapOnMenu";
-    public static final String CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR = "ShouldShowInformationButtonFor";
     public static final String CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON = "TapOnPlaceInformationButton";
     public static final String CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = "TapOnPlaceListInformationButton";
     public static final String CBK_EVENT_CLOSE_BUTTON_CLICKED = "TapOnCloseButton";
@@ -181,7 +180,6 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         filter.addAction(CBK_EVENT_DID_LOAD);
         filter.addAction(CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION);
         filter.addAction(CBK_EVENT_DID_TAP_ON_MENU);
-        filter.addAction(CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR);
         filter.addAction(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_CLOSE_BUTTON_CLICKED);
