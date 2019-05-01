@@ -22,7 +22,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "TapOnPlaceInformationButton":
 			case "TapOnPlaceListInformationButton":
 			case "TapOnCloseButton":
-				console.log("Handling event " + result.event + " result: " + result.arg);
+				console.log("Handling event " + result);
 				if (!result.arg) {
 					callbacks[result.event]();
 				} else {
@@ -31,7 +31,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 				
 				break;
 			default:
-				console.log("Event not recognized... event: " + JSON.stringify(result.event));
+				console.log("Event not recognized... event: " + JSON.stringify(result));
 		}
 	}, function(result) {
 		console.log("MapwizeView: setCallback: FAILED");}, PLUGIN_NAME, "setCallback", []);

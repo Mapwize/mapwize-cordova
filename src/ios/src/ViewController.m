@@ -26,6 +26,11 @@ BOOL showCloseButton;
 BOOL showInfoButtonForPlaces;
 BOOL showInfoButtonForPlaceLists;
 
+
+-(void)deinit {
+    NSLog(@"ViewController, deinit...");
+}
+
 -(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     NSLog(@"positionForBar called...");
 //    return UIBarPositionTopAttached;
@@ -157,7 +162,16 @@ BOOL showInfoButtonForPlaceLists;
 
 - (void)onTapDone:(id)sender {
     NSLog(@"onTapDone");
-    [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    UINavigationBar* navibar = self.navigationController.navigationBar;
+    if (navibar != nil) {
+        [self.navigationController dismissViewControllerAnimated:TRUE completion:nil];
+//        [self dismissViewControllerAnimated:NO completion:nil];
+//        [self.navigationController dismissViewControllerAnimated:NO completion:nil];
+    } else {
+        [self dismissViewControllerAnimated:NO completion:nil];
+//        [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    }
+
 }
 
 - (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place {
