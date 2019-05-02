@@ -4,7 +4,8 @@ module.exports = function(ctx) {
         return;
     }
     const fs = require('fs-extra');
-    var path = ctx.requireCordovaModule('path');
+    var path = require('path');
+    // var path = ctx.requireCordovaModule('path');
 
     var platformRes = path.join(ctx.opts.projectRoot, 'platforms/android/app/src/main/res');
     var platformSource = path.join(ctx.opts.projectRoot, 'languages/android');

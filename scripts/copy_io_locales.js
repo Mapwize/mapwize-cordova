@@ -5,8 +5,13 @@ module.exports = function(ctx) {
         return;
     }
     const fs = require('fs-extra');
-    const path = ctx.requireCordovaModule('path');
-    const xcode = ctx.requireCordovaModule('xcode');
+    const path = require('path');
+    const xcode = require('xcode');
+
+    // const path = ctx.requireCordovaModule('path');
+    // const xcode = ctx.requireCordovaModule('xcode');
+
+
     var platformRes = path.join(ctx.opts.projectRoot, 'platforms/ios');
     var platformSource = path.join(ctx.opts.projectRoot, 'languages/ios');
 
