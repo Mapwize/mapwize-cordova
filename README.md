@@ -63,13 +63,25 @@ this.mapwizeView = Mapwize.createMapwizeView(
         restrictContentToOrganizationId: "",
         centerOnVenueId: "xxxxxxxxxxxxxxxxxxxxxxxx",
         centerOnPlaceId: "xxxxxxxxxxxxxxxxxxxxxxxx",
-        showCloseButton: true
+        showCloseButton: true,
+        showInformationButtonForPlaces: true,
+        showInformationButtonForPlaceLists: false
+        
       }, () => {
         // Handle  successfull creation
       }, (err) => {
         // Handle  failed creation
         console.log("Error: " + err.message + ", localized message: " + err.locMessage);
       });
+```
+
+### 2.1.1. Additional parameters
+
+```
+showCloseButton: <<boolean>>, hide/show close button on MapwizeView (default: false)
+showInformationButtonForPlaces: <<boolean>>, hide/show Information button on selecting a 		Place in case the Place doesn't include the "cordovaShowInformationButton" flag.			(default: true)
+showInformationButtonForPlaceLists: <<boolean>>, hide/show Information button on selecting a 	 PlaceList in case the PlaceList doesn't include the "cordovaShowInformationButton" flag.
+	(default: true)
 ```
 
 ## 2.2. Callback functions
@@ -121,7 +133,7 @@ Triggers when the View has loaded.
 
 Triggers when the Menu icon is tapped.
 
-### 2.2.4 shouldShowInformationButtonFor
+### ~~2.2.4 shouldShowInformationButtonFor~~
 
 ### 2.2.5 TapOnPlaceInformationButton (place)
 

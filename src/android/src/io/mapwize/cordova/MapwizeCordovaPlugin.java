@@ -11,6 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import io.mapwize.mapwizeformapbox.api.Api;
 
 import com.onehilltech.metadata.ManifestMetadata;
 
@@ -36,6 +37,40 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private static final String ACTION_MAPWIZE_UNSELECT_CONTENT = "unselectContent";
     private static final String ACTION_MAPWIZE_CLOSE = "closeMapwizeView";
     private static final String ACTION_MAPWIZE_SETPLACESTYLE = "setPlaceStyle";
+
+    private static final String ACTION_OFFLINEMANAGER_INIT = "initOfflineManager";
+    private static final String ACTION_OFFLINEMANAGER_REMOVE_DATA_FOR_VENUE = "removeDataForVenue";
+    private static final String ACTION_OFFLINEMANAGER_DOWNLOAD_DATA_FOR_VENUE = "downloadDataForVenue";
+    private static final String ACTION_OFFLINEMANAGER_IS_OFFLINE_FOR_VENUE = "isOfflineForVenue";
+    private static final String ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES = "getOfflineVenues";
+    private static final String ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE = "getOfflineUniversesForVenue";
+
+    private static final String ACTION_API_GET_PLACE_WITH_ALIAS = "getPlaceWithAlias";
+
+    private static final String ACTION_API_GETVENUEWITHID = "getVenueWithId";
+    private static final String ACTION_API_GETVENUESWITHFILTER = "getVenuesWithFilter";
+    private static final String ACTION_API_GETVENUEWITHNAME = "getVenueWithName";
+    private static final String ACTION_API_GETVENUEWITHALIAS = "getVenueWithAlias";
+    private static final String ACTION_API_GETPLACEWITHID = "getPlaceWithId";
+    private static final String ACTION_API_GETPLACEWITHNAME = "getPlaceWithName";
+    private static final String ACTION_API_GETPLACEWITHALIAS = "getPlaceWithAlias";
+    private static final String ACTION_API_GETPLACESWITHFILTER = "getPlacesWithFilter";
+    private static final String ACTION_API_GETPLACELISTWITHID = "getPlaceListWithId";
+    private static final String ACTION_API_GETPLACELISTWITHNAME = "getPlaceListWithName";
+    private static final String ACTION_API_GETPLACELISTWITHALIAS = "getPlaceListWithAlias";
+    private static final String ACTION_API_GETPLACELISTSWITHFILTER = "getPlaceListsWithFilter";
+    private static final String ACTION_API_GETUNIVERSEWITHID = "getUniverseWithId";
+    private static final String ACTION_API_GETUNIVERSESWITHFILTER = "getUniversesWithFilter";
+    private static final String ACTION_API_GETACCESSIBLEUNIVERSESWITHVENUE = "getAccessibleUniversesWithVenue";
+    private static final String ACTION_API_SEARCHWITHPARAMS = "searchWithParams";
+
+    private static final String ACTION_API_GETDIRECTIONWITHFROM = "getDirectionWithFrom";
+    private static final String ACTION_API_GETDIRECTIONWITHDIRECTIONPOINTSFROM = "getDirectionWithDirectionPointsFrom";
+    private static final String ACTION_API_GETDIRECTIONWITHWAYPOINTSFROM = "getDirectionWithWayPointsFrom";
+    private static final String ACTION_API_GETDIRECTIONWITHDIRECTIONANDWAYPOINTSFROM = "getDirectionWithDirectionAndWayPointsFrom";
+    private static final String ACTION_API_GETDISTANCEWITHFROM = "getDistanceWithFrom";
+
+
 
     public static final String OPTIONS_STR = "optionStr";
 
@@ -97,13 +132,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_EVENT_DID_LOAD = "DidLoad";
     public static final String CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION = "DidTapOnFollowWithoutLocation";
     public static final String CBK_EVENT_DID_TAP_ON_MENU = "DidTapOnMenu";
-    public static final String CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR = "ShouldShowInformationButtonFor";
     public static final String CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON = "TapOnPlaceInformationButton";
     public static final String CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = "TapOnPlaceListInformationButton";
     public static final String CBK_EVENT_CLOSE_BUTTON_CLICKED = "TapOnCloseButton";
-
-
-
 
 
     public static final int MAPWIZEVIEW_REQUEST_ID = 12122; // Number random enough
@@ -116,10 +147,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private CallbackContext mSelectPlaceListCallback = null;
     private CallbackContext mCreateMapwizeViewCallback = null;
     private CallbackContext mSetPlaceStyleCallback = null;
-
-
-
     private Intent mMapwizeViewIntent = null;
+
+    OfflineManager mOfflineManager;
 
     /**
      * Constructor.
@@ -150,11 +180,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         filter.addAction(CBK_EVENT_DID_LOAD);
         filter.addAction(CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION);
         filter.addAction(CBK_EVENT_DID_TAP_ON_MENU);
-        filter.addAction(CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR);
         filter.addAction(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON);
         filter.addAction(CBK_EVENT_CLOSE_BUTTON_CLICKED);
-
         filter.addAction(CBK_CREATE_MAPWIZEVIEW);
         filter.addAction(CBK_SELECT_PLACE);
         filter.addAction(CBK_SELECT_PLACELIST);
@@ -164,16 +192,15 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
         LocalBroadcastManager.getInstance(cordova.getActivity()).registerReceiver(mCbkReceiver, filter);
         cordova.setActivityResultCallback(this);
+        ApiManager.initManager(cordova.getActivity());
     }
 
     public void onActivityResult(int requestCode, int resultCode,
-        Intent intent) {
+                                 Intent intent) {
         Log.d(TAG, "onActivityResult...");
 
         super.onActivityResult(requestCode, resultCode, intent);
     }
-
-
 
     /**
      * Returns the api key stored in AndroidManifest.xml
@@ -235,13 +262,120 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         } else if (ACTION_MAPWIZE_SETPLACESTYLE.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_SETPLACESTYLE received: ");
             setPlaceStyle(args, callbackContext);
+        } else if (ACTION_OFFLINEMANAGER_INIT.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_INIT received: ");
+            initOfflineManager(args, callbackContext);
+        } else if (ACTION_OFFLINEMANAGER_REMOVE_DATA_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_REMOVE_DATA_FOR_VENUE received: ");
+            removeDataForVenue(args, callbackContext);
 
+        } else if (ACTION_OFFLINEMANAGER_DOWNLOAD_DATA_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_DOWNLOAD_DATA_FOR_VENUE received: ");
+            downloadDataForVenue(args, callbackContext);
+
+        } else if (ACTION_OFFLINEMANAGER_IS_OFFLINE_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_IS_OFFLINE_FOR_VENUE received: ");
+            isOfflineForVenue(args, callbackContext);
+
+        } else if (ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES received: ");
+            getOfflineVenues(args, callbackContext);
+
+        } else if (ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE received: ");
+            getOfflineUniversesForVenue(args, callbackContext);
+
+        } else if (ACTION_API_GET_PLACE_WITH_ALIAS.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GET_PLACE_WITH_ALIAS received: ");
+            getPlaceWithAlias(args, callbackContext);
+
+        } else if (ACTION_API_GETVENUEWITHID.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETVENUEWITHID received: ");
+            getVenueWithId(args, callbackContext);
+
+        } else if (ACTION_API_GETVENUESWITHFILTER.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if received: ");
+            getVenuesWithFilter(args, callbackContext);
+
+        } else if (ACTION_API_GETVENUEWITHNAME.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETVENUEWITHNAME received: ");
+            getVenueWithName(args, callbackContext);
+
+        } else if (ACTION_API_GETVENUEWITHALIAS.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETVENUEWITHALIAS received: ");
+            getVenueWithAlias(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACEWITHID.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETPLACEWITHID received: ");
+            getPlaceWithId(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACEWITHNAME.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETPLACEWITHNAME received: ");
+            getPlaceWithName(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACEWITHALIAS.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETPLACEWITHALIAS received: ");
+            getPlaceWithAlias(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACESWITHFILTER.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if received: ");
+            getPlacesWithFilter(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACELISTWITHID.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if  received: ");
+            getPlaceListWithId(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACELISTWITHNAME.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if received: ");
+            getPlaceListWithName(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACELISTWITHALIAS.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if received: ");
+            getPlaceListWithAlias(args, callbackContext);
+
+        } else if (ACTION_API_GETPLACELISTSWITHFILTER.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if received: ");
+            getPlaceListsWithFilter(args, callbackContext);
+
+        } else if (ACTION_API_GETUNIVERSEWITHID.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETUNIVERSEWITHID received: ");
+            getUniverseWithId(args, callbackContext);
+
+        } else if (ACTION_API_GETUNIVERSESWITHFILTER.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::if received: ");
+            getUniversesWithFilter(args, callbackContext);
+
+        } else if (ACTION_API_GETACCESSIBLEUNIVERSESWITHVENUE.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::else received: ");
+            getAccessibleUniversesWithVenue(args, callbackContext);
+
+        } else if (ACTION_API_SEARCHWITHPARAMS.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_SEARCHWITHPARAMS received: ");
+            searchWithParams(args, callbackContext);
+
+        } else if (ACTION_API_GETDIRECTIONWITHFROM.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDIRECTIONWITHFROM received: ");
+            getDirectionWithFrom(args, callbackContext);
+
+        } else if (ACTION_API_GETDIRECTIONWITHDIRECTIONPOINTSFROM.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDIRECTIONWITHDIRECTIONPOINTSFROM received: ");
+            getDirectionWithDirectionPointsFrom(args, callbackContext);
+
+        } else if (ACTION_API_GETDIRECTIONWITHWAYPOINTSFROM.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDIRECTIONWITHWAYPOINTSFROM received: ");
+            getDirectionWithWayPointsFrom(args, callbackContext);
+
+        } else if (ACTION_API_GETDIRECTIONWITHDIRECTIONANDWAYPOINTSFROM.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDIRECTIONWITHDIRECTIONANDWAYPOINTSFROM received: ");
+            getDirectionWithDirectionAndWayPointsFrom(args, callbackContext);
+
+        } else if (ACTION_API_GETDISTANCEWITHFROM.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDISTANCEWITHFROM received: ");
+            getDistanceWithFrom(args, callbackContext);
+            
         } else {
             Log.d(TAG, String.format("Action is not handled %s ", action));
         }
-
-
-
 
         return true;
     }
@@ -377,17 +511,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         handler.post(new Runnable() {
             @Override
             public void run() {
-//                cordova.getActivity().startActivityForResult(mMapwizeViewIntent, MapwizeCordovaPlugin.MAPWIZEVIEW_REQUEST_ID);
-//                sendCallbackCmdOK(null, mCreateMapwizeViewCallback);
-
                 cordova.getActivity().finishActivity(MAPWIZEVIEW_REQUEST_ID);
                 PluginResult result = new PluginResult(PluginResult.Status.OK);
                 context.sendPluginResult(result);
-
             }
         });
-
-
     }
 
     /**
@@ -609,4 +737,307 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
         LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
     }
+
+    // OfflineManager
+
+    /**
+     * Delegates the initOfflineManager function to OfflineManager
+     * @param args
+     * @param context
+     */
+    void initOfflineManager(JSONArray args, CallbackContext context) {
+        try {
+            String styleUrl = args.getString(0);
+            mOfflineManager = new OfflineManager(cordova.getActivity(), styleUrl);
+        } catch (JSONException e) {
+            sendCallbackCmdErr("Init failed", "Init failed", context);
+        }
+
+    }
+
+    void removeDataForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            String universeId = args.getString(1);
+            mOfflineManager.removeDataForVenue(venueId, universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void downloadDataForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            String universeId = args.getString(1);
+            mOfflineManager.downloadDataForVenue(venueId, universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void isOfflineForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            String universeId = args.getString(1);
+            mOfflineManager.isOfflineForVenue(venueId, universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void getOfflineVenues(JSONArray args, CallbackContext context) {
+        mOfflineManager.getOfflineVenues(context);
+    }
+
+    /**
+     * [downloadDataForVenue description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void getOfflineUniversesForVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            mOfflineManager.getOfflineUniversesForVenue(venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    /**
+     * [getPlaceWithAlias description]
+     * @param  {[type]} JSONArray       args          [description]
+     * @param  {[type]} CallbackContext context       [description]
+     * @return {[type]}                 [description]
+     */
+    void getPlaceWithAlias(JSONArray args, CallbackContext context) {
+        try {
+            String alias = args.getString(0);
+            String venueId = args.getString(1);
+            ApiManager.getPlaceWithAlias(alias, venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getVenueWithId(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            ApiManager.getVenueWithId(venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getVenuesWithFilter(JSONArray args, CallbackContext context) {
+        try {
+            String filterStr = args.getString(0);
+            ApiManager.getVenuesWithFilter(filterStr, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getVenueWithName(JSONArray args, CallbackContext context) {
+        try {
+            String name = args.getString(0);
+            ApiManager.getVenueWithName(name, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getVenueWithAlias(JSONArray args, CallbackContext context) {
+        try {
+            String alias = args.getString(0);
+            ApiManager.getVenueWithAlias(alias, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlaceWithId(JSONArray args, CallbackContext context) {
+        try {
+            String placeId = args.getString(0);
+            ApiManager.getPlaceWithId(placeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlaceWithName(JSONArray args, CallbackContext context) {
+        try {
+            String name = args.getString(0);
+            String venueId = args.getString(1);
+            ApiManager.getPlaceWithName(name, venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlacesWithFilter(JSONArray args, CallbackContext context) {
+        try {
+            String filterStr = args.getString(0);
+            ApiManager.getPlacesWithFilter(filterStr, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlaceListWithId(JSONArray args, CallbackContext context) {
+        try {
+            String placeListId = args.getString(0);
+            ApiManager.getPlaceListWithId(placeListId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlaceListWithName(JSONArray args, CallbackContext context) {
+        try {
+            String name = args.getString(0);
+            String venueId = args.getString(1);
+            ApiManager.getPlaceListWithName(name, venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlaceListWithAlias(JSONArray args, CallbackContext context) {
+        try {
+            String alias = args.getString(0);
+            String venueId = args.getString(1);
+            ApiManager.getPlaceListWithAlias(alias, venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getPlaceListsWithFilter(JSONArray args, CallbackContext context) {
+        try {
+            String fileStr = args.getString(0);
+            ApiManager.getPlaceListsWithFilter(fileStr, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getUniverseWithId(JSONArray args, CallbackContext context) {
+        try {
+            String universeId = args.getString(0);
+            ApiManager.getUniverseWithId(universeId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getUniversesWithFilter(JSONArray args, CallbackContext context) {
+        try {
+            String filterStr = args.getString(0);
+            ApiManager.getUniversesWithFilter(filterStr, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getAccessibleUniversesWithVenue(JSONArray args, CallbackContext context) {
+        try {
+            String venueId = args.getString(0);
+            ApiManager.getAccessibleUniversesWithVenue(venueId, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void searchWithParams(JSONArray args, CallbackContext context) {
+        try {
+            String searchWithParams = args.getString(0);
+            ApiManager.searchWithParams(searchWithParams, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+
+        }
+    }
+
+
+    void getDirectionWithFrom(JSONArray args, CallbackContext context) {
+        try {
+            String directionPointFrom = args.getString(0);
+            String directionPointTo = args.getString(1);
+            boolean isAccessible = args.getBoolean(2);
+            ApiManager.getDirectionWithFrom(directionPointFrom, directionPointTo, isAccessible, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getDirectionWithDirectionPointsFrom(JSONArray args, CallbackContext context) {
+        try {
+            String directionPointFrom = args.getString(0);
+            String directionPointTo = args.getString(1);
+            boolean isAccessible = args.getBoolean(2);
+            ApiManager.getDirectionWithDirectionPointsFrom(directionPointFrom, directionPointTo, isAccessible, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getDirectionWithWayPointsFrom(JSONArray args, CallbackContext context) {
+        try {
+            String directionPointFrom = args.getString(0);
+            String directionPointTo = args.getString(1);
+            String wayPointToList = args.getString(2);
+            boolean bool1 = args.getBoolean(3);
+            boolean bool2 = args.getBoolean(4);
+            ApiManager.getDirectionWithWayPointsFrom(directionPointFrom, directionPointTo, wayPointToList, bool1, bool2, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getDirectionWithDirectionAndWayPointsFrom(JSONArray args, CallbackContext context) {
+        try {
+            String directionPointFrom = args.getString(0);
+            String directionPointToList = args.getString(1);
+            String wayPointToList = args.getString(2);
+            boolean bool1 = args.getBoolean(3);
+            boolean bool2 = args.getBoolean(4);
+            ApiManager.getDirectionWithDirectionAndWayPointsFrom(directionPointFrom, directionPointToList, wayPointToList, bool1, bool2, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+    void getDistanceWithFrom(JSONArray args, CallbackContext context) {
+        try {
+            String directionPointFrom = args.getString(0);
+            String directionPointToList = args.getString(1);
+            boolean bool1 = args.getBoolean(2);
+            boolean bool2 = args.getBoolean(3);
+            ApiManager.getDistanceWithFrom(directionPointFrom, directionPointToList, bool1, bool2, context);
+        } catch(JSONException e) {
+            sendCallbackCmdErr("Error", "error", context);
+        }
+    }
+
+
+
 }

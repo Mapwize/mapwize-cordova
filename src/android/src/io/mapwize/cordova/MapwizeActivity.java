@@ -88,8 +88,14 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     private static final String OPT_CENTER_ON_VENUE_ID = "centerOnVenueId";
     private static final String OPT_CENTER_ON_PLACE_ID = "centerOnPlaceId";
     private static final String OPT_SHOW_CLOSE_BUTTON = "showCloseButton";
+    private static final String OPT_SHOW_INFO_BUTTON_FOR_PLACES = "showInformationButtonForPlaces";
+    private static final String OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS = "showInformationButtonForPlaceLists";
+
+    private static final String CORDOVA_SHOW_INFO_BUTTON = "cordovaShowInformationButton";
 
     private static final String STYLE_MARKERURL = "markerUrl";
+    boolean showInformationButtonForPlaces;
+    boolean showInformationButtonForPlaceLists;
 
 
     MapwizeFragment mapwizeFragment;
@@ -117,9 +123,11 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             Log.d(TAG, "onCreate...optStr: " + optStr);
             opts = getOptionsFromStr(optJson);
 
-            showClose = optJson.optBoolean(OPT_SHOW_CLOSE_BUTTON);
+            showClose = optJson.optBoolean(OPT_SHOW_CLOSE_BUTTON, false);
             Log.d(TAG, "showClose: " + showClose);
 
+            showInformationButtonForPlaces = optJson.optBoolean(OPT_SHOW_INFO_BUTTON_FOR_PLACES, true);
+            showInformationButtonForPlaceLists = optJson.optBoolean(OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS, true);
         } catch (JSONException e) {
             e.printStackTrace();
             sendCmdEventErr(CBK_CREATE_MAPWIZEVIEW, "");
@@ -165,7 +173,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
         // ImageButton button = findViewById(R.id.imageButton);
         ImageButton button = findViewById(getApplication().getResources().getIdentifier("imageButton", "id", package_name));
-        
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -255,6 +263,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     @Override
     public void onInformationButtonClick(MapwizeObject mapwizeObject) {
         Log.d(TAG, "onInformationButtonClick...class: " + mapwizeObject.getClass() + ", className: " + mapwizeObject.getClass().getName() + ", Place.class: " + Place.class + ", Place.className: " + Place.class.getName());
+
         if (mapwizeObject instanceof Place) {
             sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, ((Place)mapwizeObject).toJSONString());
         } else if (mapwizeObject instanceof PlaceList) {
@@ -296,13 +305,21 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
     @Override
     public boolean shouldDisplayInformationButton(MapwizeObject mapwizeObject) {
-        if(mapwizeObject.getClass() == Place.class) {
-            return true;
-        } else if(mapwizeObject.getClass() == PlaceList.class) {
-            return true;
+        Log.d(TAG, "onInformationButtonClick...class: " + mapwizeObject.getClass() + ", className: " + mapwizeObject.getClass().getName() + ", Place.class: " + Place.class + ", Place.className: " + Place.class.getName());
+        JSONObject data = mapwizeObject.getData();
+
+        if (data != null && data.has(CORDOVA_SHOW_INFO_BUTTON)) {
+            return data.optBoolean(CORDOVA_SHOW_INFO_BUTTON);
         }
 
-        return false;
+        if (mapwizeObject instanceof Place) {
+            return showInformationButtonForPlaces;
+        } else if (mapwizeObject instanceof PlaceList) {
+            return showInformationButtonForPlaceLists;
+        } else {
+            Log.d(TAG, "shouldDisplayInformationButton, Object is not recognized...");
+            return false;
+        }
     }
 
     @Override

@@ -1,15 +1,16 @@
 //
-//  FlashPlugin.h
-//  FlashDemo
+//  Mapwize.h
+//  Mapwize Tester
 //
-//  Created by Blum László on 27/07/15.
-//  Copyright (c) 2015 Halifone Ltd. All rights reserved.
+//  Created by Laszlo Blum on 2019. 04. 23..
 //
 
 #ifndef Mapwize_h
 #define Mapwize_h
 
 #import <Cordova/CDV.h>
+
+
 @class MWZUniverse;
 
 
@@ -25,12 +26,42 @@
 - (void)selectPlace:(CDVInvokedUrlCommand*)command;
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command;
-
 - (void)unselectContent:(CDVInvokedUrlCommand*)command;
-
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict;
 - (MWZUniverse*) getUniverse:( NSArray * )universeDict;
 
+// Offline manager
+- (void) initOfflineManager:(CDVInvokedUrlCommand*)command;
+- (void) removeDataForVenue:(CDVInvokedUrlCommand*)command;
+- (void) downloadDataForVenue:(CDVInvokedUrlCommand*)command;
+- (void) isOfflineForVenue:(CDVInvokedUrlCommand*)command;
+- (void) getOfflineVenues:(CDVInvokedUrlCommand*)command;
+- (void) getOfflineUniversesForVenue:(CDVInvokedUrlCommand*)command;
+
+// API Manager
+- (void)getVenueWithId:(CDVInvokedUrlCommand*)command;
+- (void)getVenuesWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getVenueWithName:(CDVInvokedUrlCommand*)command;
+- (void)getVenueWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceWithId:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceWithName:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlacesWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListWithId:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListWithName:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListWithAlias:(CDVInvokedUrlCommand*)command;
+- (void)getPlaceListsWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getUniverseWithId:(CDVInvokedUrlCommand*)command;
+- (void)getUniversesWithFilter:(CDVInvokedUrlCommand*)command;
+- (void)getAccessibleUniversesWithVenue:(CDVInvokedUrlCommand*)command;
+- (void)searchWithParams:(CDVInvokedUrlCommand*)command;
+
+
+- (void)getDirectionWithFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDirectionWithDirectionPointsFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDirectionWithWayPointsFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDirectionWithDirectionAndWayPointsFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDistanceWithFrom:(CDVInvokedUrlCommand*)command;
 
 @end
 

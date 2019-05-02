@@ -1,9 +1,8 @@
 //
-//  FlashPlugin.h
-//  FlashDemo
+//  ViewController.h
+//  Mapwize Tester
 //
-//  Created by Blum László on 27/07/15.
-//  Copyright (c) 2015 Halifone Ltd. All rights reserved.
+//  Created by Laszlo Blum on 2019. 04. 23..
 //
 
 #ifndef ViewController_h
@@ -18,8 +17,8 @@
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController
-//@interface ViewController : UINavigationController
-- (void)setOptions:(MWZOptions*)opts;
+-(void)deinit;
+- (void)setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists;
 - (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId;
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId:(NSString*) callbackId;
 - (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId;
