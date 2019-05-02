@@ -163,7 +163,9 @@ NSString* mCallbackId;
 
 - (void)closeMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"closeMapwizeView called...");
-    [self.viewController dismissViewControllerAnimated:NO completion:nil];
+    [self.viewController dismissViewControllerAnimated:NO completion:^{
+//        [self.viewController deinit]
+    }];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
