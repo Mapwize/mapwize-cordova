@@ -1,3 +1,10 @@
+//
+//  ViewController.m
+//  Mapwize Tester
+//
+//  Created by Laszlo Blum on 2019. 04. 23..
+//
+
 #import "Constants.h"
 #import "ViewController.h"
 #import "Mapwize.h"
@@ -16,6 +23,13 @@
 @implementation ViewController
 
 BOOL showCloseButton;
+BOOL showInfoButtonForPlaces;
+BOOL showInfoButtonForPlaceLists;
+
+
+-(void)deinit {
+    NSLog(@"ViewController, deinit...");
+}
 
 -(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     NSLog(@"positionForBar called...");
@@ -23,9 +37,12 @@ BOOL showCloseButton;
     return UIBarPositionTop;
 }
 
-- (void)setOptions:(MWZOptions*)opts {
+- (void)setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists {
     NSLog(@"setOptions, viewController...");
     _opts = opts;
+    showInfoButtonForPlaces = showInformationButtonForPlaces;
+    showInfoButtonForPlaceLists = showInformationButtonForPlaceLists;
+
 }
 
 - (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId {
@@ -150,7 +167,15 @@ BOOL showCloseButton;
 
 - (void)onTapDone:(id)sender {
     NSLog(@"onTapDone");
-    [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    UINavigationBar* navibar = self.navigationController.navigationBar;
+    if (navibar != nil) {
+        [self.navigationController dismissViewControllerAnimated:TRUE completion:nil];
+//        [self dismissViewControllerAnimated:NO completion:nil];
+//        [self.navigationController dismissViewControllerAnimated:NO completion:nil];
+    } else {
+        [self dismissViewControllerAnimated:NO completion:nil];
+//        [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    }
     [self sendCallbackEvent:CBK_EVENT_CLOSE_BUTTON_CLICKED];
 }
 
@@ -182,11 +207,21 @@ BOOL showCloseButton;
 }
 
 - (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
-    [self sendCallbackEvent:CBK_EVENT_SHOULD_SHOW_INFORMATION_BUTTON_FOR]; //TODO: What to pass for argument? (type, object) ?
+    NSLog(@"shouldShowInformationButtonFor...");
+    NSDictionary* data = [mapwizeObject data];
+    
+    if ([data objectForKey:CORDOVA_SHOW_INFORMATION_BUTTON] != nil) {
+        BOOL cordovaOn = [[data valueForKey:CORDOVA_SHOW_INFORMATION_BUTTON] boolValue];
+        return cordovaOn;
+    }
+
     if ([mapwizeObject isKindOfClass:MWZPlace.class]) {
-        return YES;
+        NSLog(@"shouldShowInformationButtonFor, MWZPlace...");
+        return showInfoButtonForPlaces;
+
     } else if ([mapwizeObject isKindOfClass:MWZPlaceList.class]) {
-        return YES;
+        NSLog(@"shouldShowInformationButtonFor, MWZPlaceList...");
+        return showInfoButtonForPlaceLists;
     }
     return NO;
 }

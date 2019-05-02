@@ -19,6 +19,14 @@
     <js-module src="www/MapwizeView.js" name="MapwizeView" >
         <clobbers target="window.MapwizeView" />
     </js-module>
+
+    <js-module src="www/OfflineManager.js" name="OfflineManager" >
+        <clobbers target="window.OfflineManager" />
+    </js-module>
+
+    <js-module src="www/ApiManager.js" name="ApiManager" >
+        <clobbers target="window.ApiManager" />
+    </js-module>
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
@@ -58,6 +66,8 @@
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeActivity.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeCordovaPlugin.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MarshMallowPermission.java" target-dir="src/io/mapwize/cordova/" />
+        <source-file src="src/android/src/io/mapwize/cordova/ApiManager.java" target-dir="src/io/mapwize/cordova/" />
+        <source-file src="src/android/src/io/mapwize/cordova/OfflineManager.java" target-dir="src/io/mapwize/cordova/" />
 
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <hook type="after_prepare" src="scripts/after_prepare.js" />
@@ -87,6 +97,10 @@
         <pods-config ios-min-version="10.0" use-frameworks="true">
         </pods-config>
 
+        <header-file src="src/ios/src/ApiManager.h" />
+        <source-file src="src/ios/src/ApiManager.m" />
+        <header-file src="src/ios/src/OfflineManager.h" />
+        <source-file src="src/ios/src/OfflineManager.m" />
         <header-file src="src/ios/src/Constants.h" />
         <source-file src="src/ios/src/Constants.m" />
         <header-file src="src/ios/src/Mapwize.h" />

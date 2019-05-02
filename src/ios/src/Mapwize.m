@@ -1,19 +1,20 @@
 //
-//  FlashPlugin.m
-//  FlashDemo
+//  Mapwize.m
+//  Mapwize Tester
 //
-//  Created by Blum László on 27/07/15.
-//  Copyright (c) 2015 Halifone Ltd. All rights reserved.
+//  Created by Laszlo Blum on 2019. 04. 23..
 //
 
 #import <Foundation/Foundation.h>
-
 #import <AVFoundation/AVFoundation.h>
 #import <Cordova/CDV.h>
 #import "Mapwize.h"
 #import "ViewController.h"
-#import <MapwizeUI/MapwizeUI.h>
 
+#import "OfflineManager.h"
+#import "ApiManager.h"
+#import <MapwizeUI/MapwizeUI.h>
+#import "Constants.h"
 
 @implementation Mapwize
 {
@@ -21,9 +22,11 @@
     NSNotification *_notification;
     UINavigationController* navController;
     ViewController* viewCtrl;
+    OfflineManager* offlineManager;
+    BOOL showInformationButtonForPlaces;
+    BOOL showInformationButtonForPlaceLists;
 }
 NSString* mCallbackId;
-
 
 /**
  * Initialize the plugin.
@@ -31,6 +34,10 @@ NSString* mCallbackId;
 - (void) pluginInitialize
 {
     NSLog(@"pluginInitialize...");
+    
+    
+    NSLog(@"ApiManager initManager called...");
+    [ApiManager initManager:self];
 }
 
 - (void)dealloc {
@@ -47,23 +54,35 @@ NSString* mCallbackId;
 
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"createMapwizeView called...");
+    viewCtrl = [[ViewController alloc] init];
     BOOL showCloseButton = YES;
     
-    viewCtrl = [[ViewController alloc] init];
-    if (showCloseButton == YES) {
-        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
-    }
+    BOOL showInformationButtonForPlaces = YES;
+    BOOL showInformationButtonForPlaceLists = YES;
+    
     
     NSString *optionsStr = [command.arguments objectAtIndex:0];
     NSData *data = [optionsStr dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *jsonError;
-    NSLog(@"converting json...");
+    NSLog(@"converting json...%@", optionsStr);
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                  options:NSJSONReadingMutableContainers
                                    error:&jsonError];
     NSLog(@"creating opts...");
     MWZUIOptions *opts = [[MWZUIOptions alloc] init];
+    
+    NSLog(@"getting showInformationButtonForPlaces...");
+    if ([json objectForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACES] != nil) {
+        NSLog(@"setting showInformationButtonForPlaces...");
+        showInformationButtonForPlaces = [[json valueForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACES] boolValue];
+    }
+    
+    NSLog(@"getting showInformationButtonForPlaces...");
+    if ([json objectForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS] != nil) {
+        NSLog(@"setting showInformationButtonForPlaces...");
+        showInformationButtonForPlaceLists = [[json valueForKey:OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS] boolValue];
+    }
     
     NSLog(@"getting floor...");
     NSNumber* floor = json[@"floor"];
@@ -117,15 +136,23 @@ NSString* mCallbackId;
         opts.centerOnLocation = nil;
     }
     
-    [viewCtrl setOptions:opts];
+    NSLog(@"showCloseButton...");
+//    showCloseButton = json[@"showCloseButton"];
+    
+    showCloseButton =  [[json valueForKey:@"showCloseButton"] boolValue];
+    
+    if (showCloseButton == YES) {
+        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
+    }
+    
+    [viewCtrl setOptions:opts showInformationButtonForPlaces:showInformationButtonForPlaces showInformationButtonForPlaceLists:showInformationButtonForPlaceLists];
     
     NSLog(@"getting addChildViewController...");
     NSLog(@"getting presentViewController...");
     
     if (showCloseButton == YES) {
         [self.viewController presentViewController:navController
-                                          animated:NO
-                                        completion:nil];
+                                          animated:NO completion:nil];
     } else {
         [self.viewController presentViewController:viewCtrl
                                           animated:NO
@@ -137,11 +164,11 @@ NSString* mCallbackId;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-
-
 - (void)closeMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"closeMapwizeView called...");
-    [self.viewController dismissViewControllerAnimated:NO completion:nil];
+    [self.viewController dismissViewControllerAnimated:NO completion:^{
+//        [self.viewController deinit]
+    }];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -204,7 +231,6 @@ NSString* mCallbackId;
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {
     NSMutableArray<MWZUniverse*>* universes  = [NSMutableArray array];
-    
     NSEnumerator *e = [universes objectEnumerator];
     id object;
     while (object = [e nextObject]) {
@@ -221,6 +247,211 @@ NSString* mCallbackId;
     NSString* name = universeDict[@"name"];
     MWZUniverse* uv = [[MWZUniverse alloc] initWithIdentifier:identifier name:name];
     return uv;
+}
+
+// Offline Manager
+- (void) initOfflineManager:(CDVInvokedUrlCommand*)command {
+    NSLog(@"initOfflineManager called...");
+    NSString *styleURL = [command.arguments objectAtIndex:0];
+    NSLog(@"initOfflineManager styleURL %@...", styleURL);
+    offlineManager = [[OfflineManager alloc] init];
+    [offlineManager initManager:self styleURL:styleURL];
+}
+
+- (void) removeDataForVenue:(CDVInvokedUrlCommand*)command {
+    NSLog(@"removeDataForVenue called...");
+    NSString *venueId = [command.arguments objectAtIndex:0];
+    NSString *universeId = [command.arguments objectAtIndex:1];
+    [offlineManager removeDataForVenue:venueId universe:universeId callbackId:command.callbackId];
+}
+
+- (void) downloadDataForVenue:(CDVInvokedUrlCommand*)command {
+    NSLog(@"downloadDataForVenue called...");
+    NSString *venueId = [command.arguments objectAtIndex:0];
+    NSString *universeId = [command.arguments objectAtIndex:1];
+    [offlineManager downloadDataForVenue:venueId universe:universeId callbackId:command.callbackId];
+}
+
+- (void) isOfflineForVenue:(CDVInvokedUrlCommand*)command {
+    NSLog(@"isOfflineForVenue called...");
+    NSString *venueId = [command.arguments objectAtIndex:0];
+    NSString *universeId = [command.arguments objectAtIndex:1];
+    [offlineManager isOfflineForVenue:venueId universe:universeId callbackId:command.callbackId];
+}
+
+- (void) getOfflineVenues:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getOfflineVenues called...");
+    [offlineManager getOfflineVenues:command.callbackId];
+}
+
+- (void) getOfflineUniversesForVenue:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getOfflineUniversesForVenue called...");
+    NSString *venueId = [command.arguments objectAtIndex:0];
+    [offlineManager getOfflineUniversesForVenue:venueId callbackId:command.callbackId];
+}
+
+
+// API Manager
+
+- (void)getVenueWithId:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getVenueWithId called...");
+    NSString *identifier = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getVenueWithId:identifier callbackId:command.callbackId];
+}
+- (void)getVenuesWithFilter:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getVenuesWithFilter called...");
+    NSString *filterStr = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getVenuesWithFilter:filterStr callbackId:command.callbackId];
+}
+
+- (void)getVenueWithName:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getVenueWithName called...");
+    NSString *name = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getVenueWithName:name callbackId:command.callbackId];
+}
+
+- (void)getVenueWithAlias:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getVenueWithAlias called...");
+    NSString *alias = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getVenueWithAlias:alias callbackId:command.callbackId];
+}
+
+- (void)getPlaceWithId:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceWithId called...");
+    NSString *identifier = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getPlaceWithId:identifier callbackId:command.callbackId];
+}
+
+- (void)getPlaceWithName:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceWithName called...");
+    NSString *name = [command.arguments objectAtIndex:0];
+    NSString *venueId = [command.arguments objectAtIndex:1];
+    
+    [ApiManager getPlaceWithName:name venue:venueId callbackId:command.callbackId];
+}
+
+- (void)getPlaceWithAlias:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceWithAlias called...");
+    NSString *alias = [command.arguments objectAtIndex:0];
+    NSString *venueId = [command.arguments objectAtIndex:1];
+    
+    [ApiManager getPlaceWithAlias:alias venue:venueId callbackId:command.callbackId];
+}
+
+- (void)getPlacesWithFilter:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlacesWithFilter called...");
+    NSString *filter = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getPlacesWithFilter:filter callbackId:command.callbackId];
+}
+
+- (void)getPlaceListWithId:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceListWithId called...");
+    NSString *identifier = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getPlaceListWithId:identifier callbackId:command.callbackId];
+}
+
+- (void)getPlaceListWithName:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceListWithName called...");
+    NSString *name = [command.arguments objectAtIndex:0];
+    NSString *venueId = [command.arguments objectAtIndex:1];
+    
+    [ApiManager getPlaceListWithName:name venue:venueId callbackId:command.callbackId];
+}
+
+- (void)getPlaceListWithAlias:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceListWithAlias called...");
+    NSString *alias = [command.arguments objectAtIndex:0];
+    NSString *venueId = [command.arguments objectAtIndex:1];
+    
+    [ApiManager getPlaceListWithAlias:alias venue:venueId callbackId:command.callbackId];
+}
+
+- (void)getPlaceListsWithFilter:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getPlaceListsWithFilter called...");
+    NSString *filterStr = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getPlaceListsWithFilter:filterStr callbackId:command.callbackId];
+}
+
+- (void)getUniverseWithId:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getUniverseWithId called...");
+    NSString *universeId = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getUniverseWithId:universeId callbackId:command.callbackId];
+}
+
+- (void)getUniversesWithFilter:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getUniversesWithFilter called...");
+    NSString *filterStr = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getUniversesWithFilter:filterStr callbackId:command.callbackId];
+}
+
+- (void)getAccessibleUniversesWithVenue:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getAccessibleUniversesWithVenue called...");
+    NSString *venueId = [command.arguments objectAtIndex:0];
+    
+    [ApiManager getAccessibleUniversesWithVenue:venueId callbackId:command.callbackId];
+}
+
+- (void)searchWithParams:(CDVInvokedUrlCommand*)command {
+    NSLog(@"searchWithParams called...");
+    NSString *searchParams = [command.arguments objectAtIndex:0];
+    
+    [ApiManager searchWithParams:searchParams callbackId:command.callbackId];
+}
+
+- (void)getDirectionWithFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointTo = [command.arguments objectAtIndex:1];
+    BOOL     isAccessible = [command.arguments objectAtIndex:2];
+    [ApiManager getDirectionWithFrom:directionPointFrom to:directionPointTo isAccessible:isAccessible callbackId:command.callbackId];
+}
+
+- (void)getDirectionWithDirectionPointsFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithDirectionPointsFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointsListTo = [command.arguments objectAtIndex:1];
+    BOOL     isAccessible = [command.arguments objectAtIndex:2];
+    [ApiManager getDirectionWithDirectionPointsFrom:directionPointFrom to:directionPointsListTo isAccessible:isAccessible callbackId:command.callbackId];
+}
+- (void)getDirectionWithWayPointsFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithWayPointsFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointTo = [command.arguments objectAtIndex:1];
+    NSString *wayPointsList = [command.arguments objectAtIndex:2];
+    BOOL     isAccessible = [command.arguments objectAtIndex:3];
+    BOOL     bool2 = [command.arguments objectAtIndex:4];
+    [ApiManager getDirectionWithWayPointsFrom:directionPointFrom to:directionPointTo waypointsList:wayPointsList bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+}
+
+- (void)getDirectionWithDirectionAndWayPointsFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDirectionWithWayPointsFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointListTo = [command.arguments objectAtIndex:1];
+    NSString *wayPointsList = [command.arguments objectAtIndex:2];
+    BOOL     isAccessible = [command.arguments objectAtIndex:3];
+    BOOL     bool2 = [command.arguments objectAtIndex:4];
+    
+    [ApiManager getDirectionWithDirectionAndWayPointsFrom:directionPointFrom tos:directionPointListTo waypointsList:wayPointsList bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+}
+
+
+- (void)getDistanceWithFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDistanceWithFrom called...");
+    NSString *directionPointFrom = [command.arguments objectAtIndex:0];
+    NSString *directionPointsListTo = [command.arguments objectAtIndex:1];
+    BOOL     isAccessible = [command.arguments objectAtIndex:2];
+    BOOL     bool2 = [command.arguments objectAtIndex:3];
+    [ApiManager getDistanceWithFrom:directionPointFrom directionpointsToListStr:directionPointsListTo bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
 }
 
 @end
