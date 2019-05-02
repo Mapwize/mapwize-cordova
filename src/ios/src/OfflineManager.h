@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MapwizeUI.h"
+#import <MapwizeUI/MapwizeUI.h>
 #import "Mapwize.h"
 
 NS_ASSUME_NONNULL_BEGIN
