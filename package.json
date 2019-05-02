@@ -1,8 +1,8 @@
 {
     "version": "1.0.0",
-    "name": "mapwize-cordova-plugin",
-    "cordova_name": "Mapwize Plugin",
-    "description": "Mapwize Plugin",
+    "name": "mapwize-cordova",
+    "cordova_name": "Use Mapwize Indoor Maps in your Cordova app",
+    "description": "Use Mapwize Indoor Maps in your Cordova app",
     "license": "MIT",
     "repo": "https://github.com/Mapwize/mapwize-cordova",
     "issue": "",
