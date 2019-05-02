@@ -12,7 +12,7 @@
 #import "ViewController.h"
 #import "OfflineManager.h"
 #import "ApiManager.h"
-#import "MapwizeUI.h"
+#import <MapwizeUI/MapwizeUI.h>
 #import "Constants.h"
 
 @implementation Mapwize
@@ -136,8 +136,6 @@ NSString* mCallbackId;
     }
     
     NSLog(@"showCloseButton...");
-//    showCloseButton = json[@"showCloseButton"];
-    
     showCloseButton =  [[json valueForKey:@"showCloseButton"] boolValue];
     
     if (showCloseButton == YES) {
@@ -291,7 +289,6 @@ NSString* mCallbackId;
 
 
 // API Manager
-
 - (void)getVenueWithId:(CDVInvokedUrlCommand*)command {
     NSLog(@"getVenueWithId called...");
     NSString *identifier = [command.arguments objectAtIndex:0];

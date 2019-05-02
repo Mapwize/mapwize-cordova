@@ -6,12 +6,10 @@
 //
 
 #import "OfflineManager.h"
-#import "MapwizeUI.h"
 #import "Constants.h"
 
 @interface OfflineManager ()
 
-//@property (nonatomic, retain) MGLMapView* mapView;
 @property (nonatomic, retain) MWZOfflineManager* offlineManager;
 @property (nonatomic, retain) Mapwize* plugin;
 
@@ -20,8 +18,6 @@
 
 @implementation OfflineManager
 
-
-//- (void) initManager:(MGLMapView*) mapView plugin:(Mapwize*) plugin {
 - (void) initManager:(Mapwize*) plugin styleURL:(NSString*) styleURL {
     self.plugin = plugin;
     NSURL* url = [NSURL URLWithString:[styleURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
