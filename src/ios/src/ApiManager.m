@@ -6,7 +6,6 @@
 //
 
 #import "ApiManager.h"
-#import <MapwizeUI/MapwizeUI.h>
 #import "Constants.h"
 
 

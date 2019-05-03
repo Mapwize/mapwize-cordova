@@ -11,6 +11,7 @@
 NSString *const CBK_FIELD_EVENT = @"event";
 NSString *const CBK_FIELD_ARG = @"arg";
 
+NSString *const CBK_EVENT_CLOSE_BUTTON_CLICKED = @"TapOnCloseButton";
 NSString *const CBK_EVENT_DID_LOAD = @"DidLoad";
 NSString *const CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION = @"DidTapOnFollowWithoutLocation";
 NSString *const CBK_EVENT_DID_TAP_ON_MENU = @"DidTapOnMenu";
@@ -41,6 +42,3 @@ NSString *const OPT_SHOW_INFO_BUTTON_FOR_PLACES = @"showInformationButtonForPlac
 NSString *const OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS = @"showInformationButtonForPlaceLists";
 
 NSString *const CORDOVA_SHOW_INFORMATION_BUTTON = @"cordovaShowInformationButton";
-
-
-

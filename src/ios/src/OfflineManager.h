@@ -12,7 +12,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface OfflineManager : NSObject
-//- (void) initManager:(MGLMapView*) mapView plugin:(Mapwize*) plugin;
 - (void) initManager:(Mapwize*) plugin styleURL:(NSString*) styleURL;
 - (void) removeDataForVenue:(NSString*) venueId universe:(NSString*) universeId callbackId:(NSString*) callbackId;
 - (void) downloadDataForVenue:(NSString*) venueId

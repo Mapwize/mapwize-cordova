@@ -8,9 +8,7 @@
 #import "Constants.h"
 #import "ViewController.h"
 #import "Mapwize.h"
-#import <MapwizeUI/MapwizeUI.h>
 
-//@interface ViewController () <MWZMapwizeViewDelegate, UIBarPositioningDelegate>
 @interface ViewController () <MWZMapwizeViewDelegate, UINavigationBarDelegate>
 
 @property (nonatomic, retain) MWZMapwizeView* mapwizeView;
@@ -33,7 +31,6 @@ BOOL showInfoButtonForPlaceLists;
 
 -(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     NSLog(@"positionForBar called...");
-    //    return UIBarPositionTopAttached;
     return UIBarPositionTop;
 }
 
@@ -127,8 +124,8 @@ BOOL showInfoButtonForPlaceLists;
                                     style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(onTapDone:)];
-
-        self.navigationItem.leftBarButtonItem = doneBtn;
+        
+        self.navigationItem.rightBarButtonItem = doneBtn;
     }
     
     [self.view addSubview:self.mapwizeView];
@@ -170,11 +167,8 @@ BOOL showInfoButtonForPlaceLists;
     UINavigationBar* navibar = self.navigationController.navigationBar;
     if (navibar != nil) {
         [self.navigationController dismissViewControllerAnimated:TRUE completion:nil];
-//        [self dismissViewControllerAnimated:NO completion:nil];
-//        [self.navigationController dismissViewControllerAnimated:NO completion:nil];
     } else {
         [self dismissViewControllerAnimated:NO completion:nil];
-//        [[self presentingViewController] dismissViewControllerAnimated:NO completion:nil];
     }
     [self sendCallbackEvent:CBK_EVENT_CLOSE_BUTTON_CLICKED];
 }
@@ -262,7 +256,6 @@ BOOL showInfoButtonForPlaceLists;
     NSError *err;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:args options:NSJSONWritingPrettyPrinted error:&err];
     NSString* argStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    //    dict[CBK_FIELD_EVENT] = event;
     dict[CBK_FIELD_ARG] = argStr;
     [self sendCallback:dict callbackId:callbackId];
 }

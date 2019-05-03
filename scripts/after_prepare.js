@@ -3,6 +3,7 @@ module.exports = function(ctx) {
     if (ctx.opts.platforms.indexOf('android') < 0) {
         return;
     }
+    
     var path = require('path'),
         properties = require("properties-parser");
 

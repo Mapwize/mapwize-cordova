@@ -4,7 +4,7 @@
     id="mapwize-cordova-plugin"
     version="1.0.0">
     <name>Mapwize</name>
-    <description>Cordova Plugin for Mapwize</description>
+    <description>Use Mapwize Indoor Maps in your Cordova app</description>
     <license>MIT</license>
     <keywords>cordova,ionic,mapwize,indoor,building,map,maps</keywords>
     <repo>https://github.com/Mapwize/mapwize-cordova</repo>

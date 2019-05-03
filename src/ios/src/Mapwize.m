@@ -137,8 +137,6 @@ NSString* mCallbackId;
     }
     
     NSLog(@"showCloseButton...");
-//    showCloseButton = json[@"showCloseButton"];
-    
     showCloseButton =  [[json valueForKey:@"showCloseButton"] boolValue];
     
     if (showCloseButton == YES) {
@@ -292,7 +290,6 @@ NSString* mCallbackId;
 
 
 // API Manager
-
 - (void)getVenueWithId:(CDVInvokedUrlCommand*)command {
     NSLog(@"getVenueWithId called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
