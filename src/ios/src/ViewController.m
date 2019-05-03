@@ -129,7 +129,7 @@ BOOL showInfoButtonForPlaceLists;
     }
     
     [self.view addSubview:self.mapwizeView];
-    
+
     [[NSLayoutConstraint constraintWithItem:self.mapwizeView
                                   attribute:NSLayoutAttributeLeft
                                   relatedBy:NSLayoutRelationEqual

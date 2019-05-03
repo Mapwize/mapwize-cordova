@@ -10,7 +10,6 @@
 #import <Cordova/CDV.h>
 #import "Mapwize.h"
 #import "ViewController.h"
-
 #import "OfflineManager.h"
 #import "ApiManager.h"
 #import <MapwizeUI/MapwizeUI.h>
