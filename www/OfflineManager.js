@@ -21,7 +21,11 @@ OfflineManager.prototype.removeDataForVenue = function(venueId, universeId, succ
 	console.log("OfflineManager: close");
 	exec(function(result) { 
 				console.log("OfflineManager: close: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("OfflineManager: close: FAILED");
 				failure(err);
@@ -47,7 +51,11 @@ OfflineManager.prototype.isOfflineForVenue = function(venueId, universeId, succe
 	console.log("OfflineManager: isOfflineForVenue");
 	exec(function(result) { 
 				console.log("OfflineManager: isOfflineForVenue: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("OfflineManager: isOfflineForVenue: FAILED");
 				failure(err);
@@ -58,7 +66,11 @@ OfflineManager.prototype.getOfflineVenues = function(success, failure) {
 	console.log("OfflineManager: getOfflineVenues");
 	exec(function(result) { 
 				console.log("OfflineManager: getOfflineVenues: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("OfflineManager: getOfflineVenues: FAILED");
 				failure(err);
@@ -69,7 +81,11 @@ OfflineManager.prototype.getOfflineUniversesForVenue = function(venueId, success
 	console.log("OfflineManager: getOfflineUniversesForVenue");
 	exec(function(result) { 
 				console.log("OfflineManager: getOfflineUniversesForVenue: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("OfflineManager: getOfflineUniversesForVenue: FAILED");
 				failure(err);
