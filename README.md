@@ -441,3 +441,11 @@ The localization files should be placed in directories named 'languages/ios' and
 ```
 
 Configure and run the ionic project the usual way. The localization takes the default device language to select the proper localization file.
+
+# Contributions
+
+This plugin has been mainly developed by [Laszlo Blum](https://github.com/laszloblum).
+
+We want to thank [Guillaume Emery](https://github.com/EmeryGuillaume) for its contributions, advises and feedbacks along the development.
+
+Contributions to this open-source project are welcome.
