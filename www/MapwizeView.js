@@ -23,12 +23,11 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "TapOnPlaceListInformationButton":
 			case "TapOnCloseButton":
 				console.log("Handling event " + result);
-				if (!result.arg) {
-					callbacks[result.event]();
-				} else {
+				if(!!result && result.arg){
 					callbacks[result.event](JSON.parse(result.arg));
+				} else{
+					callbacks[result.event](result);
 				}
-				
 				break;
 			default:
 				console.log("Event not recognized... event: " + JSON.stringify(result));
@@ -41,7 +40,11 @@ MapwizeView.prototype.close = function(success, failure) {
 	console.log("MapwizeView: close");
 	exec(function(result) { 
 				console.log("MapwizeView: close: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("MapwizeView: close: FAILED");
 				failure(err);
@@ -52,7 +55,11 @@ MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
 	console.log("MapwizeView: selectPlace");
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlace: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("MapwizeView: selectPlace: FAILED");
 				failure(err);
@@ -63,7 +70,11 @@ MapwizeView.prototype.selectPlaceList = function(id, success, failure) {
 	console.log("MapwizeView: selectPlaceList");
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlaceList: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("MapwizeView: selectPlaceList: FAILED");
 				failure(err);
@@ -74,7 +85,11 @@ MapwizeView.prototype.setPlaceStyle = function(id, style, success, failure) {
 	console.log("MapwizeView: setPlaceStyle");
 	exec(function(result) { 
 				console.log("MapwizeView: setPlaceStyle: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("MapwizeView: setPlaceStyle: FAILED");
 				failure(err);
@@ -85,7 +100,11 @@ MapwizeView.prototype.grantAccess = function(accessKey, success, failure) {
 	console.log("MapwizeView: grantAccess");
 	exec(function(result) { 
 				console.log("MapwizeView: grantAccess: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("MapwizeView: grantAccess: FAILED");
 				failure(err);
@@ -96,7 +115,11 @@ MapwizeView.prototype.unselectContent = function(closeInfo, success, failure) {
 	console.log("MapwizeView: unselectContent");
 	exec(function(result) { 
 				console.log("MapwizeView: unselectContent: SUCCESS");
-				success(JSON.parse(result.arg));
+				if(!!result && result.arg){
+					success(JSON.parse(result.arg));
+				} else{
+					success(result);
+				}
 			}, function(err) {
 				console.log("MapwizeView: unselectContent: FAILED");
 				failure(err);
