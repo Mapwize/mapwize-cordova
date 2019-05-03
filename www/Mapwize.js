@@ -6,7 +6,7 @@ function Mapwize() {
 	console.log("Mapwize: is created");
 }
 
-Mapwize.prototype.createMapwizeView = function(options, callbacks, success, failure) {
+Mapwize.prototype.createMapwizeView = function(options, success, failure) {
 	console.log("Mapwize: createMapwizeView...");
 	exec(function(result) { 
 				console.log("Mapwize: selectPlace: SUCCESS");
