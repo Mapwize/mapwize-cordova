@@ -260,5 +260,10 @@ BOOL showInfoButtonForPlaceLists;
     [self sendCallback:dict callbackId:callbackId];
 }
 
+- (void) dealloc {
+    NSLog(@"ViewController, dealloc...");
+    [self.view willRemoveSubview:self.mapwizeView];
+    self.mapwizeView = nil;
+}
 
 @end

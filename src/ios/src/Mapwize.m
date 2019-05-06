@@ -37,6 +37,7 @@ NSString* mCallbackId;
     
     NSLog(@"ApiManager initManager called...");
     [ApiManager initManager:self];
+    viewCtrl = nil;
 }
 
 - (void)dealloc {
@@ -53,6 +54,9 @@ NSString* mCallbackId;
 
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"createMapwizeView called...");
+    if (viewCtrl != nil) {
+        viewCtrl = nil;
+    }
     viewCtrl = [[ViewController alloc] init];
     BOOL showCloseButton = YES;
     
@@ -225,6 +229,13 @@ NSString* mCallbackId;
     BOOL closeInfo = [command.arguments objectAtIndex:0];
     [viewCtrl unselectContent:closeInfo callbackId:command.callbackId];
 }
+
+- (void)destroyMapwizeView:(CDVInvokedUrlCommand*)command {
+    NSLog(@"destroyMapwizeView...");
+    viewCtrl = nil;
+}
+
+
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {
     NSMutableArray<MWZUniverse*>* universes  = [NSMutableArray array];

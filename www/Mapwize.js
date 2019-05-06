@@ -9,10 +9,10 @@ function Mapwize() {
 Mapwize.prototype.createMapwizeView = function(options, success, failure) {
 	console.log("Mapwize: createMapwizeView...");
 	exec(function(result) { 
-				console.log("Mapwize: selectPlace: SUCCESS");
-				success(JSON.parse(result.arg));
+				console.log("Mapwize: createMapwizeView: SUCCESS ");
+				success(JSON.parse(result));
 			}, function(err) {
-				console.log("Mapwize: selectPlace: FAILED");
+				console.log("Mapwize: createMapwizeView: FAILED");
 				failure(err);
 			}, PLUGIN_NAME, "createMapwizeView", [JSON.stringify(options)]);
 	return new MapwizeView();
@@ -27,6 +27,18 @@ Mapwize.prototype.createApiManager = function(success, failure) {
 	console.log("Mapwize: createApiManager...");
 	return new ApiManager();
 }
+
+Mapwize.prototype.destroyMapwizeView = function(success, failure) {
+	console.log("Mapwize: destroyMapwizeView");
+	exec(function(result) { 
+				console.log("Mapwize: destroyMapwizeView: SUCCESS");
+				success(JSON.parse(result));
+			}, function(err) {
+				console.log("Mapwize: destroyMapwizeView: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "destroyMapwizeView", []);
+}
+
 
 var mapwize = new Mapwize();
 module.exports = mapwize;
