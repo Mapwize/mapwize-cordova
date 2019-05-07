@@ -11,10 +11,11 @@
 
 @interface ViewController () <MWZMapwizeViewDelegate, UINavigationBarDelegate>
 
-@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
-@property (nonatomic, retain) MWZOptions* opts;
-@property (nonatomic, retain) Mapwize* plugin;
-@property (nonatomic, retain) NSString* callbackId;
+//@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
+@property (nonatomic, weak) MWZMapwizeView* mapwizeView;
+@property (nonatomic, weak) MWZOptions* opts;
+@property (nonatomic, weak) Mapwize* plugin;
+@property (nonatomic, weak) NSString* callbackId;
 
 @end
 
@@ -260,5 +261,10 @@ BOOL showInfoButtonForPlaceLists;
     [self sendCallback:dict callbackId:callbackId];
 }
 
+- (void) dealloc {
+    NSLog(@"ViewController, dealloc...");
+    [self.view willRemoveSubview:self.mapwizeView];
+    self.mapwizeView = nil;
+}
 
 @end

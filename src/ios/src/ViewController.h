@@ -33,6 +33,8 @@
 - (void)mapwizeViewDidTapOnMenu:(MWZMapwizeView *)mapwizeView;
 - (void)mapwizeViewDidLoad:(MWZMapwizeView*) mapwizeView;
 - (BOOL)mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject;
+- (void) dealloc;
+
 @end
 
 #endif

@@ -84,6 +84,20 @@ showInformationButtonForPlaceLists: <<boolean>>, hide/show Information button on
 	(default: true)
 ```
 
+### Destroying MapwizeView
+This function destroy the single instance of the MapwizeView.
+
+
+```
+Mapwize.destroyMapwizeView(
+      () => {
+        // Handle  successfull destruction
+      }, (err) => {
+        // Handle  failed destruction
+        console.log("Error: " + err.message + ", localized message: " + err.locMessage);
+      });
+```
+
 ### Callback functions
 
 To receive callbacks you need to set the supported callback functions.
