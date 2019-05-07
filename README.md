@@ -14,9 +14,9 @@ The plugin is compatible with Cordova 8 / cordova-ios 4.5+ / cordova-android 8.0
 
 A simple Ionic app using the plugin is available in this repository [mapwize-cordova-demo](https://github.com/Mapwize/mapwize-cordova-demo). It's a great way to see how it works.
 
-# 1. Preparation
+## Preparation
 
-## 1.1. Installing plugin
+### Installing plugin
 
 ```
 ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" mapwize-cordova-plugin
@@ -28,7 +28,7 @@ or from github
 ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" https://github.com/Mapwize/mapwize-cordova.git
 ```
 
-## 1.2. Setting up your ionic project
+### Setting up your ionic project
 
 To use the plugin, declare Mapwize symbol for your components.
 
@@ -49,9 +49,9 @@ export class HomePage {
 
 
 
-# 2. MapwizeView
+## MapwizeView
 
-## 2.1 Creating MapwizeView
+### Creating MapwizeView
 
 ```
 this.mapwizeView = Mapwize.createMapwizeView(
@@ -75,7 +75,7 @@ this.mapwizeView = Mapwize.createMapwizeView(
       });
 ```
 
-### 2.1.1. Additional parameters
+#### Additional parameters
 
 ```
 showCloseButton: <<boolean>>, hide/show close button on MapwizeView (default: false)
@@ -84,7 +84,7 @@ showInformationButtonForPlaceLists: <<boolean>>, hide/show Information button on
 	(default: true)
 ```
 
-## 2.2. Callback functions
+### Callback functions
 
 To receive callbacks you need to set the supported callback functions.
 
@@ -121,21 +121,21 @@ this.mapwizeView.setCallback(
  ...
 ```
 
-### 2.2.1 DidLoad
+#### DidLoad
 
 Triggers when the View has loaded.
 
-### 2.2.2 DidTapOnFollowWithoutLocation
+#### DidTapOnFollowWithoutLocation
 
 ---
 
-### 2.2.3 DidTapOnMenu
+#### DidTapOnMenu
 
 Triggers when the Menu icon is tapped.
 
-### ~~2.2.4 shouldShowInformationButtonFor~~
+#### shouldShowInformationButtonFor~~
 
-### 2.2.5 TapOnPlaceInformationButton (place)
+#### TapOnPlaceInformationButton (place)
 
 Triggers when a place is selected and the "Information" button is tapped.
 
@@ -215,7 +215,7 @@ Returns a Place object like this:
 }
 ```
 
-### 2.2.6 TapOnPlaceListInformationButton (place)
+#### TapOnPlaceListInformationButton (place)
 
 Triggers when a place is selected and the "Information" button is tapped.
 
@@ -258,11 +258,11 @@ Returns a PlaceList object like this:
 }
 ```
 
-### 2.3 MapwizeView functions
+#### MapwizeView functions
 
 These functions can be used after the view has been loaded.
 
-### 2.3.1 selectPlace(id, centerOn, successFn, failureFn)
+#### selectPlace(id, centerOn, successFn, failureFn)
 
 Selects the Place object of the given *id* in the view.
 
@@ -283,7 +283,7 @@ this.mapwiseView.selectPlace(
       );
 ```
 
-### 2.3.2 selectPlaceList(id, successFn, failureFn)
+#### selectPlaceList(id, successFn, failureFn)
 
 Selects the PlaceList object of the given *id* in the view.
 
@@ -303,7 +303,7 @@ this.mapwiseView.selectPlaceList(
       );
 ```
 
-### 2.3.3 grantAccess(token, successFn, failureFn)
+#### grantAccess(token, successFn, failureFn)
 
 Grants access.
 
@@ -323,7 +323,7 @@ this.mapwiseView.grantAccess(
       );
 ```
 
-### 2.3.4 unselectContent(closeInfo, successFn, failureFn)
+#### unselectContent(closeInfo, successFn, failureFn)
 
 TBD
 
@@ -343,7 +343,7 @@ this.mapwiseView.unselectContent(
       );
 ```
 
-### 2.3.5 setPlaceStyle(id, style, successFn, failureFn)
+#### setPlaceStyle(id, style, successFn, failureFn)
 
 Sets the style of the given Place.
 
@@ -383,13 +383,13 @@ this.mapwizeView.setPlaceStyle(
           );
 ```
 
-# 3. Localization
+## Localization
 
 For localized texts,
 
 The localization files should be placed in directories named 'languages/ios' and 'languages/android' under the root directory of your ionic project
 
-## 3.1. Android localization
+### Android localization
 
 1. Create value-<<2-letter country code>> directories for each language
 2. Create a translation content file named "strings2.xml" with the following content (the values to be translated):
@@ -416,7 +416,7 @@ The localization files should be placed in directories named 'languages/ios' and
 </resources>
 ```
 
-## 3.2. Android localization
+### Ios localization
 
 1. Create <<2-letter country code>>.lproj directories for each language
 2. Create a translation content file named "Localizable.strings" with the following content (the values to be translated):
@@ -442,7 +442,7 @@ The localization files should be placed in directories named 'languages/ios' and
 
 Configure and run the ionic project the usual way. The localization takes the default device language to select the proper localization file.
 
-# Contributions
+## Contributions
 
 This plugin has been mainly developed by [Laszlo Blum](https://github.com/laszloblum).
 
