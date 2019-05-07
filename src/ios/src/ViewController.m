@@ -264,7 +264,7 @@ BOOL showInfoButtonForPlaceLists;
     self.navigationItem.rightBarButtonItem = nil;
     self.mapwizeView.delegate = nil;
     self.mapwizeView = nil;
-    
+
 }
 
 @end
