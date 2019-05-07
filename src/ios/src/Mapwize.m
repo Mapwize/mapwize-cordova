@@ -37,6 +37,7 @@ NSString* mCallbackId;
     
     NSLog(@"ApiManager initManager called...");
     [ApiManager initManager:self];
+    viewCtrl = nil;
 }
 
 - (void)dealloc {
@@ -53,6 +54,9 @@ NSString* mCallbackId;
 
 - (void)createMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"createMapwizeView called...");
+    if (viewCtrl != nil) {
+        viewCtrl = nil;
+    }
     viewCtrl = [[ViewController alloc] init];
     BOOL showCloseButton = YES;
     
@@ -165,6 +169,7 @@ NSString* mCallbackId;
     NSLog(@"closeMapwizeView called...");
     [self.viewController dismissViewControllerAnimated:NO completion:^{
 //        [self.viewController deinit]
+        self->viewCtrl = nil;
     }];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
