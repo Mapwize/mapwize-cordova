@@ -169,6 +169,7 @@ NSString* mCallbackId;
     NSLog(@"closeMapwizeView called...");
     [self.viewController dismissViewControllerAnimated:NO completion:^{
 //        [self.viewController deinit]
+        self->viewCtrl = nil;
     }];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -229,13 +230,6 @@ NSString* mCallbackId;
     BOOL closeInfo = [command.arguments objectAtIndex:0];
     [viewCtrl unselectContent:closeInfo callbackId:command.callbackId];
 }
-
-- (void)destroyMapwizeView:(CDVInvokedUrlCommand*)command {
-    NSLog(@"destroyMapwizeView...");
-    viewCtrl = nil;
-}
-
-
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {
     NSMutableArray<MWZUniverse*>* universes  = [NSMutableArray array];

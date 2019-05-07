@@ -13,9 +13,9 @@
 
 //@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
 @property (nonatomic, weak) MWZMapwizeView* mapwizeView;
-@property (nonatomic, weak) MWZOptions* opts;
-@property (nonatomic, weak) Mapwize* plugin;
-@property (nonatomic, weak) NSString* callbackId;
+@property (nonatomic, retain) MWZOptions* opts;
+@property (nonatomic, retain) Mapwize* plugin;
+@property (nonatomic, retain) NSString* callbackId;
 
 @end
 

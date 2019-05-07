@@ -28,17 +28,5 @@ Mapwize.prototype.createApiManager = function(success, failure) {
 	return new ApiManager();
 }
 
-Mapwize.prototype.destroyMapwizeView = function(success, failure) {
-	console.log("Mapwize: destroyMapwizeView");
-	exec(function(result) { 
-				console.log("Mapwize: destroyMapwizeView: SUCCESS");
-				success(JSON.parse(result));
-			}, function(err) {
-				console.log("Mapwize: destroyMapwizeView: FAILED");
-				failure(err);
-			}, PLUGIN_NAME, "destroyMapwizeView", []);
-}
-
-
 var mapwize = new Mapwize();
 module.exports = mapwize;
