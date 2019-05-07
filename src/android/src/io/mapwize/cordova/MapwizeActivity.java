@@ -160,7 +160,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         // Toolbar tb = (Toolbar) findViewById(R.id.imgtoolbar);
-        Toolbar tb = (Toolbar) findViewById(getApplication().getResources().getIdentifier("imgtoolbar", "id", package_name));
+        Toolbar tb = findViewById(getApplication().getResources().getIdentifier("imgtoolbar", "id", package_name));
         setSupportActionBar(tb);
 
         // Get the ActionBar here to configure the way it behaves.
@@ -265,9 +265,9 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         Log.d(TAG, "onInformationButtonClick...class: " + mapwizeObject.getClass() + ", className: " + mapwizeObject.getClass().getName() + ", Place.class: " + Place.class + ", Place.className: " + Place.class.getName());
 
         if (mapwizeObject instanceof Place) {
-            sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, ((Place)mapwizeObject).toJSONString());
+            sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, mapwizeObject.toJSONString());
         } else if (mapwizeObject instanceof PlaceList) {
-            sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON, ((PlaceList)mapwizeObject).toJSONString());
+            sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON, mapwizeObject.toJSONString());
         } else {
             Log.d(TAG, "onInformationButtonClick, Object is not recognized...");
         }
@@ -324,10 +324,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
     @Override
     public boolean shouldDisplayFloorController(List<Double> floors) {
-        if (floors == null || floors.size() <= 1) {
-            return false;
-        }
-        return true;
+        return floors != null && floors.size() > 1;
     }
 
 
@@ -451,6 +448,21 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             intent.putExtra(CBK_ARGS, args);
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy...");
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCbkReceiver);
+        mCbkReceiver = null;
+        this.locationProvider = null;
+        mapwizeFragment = null;
+        this.mapboxMap = null;
+        this.mapwizePlugin = null;
+        this.locationProvider = null;
+
+
     }
 
 

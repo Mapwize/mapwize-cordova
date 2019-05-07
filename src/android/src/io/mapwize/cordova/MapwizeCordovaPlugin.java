@@ -226,10 +226,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
      * @param args            The exec() arguments.
      * @param callbackContext The callback context used when calling back into JavaScript.
      * @return
-     * @throws JSONException
      */
     public boolean execute(final String action, JSONArray args,
-                           CallbackContext callbackContext) throws JSONException {
+                           CallbackContext callbackContext) {
         // Shows a toast
         Log.d(TAG, "MapwizeCordovaPlugin received: " + action);
         if (ACTION_CREATE_MAPWIZE_VIEW.equals(action)) {
