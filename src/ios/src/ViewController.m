@@ -11,7 +11,8 @@
 
 @interface ViewController () <MWZMapwizeViewDelegate, UINavigationBarDelegate>
 
-@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
+//@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
+@property (nonatomic, weak) MWZMapwizeView* mapwizeView;
 @property (nonatomic, retain) MWZOptions* opts;
 @property (nonatomic, retain) Mapwize* plugin;
 @property (nonatomic, retain) NSString* callbackId;
@@ -107,8 +108,6 @@ BOOL showInfoButtonForPlaceLists;
     MWZMapwizeViewUISettings* settings = [[MWZMapwizeViewUISettings alloc] init];
     settings.followUserButtonIsHidden = NO;
     settings.menuButtonIsHidden = NO;
-    
-    BOOL showCloseButton = YES;
     //settings.mainColor = [UIColor orangeColor];           // Change main color to Orange
     
     self.mapwizeView = [[MWZMapwizeView alloc] initWithFrame:self.view.frame
@@ -118,15 +117,14 @@ BOOL showInfoButtonForPlaceLists;
     self.mapwizeView.translatesAutoresizingMaskIntoConstraints = NO;
     
     NSLog(@"self.topLayoutGuide.length: %lf", self.topLayoutGuide.length);
-    if (showCloseButton == YES) {
-        UIBarButtonItem* doneBtn = [[UIBarButtonItem alloc]
-                                    initWithTitle:NSLocalizedString(@"Back", comment: nil)
-                                    style:UIBarButtonItemStylePlain
-                                    target:self
-                                    action:@selector(onTapDone:)];
-        
-        self.navigationItem.rightBarButtonItem = doneBtn;
-    }
+    UIBarButtonItem* doneBtn = [[UIBarButtonItem alloc]
+                                initWithTitle:NSLocalizedString(@"Back", comment: nil)
+                                style:UIBarButtonItemStylePlain
+                                target:self
+                                action:@selector(onTapDone:)];
+    
+    self.navigationItem.rightBarButtonItem = doneBtn;
+
     
     [self.view addSubview:self.mapwizeView];
 
@@ -260,5 +258,13 @@ BOOL showInfoButtonForPlaceLists;
     [self sendCallback:dict callbackId:callbackId];
 }
 
+- (void) dealloc {
+    NSLog(@"ViewController, dealloc...");
+    [self.view willRemoveSubview:self.mapwizeView];
+    self.navigationItem.rightBarButtonItem = nil;
+    self.mapwizeView.delegate = nil;
+    self.mapwizeView = nil;
+    
+}
 
 @end

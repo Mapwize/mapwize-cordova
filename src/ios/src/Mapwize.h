@@ -27,6 +27,7 @@
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command;
 - (void)unselectContent:(CDVInvokedUrlCommand*)command;
+
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict;
 - (MWZUniverse*) getUniverse:( NSArray * )universeDict;
 
