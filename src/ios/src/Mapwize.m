@@ -18,7 +18,6 @@
 @implementation Mapwize
 {
     BOOL enabled;
-    NSNotification *_notification;
     UINavigationController* navController;
     ViewController* viewCtrl;
     OfflineManager* offlineManager;
@@ -43,6 +42,9 @@ NSString* mCallbackId;
 - (void)dealloc {
     NSLog(@"dealloc...");
     [UIApplication sharedApplication].idleTimerDisabled = NO;
+    self->navController = nil;
+    self->viewCtrl = nil;
+    self->offlineManager = nil;
 }
 
 - (void)setCallback:(CDVInvokedUrlCommand*)command {
@@ -168,8 +170,9 @@ NSString* mCallbackId;
 - (void)closeMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"closeMapwizeView called...");
     [self.viewController dismissViewControllerAnimated:NO completion:^{
-//        [self.viewController deinit]
+        NSLog(@"closeMapwizeView successfully closed...");
         self->viewCtrl = nil;
+        self->navController = nil;
     }];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
