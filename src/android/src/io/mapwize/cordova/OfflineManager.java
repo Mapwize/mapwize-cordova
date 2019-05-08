@@ -189,7 +189,7 @@ public class OfflineManager {
 
             String venueStr = venue.toJSONString();
             sb.append(venueStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();
@@ -209,7 +209,7 @@ public class OfflineManager {
 
             String venueStr = universe.toJSONString();
             sb.append(venueStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();

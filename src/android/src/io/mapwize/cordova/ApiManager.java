@@ -533,7 +533,7 @@ public class ApiManager {
 
             String objectStr = mapwizeObject.toJSONString();
             sb.append(objectStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();
@@ -553,7 +553,7 @@ public class ApiManager {
 
             String venueStr = venue.toJSONString();
             sb.append(venueStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();
@@ -573,7 +573,7 @@ public class ApiManager {
 
             String placeStr = place.toJSONString();
             sb.append(placeStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();
@@ -593,7 +593,7 @@ public class ApiManager {
 
             String placeListStr = placeList.toJSONString();
             sb.append(placeListStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();
@@ -613,7 +613,7 @@ public class ApiManager {
 
             String venueStr = universe.toJSONString();
             sb.append(venueStr);
-        };
+        }
 
         sb.append(']');
         return sb.toString();
