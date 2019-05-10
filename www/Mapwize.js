@@ -10,8 +10,8 @@ Mapwize.prototype.createMapwizeView = function (options, success, failure) {
 	console.log("Mapwize: createMapwizeView...");
 	exec(function (result) {
 		console.log("Mapwize: selectPlace: SUCCESS");
-		if (!!result && result.arg) {
-			success(JSON.parse(result.arg));
+		if (typeof result === "object") {
+			success(JSON.parse(result));
 		} else {
 			success(result);
 		}
