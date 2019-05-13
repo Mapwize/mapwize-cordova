@@ -30,6 +30,16 @@ ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ### Setting up your ionic project
 
+Configure Android launchMode in config.xml.
+
+```
+...
+<preference name="androidLaunchMode" value="singleTask" />
+...
+```
+
+
+
 To use the plugin, declare Mapwize symbol for your components.
 
 E.g.
