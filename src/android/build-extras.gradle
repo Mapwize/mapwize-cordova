@@ -30,7 +30,7 @@ android {
 	  implementation "com.github.indoorlocation:manual-indoor-location-provider-android:1.0.0"
 
 	  dependencies {
-		  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-1'
+		  // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-1'
 	  }
 	}
 

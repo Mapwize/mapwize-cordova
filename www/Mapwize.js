@@ -8,17 +8,13 @@ function Mapwize() {
 
 Mapwize.prototype.createMapwizeView = function (options, success, failure) {
 	console.log("Mapwize: createMapwizeView...");
-	exec(function (result) {
-		console.log("Mapwize: selectPlace: SUCCESS");
-		if (typeof result === "object") {
-			success(JSON.parse(result));
-		} else {
-			success(result);
-		}
-	}, function (err) {
-		console.log("Mapwize: createMapwizeView: FAILED");
-		failure(err);
-	}, PLUGIN_NAME, "createMapwizeView", [JSON.stringify(options)]);
+	exec(function(result) { 
+				console.log("Mapwize: createMapwizeView: SUCCESS ");
+				success(result);
+			}, function(err) {
+				console.log("Mapwize: createMapwizeView: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "createMapwizeView", [JSON.stringify(options)]);
 	return new MapwizeView();
 }
 
