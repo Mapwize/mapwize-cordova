@@ -40,4 +40,10 @@ NSString *const CBK_UNSELECT_CONTENT = @"unselectContentCbk";
 NSString *const OPT_SHOW_INFO_BUTTON_FOR_PLACES = @"showInformationButtonForPlaces";
 NSString *const OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS = @"showInformationButtonForPlaceLists";
 
+NSString *const UIOPT_MAINCOLOR = @"mainColor";
+NSString *const UIOPT_MENUBUTTONISHIDDEN = @"menuButtonIsHidden";
+NSString *const UIOPT_FOLLOWUSERBUTTONISHIDDEN = @"followUserButtonIsHidden";
+NSString *const UIOPT_FLOORCONTROLLERISHIDDEN = @"floorControllerIsHidden";
+NSString *const UIOPT_COMPASSISHIDDEN = @"compassIsHidden";
+
 NSString *const CORDOVA_SHOW_INFORMATION_BUTTON = @"cordovaShowInformationButton";

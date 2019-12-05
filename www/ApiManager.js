@@ -1,4 +1,3 @@
-//var exec = require('cordova/exec');
 var exec = cordova.exec;
 var PLUGIN_NAME = "Mapwize"
 
@@ -49,8 +48,16 @@ ApiManager.prototype.getVenueWithAlias = function(alias, success, failure) {
 ApiManager.prototype.getPlaceWithId = function(id, success, failure) {
 	console.log("ApiManager: getPlaceWithId...");
 	exec(function(result) {
-		console.log("ApiManager: getPlaceWithId: SUCCESS");
-		success(JSON.parse(result.arg));
+		console.log("ApiManager: getPlaceWithId: SUCCESS, res: ");
+		if(!!result && result.arg){
+			var arg = JSON.parse(result.arg);
+			console.log("getPlaceWithId, result OK..." + arg);
+			console.log("getPlaceWithId, arg: " + JSON.stringify(arg));
+			success(arg);
+		} else{
+			console.log("getPlaceWithId, no result: " + JSON.stringify(result));
+			success({});
+		}
 	}, function(err) {
 		console.log("ApiManager: getPlaceWithId: FAILED");
 		failure(err);
@@ -198,7 +205,7 @@ ApiManager.prototype.getDirectionWithDirectionPointsFrom = function(directionPoi
 	}, PLUGIN_NAME, "getDirectionWithDirectionPointsFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionPointsListTo), isAccessible]);
 }
 
-ApiManager.prototype.getDirectionWithWayPointsFrom = function(directionPointFrom, directionPointTo, waypointsList, bool1, bool2, success, failure) {
+ApiManager.prototype.getDirectionWithWayPointsFrom = function(directionPointFrom, directionPointTo, waypointsList, isAccessible, success, failure) {
 	console.log("ApiManager: getDirectionWithWayPointsFrom...");
 	exec(function(result) {
 		console.log("ApiManager: getDirectionWithWayPointsFrom: SUCCESS");
@@ -206,10 +213,10 @@ ApiManager.prototype.getDirectionWithWayPointsFrom = function(directionPointFrom
 	}, function(err) {
 		console.log("ApiManager: getDirectionWithWayPointsFrom: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getDirectionWithWayPointsFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionPointTo), JSON.stringify(waypointsList), bool1, bool2]);
+	}, PLUGIN_NAME, "getDirectionWithWayPointsFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionPointTo), JSON.stringify(waypointsList), isAccessible]);
 }
 
-ApiManager.prototype.getDirectionWithDirectionAndWayPointsFrom = function(directionPointFrom, directionpointsToList, waypointsList, bool1, bool2, success, failure) {
+ApiManager.prototype.getDirectionWithDirectionAndWayPointsFrom = function(directionPointFrom, directionpointsToList, waypointsList, isAccessible, success, failure) {
 	console.log("ApiManager: getDirectionWithDirectionAndWayPointsFrom...");
 	exec(function(result) {
 		console.log("ApiManager: getDirectionWithDirectionAndWayPointsFrom: SUCCESS");
@@ -217,18 +224,18 @@ ApiManager.prototype.getDirectionWithDirectionAndWayPointsFrom = function(direct
 	}, function(err) {
 		console.log("ApiManager: getDirectionWithDirectionAndWayPointsFrom: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getDirectionWithDirectionAndWayPointsFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), JSON.stringify(waypointsList), bool1, bool2]);
+	}, PLUGIN_NAME, "getDirectionWithDirectionAndWayPointsFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), JSON.stringify(waypointsList), isAccessible]);
 }
 
-ApiManager.prototype.getDistanceWithFrom = function(directionPointFrom, directionpointsToList, bool1, bool2, success, failure) {
-	console.log("ApiManager: getDistanceWithFrom...");
+ApiManager.prototype.getDistancesWithFrom = function(directionPointFrom, directionpointsToList, bool1, bool2, success, failure) {
+	console.log("ApiManager: getDistancesWithFrom...");
 	exec(function(result) {
-		console.log("ApiManager: getDistanceWithFrom: SUCCESS");
+		console.log("ApiManager: getDistancesWithFrom: SUCCESS");
 		success(JSON.parse(result.arg));
 	}, function(err) {
-		console.log("ApiManager: getDistanceWithFrom: FAILED");
+		console.log("ApiManager: getDistancesWithFrom: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getDistanceWithFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), bool1, bool2]);
+	}, PLUGIN_NAME, "getDistancesWithFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), bool1, bool2]);
 }
 
 module.exports = ApiManager;

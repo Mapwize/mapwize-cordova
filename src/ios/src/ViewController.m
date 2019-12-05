@@ -8,12 +8,16 @@
 #import "Constants.h"
 #import "ViewController.h"
 #import "Mapwize.h"
+#import <MapwizeSDK/MWZPlacelist.h>
+
+
 
 @interface ViewController () <MWZMapwizeViewDelegate, UINavigationBarDelegate>
 
 //@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
-@property (nonatomic, weak) MWZMapwizeView* mapwizeView;
-@property (nonatomic, retain) MWZOptions* opts;
+@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
+@property (nonatomic, retain) MWZUIOptions* opts;
+@property (nonatomic, retain) MWZMapwizeViewUISettings* uiSettings;
 @property (nonatomic, retain) Mapwize* plugin;
 @property (nonatomic, retain) NSString* callbackId;
 
@@ -37,16 +41,39 @@ BOOL showInfoButtonForPlaceLists;
 
 - (void)setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists {
     NSLog(@"setOptions, viewController...");
-    _opts = opts;
+//    _opts = opts;
+    _opts = [self getUIOptions:opts];
     showInfoButtonForPlaces = showInformationButtonForPlaces;
     showInfoButtonForPlaceLists = showInformationButtonForPlaceLists;
+}
 
+- (MWZUIOptions*) getUIOptions:(MWZOptions*)options {
+    NSLog(@"viewController, getUIOptions...");
+    MWZUIOptions* uiOptions = [[MWZUIOptions alloc] init];
+
+    uiOptions.floor = options.floor;
+    uiOptions.language = options.language;
+    uiOptions.universeId = options.universeId;
+    uiOptions.restrictContentToVenueId = options.restrictContentToVenueId;
+    uiOptions.restrictContentToVenueIds = options.restrictContentToVenueIds;
+    uiOptions.restrictContentToOrganizationId = options.restrictContentToOrganizationId;
+    uiOptions.centerOnVenueId = options.centerOnVenueId;
+    uiOptions.centerOnPlaceId = options.centerOnPlaceId;
+    uiOptions.mainColor = options.mainColor;
+    
+    return uiOptions;
+}
+
+- (void) setUiSettings:(MWZMapwizeViewUISettings*)uiSettings {
+    NSLog(@"setUiSettings, viewController...");
+    _uiSettings = uiSettings;
 }
 
 - (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId {
     MWZStyle* styleObj = [MWZApiResponseParser parseStyleWith:style];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.mapwizeView.mapwizePlugin setStyle:styleObj forPlace:place];
+        [self.mapwizeView.mapView setStyle:styleObj forPlace:place];
+//        [self.mapwizeView.mapwizePlugin setStyle:styleObj forPlace:place];
         NSDictionary *dict = @{ CBK_SET_PLACE_STYLE_ID : place.identifier};
         [self sendCommandCallback:dict callbackId:callbackId];
     });
@@ -60,7 +87,7 @@ BOOL showInfoButtonForPlaceLists;
     });
 }
 
-- (void) selectPlaceList:(MWZPlaceList*) placeList callbackId:(NSString*) callbackId {
+- (void) selectPlaceList:(MWZPlacelist*) placeList callbackId:(NSString*) callbackId {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.mapwizeView selectPlaceList:placeList];
         NSDictionary *dict = @{ CBK_SELECT_PLACELIST_ID : placeList.identifier};
@@ -85,6 +112,20 @@ BOOL showInfoButtonForPlaceLists;
     });
 }
 
+- (void) setDirection:(MWZDirection*) direction from:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapwizeView
+         setDirection:direction
+         from:from
+         to:to
+         isAccessible:isAccessible
+         ];
+        [self sendCommandCallbackOK:callbackId];
+    });
+}
+
+
+
 - (void) setPlugin:(Mapwize*) plugin callbackId:(NSString*) callbackId {
     NSLog(@"setPlugin...");
     _plugin = plugin;
@@ -105,14 +146,14 @@ BOOL showInfoButtonForPlaceLists;
 - (void)viewDidLoad {
     [super viewDidLoad];
     NSLog(@"viewDidLoad...");
-    MWZMapwizeViewUISettings* settings = [[MWZMapwizeViewUISettings alloc] init];
-    settings.followUserButtonIsHidden = NO;
-    settings.menuButtonIsHidden = NO;
+//    MWZMapwizeViewUISettings* settings = [[MWZMapwizeViewUISettings alloc] init];
+//    settings.followUserButtonIsHidden = NO;
+//    settings.menuButtonIsHidden = NO;
     //settings.mainColor = [UIColor orangeColor];           // Change main color to Orange
     
     self.mapwizeView = [[MWZMapwizeView alloc] initWithFrame:self.view.frame
                                               mapwizeOptions:_opts
-                                                  uiSettings:settings];
+                                                  uiSettings:_uiSettings];
     self.mapwizeView.delegate = self;
     self.mapwizeView.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -177,7 +218,7 @@ BOOL showInfoButtonForPlaceLists;
     [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON arg:json];
 }
 
-- (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlaceList *)placeList {
+- (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlacelist *)placeList {
     NSLog(@"didTapOnPlaceListInformations");
     NSString* json = [placeList toJSONString];
     [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON arg:json];
@@ -211,7 +252,7 @@ BOOL showInfoButtonForPlaceLists;
         NSLog(@"shouldShowInformationButtonFor, MWZPlace...");
         return showInfoButtonForPlaces;
 
-    } else if ([mapwizeObject isKindOfClass:MWZPlaceList.class]) {
+    } else if ([mapwizeObject isKindOfClass:MWZPlacelist.class]) {
         NSLog(@"shouldShowInformationButtonFor, MWZPlaceList...");
         return showInfoButtonForPlaceLists;
     }
@@ -232,7 +273,7 @@ BOOL showInfoButtonForPlaceLists;
 - (void) sendCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                   messageAsDictionary:dict];
-    [pluginResult setKeepCallback: [NSNumber numberWithBool:YES]];
+    [pluginResult setKeepCallbackAsBool:YES];
     [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 

@@ -7,11 +7,17 @@
 
 #import "OfflineManager.h"
 #import "Constants.h"
+#import <MapwizeSDK/MWZOfflineManager.h>
+#import <MapwizeSDK/MWZMapwizeConfiguration.h>
+#import <MapwizeSDK/MWZMapwizeApi.h>
+
 
 @interface OfflineManager ()
 
 @property (nonatomic, retain) MWZOfflineManager* offlineManager;
 @property (nonatomic, retain) Mapwize* plugin;
+
+@property (nonatomic, retain) id<MWZMapwizeApi> mapwizeApi;
 
 - (void) getUniverse:(MWZVenue*)venue universeId:(NSString*)universeId  success:(void (^)(MWZUniverse* universe)) success failure:(void (^)(NSError* error)) failure;
 @end
@@ -20,14 +26,20 @@
 
 - (void) initManager:(Mapwize*) plugin styleURL:(NSString*) styleURL {
     self.plugin = plugin;
-    NSURL* url = [NSURL URLWithString:[styleURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSLog(@"initManager...");
+    
+    MWZMapwizeConfiguration* mapwizeConfiguration = [MWZMapwizeConfiguration sharedInstance];
+    NSLog(@"initManager apiKey: %@", mapwizeConfiguration.apiKey);
+    
+    
+    _mapwizeApi = [MWZMapwizeApiFactory getApi];
 
-    self.offlineManager = [[MWZOfflineManager alloc] initWithStyleUrl:url];
+    self.offlineManager = [[MWZOfflineManager alloc] initWithMapwizeConfiguration:mapwizeConfiguration];
 }
 
 - (void) removeDataForVenue:(NSString*) venueId universe:(NSString*) universeId callbackId:(NSString*) callbackId {
     NSLog(@"removeDataForVenue...");
-    NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
+    [_mapwizeApi getVenueWithIdentifier:venueId success:^(MWZVenue *venue) {
         NSLog(@"removeDataForVenue, venue received...");
         [self getUniverse:venue universeId:universeId  success:^(MWZUniverse *universe) {
             NSLog(@"removeDataForVenue, universe received...");
@@ -41,15 +53,13 @@
           NSLog(@"removeDataForVenue, Failed to receive venue...");
           [self sendCommandCallbackFailed:callbackId];
       }];
-    
-    [venueTask resume];
 }
 
 - (void) downloadDataForVenue:(NSString*) venueId
                      universe:(NSString*) universeId
                    callbackId:(NSString*) callbackId {
     NSLog(@"downloadDataForVenue...venueId: %@, universeId: %@", venueId, universeId);
-    NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
+    [_mapwizeApi getVenueWithIdentifier:venueId success:^(MWZVenue *venue) {
         NSLog(@"downloadDataForVenue, venue received...");
         [self getUniverse:venue universeId:universeId success:^(MWZUniverse *universe) {
             NSLog(@"downloadDataForVenue, universe received...");
@@ -73,12 +83,11 @@
         NSLog(@"downloadDataForVenue, Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
     }];
-    [venueTask resume];
 }
 
 - (void) isOfflineForVenue:(NSString*) venueId universe:(NSString*) universeId callbackId:(NSString*) callbackId {
     NSLog(@"isOfflineForVenue...");
-    NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
+    [_mapwizeApi getVenueWithIdentifier:venueId success:^(MWZVenue *venue) {
         NSLog(@"isOfflineForVenue, venue received...");
         [self getUniverse:venue universeId:universeId success:^(MWZUniverse *universe) {
             NSLog(@"isOfflineForVenue, universe received...");
@@ -94,8 +103,6 @@
         NSLog(@"isOfflineForVenue, Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
     }];
-    
-    [venueTask resume];
 }
 
 - (void) getOfflineVenues:(NSString*) callbackId {
@@ -109,7 +116,7 @@
 }
 
 - (void) getOfflineUniversesForVenue:(NSString*) venueId callbackId:(NSString*) callbackId {
-    NSURLSessionDataTask* venueTask = [MWZApi getVenueWithId:venueId success:^(MWZVenue *venue) {
+    [_mapwizeApi getVenueWithIdentifier:venueId success:^(MWZVenue *venue) {
         NSLog(@"getOfflineUniversesForVenue, venue received...");
         NSArray<MWZUniverse*>* universes =[self.offlineManager getOfflineUniversesForVenue:venue];
         NSString* result = [self universes2JsonArray:universes];
@@ -120,12 +127,10 @@
         NSLog(@"getOfflineUniversesForVenue, Failed to receive venue...");
         [self sendCommandCallbackFailed:callbackId];
     }];
-    
-    [venueTask resume];
 }
 
 - (void) getUniverse:(MWZVenue*)venue universeId:(NSString*)universeId  success:(void (^)(MWZUniverse* universe)) success failure:(void (^)(NSError* error)) failure {
-    NSURLSessionDataTask* venueTask = [MWZApi getAccessibleUniversesWithVenue:venue success:^(NSArray<MWZUniverse *> *universes) {
+    [_mapwizeApi getAccessibleUniversesWithVenue:venue success:^(NSArray<MWZUniverse *> *universes) {
         for(MWZUniverse* univ in universes){
             NSLog(@"Comparing universe %@ with %@", univ.identifier, universeId);
             if ([univ.identifier isEqualToString:universeId]) {
@@ -144,8 +149,6 @@
     } failure:^(NSError *error) {
         failure(error);
     }];
-    
-    [venueTask resume];
 }
 
 - (NSString*) venues2JsonArray:(NSArray<MWZVenue*>*) array {
@@ -181,7 +184,7 @@
 - (void) sendCommandDictCallbackKeep:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                   messageAsDictionary:dict];
-    [pluginResult setKeepCallback: [NSNumber numberWithBool:YES]];
+    [pluginResult setKeepCallbackAsBool:YES];
     [_plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 

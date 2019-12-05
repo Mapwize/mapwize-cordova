@@ -1,4 +1,3 @@
-//var exec = require('cordova/exec');
 var exec = cordova.exec;
 var PLUGIN_NAME = "Mapwize"
 
@@ -10,10 +9,10 @@ function OfflineManager(styleURL) {
 	this.styleURL = styleURL;
 	exec(function(result) { 
 				console.log("OfflineManager: init: SUCCESS");
-				// success(JSON.parse(result.arg));
+				success(JSON.parse(result.arg));
 			}, function(err) {
 				console.log("OfflineManager: init: FAILED");
-				// failure(err);
+				failure(err);
 			}, PLUGIN_NAME, "initOfflineManager", [styleURL]);
 }
 
