@@ -27,6 +27,7 @@
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command;
 - (void)grantAccess:(CDVInvokedUrlCommand*)command;
 - (void)unselectContent:(CDVInvokedUrlCommand*)command;
+- (void)setDirection:(CDVInvokedUrlCommand*)command;
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict;
 - (MWZUniverse*) getUniverse:( NSArray * )universeDict;
@@ -62,7 +63,7 @@
 - (void)getDirectionWithDirectionPointsFrom:(CDVInvokedUrlCommand*)command;
 - (void)getDirectionWithWayPointsFrom:(CDVInvokedUrlCommand*)command;
 - (void)getDirectionWithDirectionAndWayPointsFrom:(CDVInvokedUrlCommand*)command;
-- (void)getDistanceWithFrom:(CDVInvokedUrlCommand*)command;
+- (void)getDistancesWithFrom:(CDVInvokedUrlCommand*)command;
 
 @end
 

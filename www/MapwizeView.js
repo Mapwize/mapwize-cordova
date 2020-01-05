@@ -1,4 +1,3 @@
-//var exec = require('cordova/exec');
 var exec = cordova.exec;
 var PLUGIN_NAME = "Mapwize"
 
@@ -22,12 +21,17 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 			case "TapOnPlaceInformationButton":
 			case "TapOnPlaceListInformationButton":
 			case "TapOnCloseButton":
-				console.log("Handling event " + result);
-				if(!!result && result.arg){
-					callbacks[result.event](JSON.parse(result.arg));
-				} else{
-					callbacks[result.event](result);
+				console.log("Handling event " + JSON.stringify(result));
+				if (callbacks[result.event]) {
+					if(!!result && result.arg){
+						callbacks[result.event](result.arg);
+					} else{
+						callbacks[result.event](result);
+					}
+				} else {
+					console.log("Callback function doesn't exist...");
 				}
+				
 				break;
 			default:
 				console.log("Event not recognized... event: " + JSON.stringify(result));
@@ -41,7 +45,7 @@ MapwizeView.prototype.close = function(success, failure) {
 	exec(function(result) { 
 				console.log("MapwizeView: close: SUCCESS");
 				if(!!result && result.arg){
-					success(JSON.parse(result.arg));
+					success(result.arg);
 				} else{
 					success(result);
 				}
@@ -51,12 +55,43 @@ MapwizeView.prototype.close = function(success, failure) {
 			}, PLUGIN_NAME, "closeMapwizeView", []);
 }
 
+MapwizeView.prototype.setDirection = function(direction, from, to, isAccessible, success, failure) {
+	console.log("MapwizeView: setDirection...");
+	exec(function(result) { 
+				console.log("MapwizeView: setDirection: SUCCESS");
+				if(!!result && result.arg){
+					success(result.arg);
+				} else{
+					console.log("setDirection, no result: " + JSON.stringify(result));
+					success(result);
+				}
+			}, function(err) {
+				console.log("MapwizeView: setDirection: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "setDirection", [JSON.stringify(direction), JSON.stringify(from), JSON.stringify(to), isAccessible]);
+}
+
+MapwizeView.prototype.getDirection = function(from, to, isAccessible, success, failure) {
+	console.log("MapwizeView: getDirection");
+	exec(function(result) { 
+				console.log("MapwizeView: getDirection: SUCCESS");
+				if(!!result && result.arg){
+					success(result.arg);
+				} else{
+					success(result);
+				}
+			}, function(err) {
+				console.log("MapwizeView: getDirection: FAILED");
+				failure(err);
+			}, PLUGIN_NAME, "getDirection", [JSON.stringify(from), JSON.stringify(to), isAccessible]);
+}
+
 MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
 	console.log("MapwizeView: selectPlace");
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlace: SUCCESS");
 				if(!!result && result.arg){
-					success(JSON.parse(result.arg));
+					success(result.arg);
 				} else{
 					success(result);
 				}
@@ -71,7 +106,7 @@ MapwizeView.prototype.selectPlaceList = function(id, success, failure) {
 	exec(function(result) { 
 				console.log("MapwizeView: selectPlaceList: SUCCESS");
 				if(!!result && result.arg){
-					success(JSON.parse(result.arg));
+					success(result.arg);
 				} else{
 					success(result);
 				}
@@ -86,7 +121,7 @@ MapwizeView.prototype.setPlaceStyle = function(id, style, success, failure) {
 	exec(function(result) { 
 				console.log("MapwizeView: setPlaceStyle: SUCCESS");
 				if(!!result && result.arg){
-					success(JSON.parse(result.arg));
+					success(result.arg);
 				} else{
 					success(result);
 				}
@@ -101,7 +136,7 @@ MapwizeView.prototype.grantAccess = function(accessKey, success, failure) {
 	exec(function(result) { 
 				console.log("MapwizeView: grantAccess: SUCCESS");
 				if(!!result && result.arg){
-					success(JSON.parse(result.arg));
+					success(result.arg);
 				} else{
 					success(result);
 				}
@@ -116,7 +151,7 @@ MapwizeView.prototype.unselectContent = function(closeInfo, success, failure) {
 	exec(function(result) { 
 				console.log("MapwizeView: unselectContent: SUCCESS");
 				if(!!result && result.arg){
-					success(JSON.parse(result.arg));
+					success(result.arg);
 				} else{
 					success(result);
 				}

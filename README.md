@@ -19,13 +19,22 @@ A simple Ionic app using the plugin is available in this repository [mapwize-cor
 ### Installing plugin
 
 ```
-ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" mapwize-cordova-plugin
+cordova plugin add mapwize-cordova-plugin \
+ --variable MWZAPIKEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+ --variable MWZSERVERURL="https://api.mapwize.io/" \
+ --variable MWZSTYLEURL="https://outdoor.mapwize.io/styles/mapwize/style.json?key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+ --variable MWZREFRESHINTERVAL=100
+
 ```
 
 or from github
 
 ```
-ionic cordova plugin add --variable MWZMapwizeApiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" https://github.com/Mapwize/mapwize-cordova.git
+cordova plugin add https://github.com/Mapwize/mapwize-cordova.git \
+ --variable MWZAPIKEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+ --variable MWZSERVERURL="https://api.mapwize.io/" \
+ --variable MWZSTYLEURL="https://outdoor.mapwize.io/styles/mapwize/style.json?key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+ --variable MWZREFRESHINTERVAL=100
 ```
 
 ### Setting up your ionic project
@@ -77,7 +86,16 @@ this.mapwizeView = Mapwize.createMapwizeView(
         showInformationButtonForPlaces: true,
         showInformationButtonForPlaceLists: false
         
-      }, () => {
+      },
+      {
+      	mainColor: #FF0000,
+		menuButtonIsHidden: true, 
+		followUserButtonIsHidden: true,
+		floorControllerIsHidden: true,
+		compassIsHidden: true
+      },
+
+      () => {
         // Handle  successfull creation
       }, (err) => {
         // Handle  failed creation
@@ -87,11 +105,21 @@ this.mapwizeView = Mapwize.createMapwizeView(
 
 #### Additional parameters
 
+Options
 ```
 showCloseButton: <<boolean>>, hide/show close button on MapwizeView (default: false)
 showInformationButtonForPlaces: <<boolean>>, hide/show Information button on selecting a 		Place in case the Place doesn't include the "cordovaShowInformationButton" flag.			(default: true)
 showInformationButtonForPlaceLists: <<boolean>>, hide/show Information button on selecting a 	 PlaceList in case the PlaceList doesn't include the "cordovaShowInformationButton" flag.
 	(default: true)
+```
+
+UISettings fields
+```
+mainColor: The main color of Mapwize in hex form either #FF0000 or #99FF0000,
+menuButtonIsHidden: Is menu button hidden true/false
+followUserButtonIsHidden: Is follow user button hidden true/false
+floorControllerIsHidden: Is floor controller button hidden true/false
+compassIsHidden: Is compass hidden true/false
 ```
 
 ### Callback functions
@@ -451,6 +479,319 @@ The localization files should be placed in directories named 'languages/ios' and
 ```
 
 Configure and run the ionic project the usual way. The localization takes the default device language to select the proper localization file.
+
+
+
+## API Manager
+
+### Creating API Manager
+To use API Manager functions you need to create an API Manager instance
+
+```
+this.apiManager = Mapwize.createApiManager();
+```
+
+
+
+#### #### getVenueWithId(id, successFn, failureFn)
+
+Gets venue with the given *id*.
+
+```
+id: id of the Venue object
+successFn(venue): returns the Venue object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+
+#### getVenuesWithFilter(filter, successFn, failureFn)
+
+Gets venues according to the *filter*.
+
+```
+filter: the filter
+successFn(venues): returns an array of Venues object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+##### The filter
+
+The filter is an object with the following optional fields:
+```
+{
+	venueId: <<venueId>>,
+	venueIds: <<array of venueIds>>,
+	universeId: <<universeId>>,
+	isVisible: <<isVisible>>,
+	organizationId: <<organizationId>>,
+	alias: <<alias>>,
+	name: <<name>>,
+	floor: <<floor>>,
+	latitudeMin: <<latitudeMin>>,
+	latitudeMax: <<latitudeMax>>,
+	longitudeMin: <<longitudeMin>>,
+	longitudeMax: <<longitudeMax>>
+}
+
+```
+
+#### getVenueWithName(name, successFn, failureFn)
+
+Gets venue with the given *name*.
+
+```
+name: name of the Place object
+successFn(venue): returns the Venue object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getVenueWithAlias(alias, successFn, failureFn)
+
+Gets venue with the given *alias*.
+
+```
+alias: alias of the Place object
+successFn(place): returns the Place object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceWithId(id, successFn, failureFn)
+
+Gets the Place object of the given *id* in the view.
+
+```
+id: id of the Place object
+successFn(place): returns the Place object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceWithName(name, venueId, successFn, failureFn)
+
+Gets the Place object of the given *name* and *venueId*.
+
+```
+name: name of the Place object
+venueId: venueId of the Place object
+successFn(place): returns the Place object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceWithAlias(alias, venueId, successFn, failureFn)
+
+Gets the Place object of the given *alias* and *venueId*.
+
+```
+alias: name of the Place object
+venueId: venueId of the Place object
+successFn(place): returns the Place object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlacesWithFilter(filter, successFn, failureFn)
+
+Gets venues according to the *filter*.
+
+```
+filter: the filter (for more information pls. check the getVenuesWithFilter function)
+successFn(venues): returns an array of Places object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceListWithId(id, successFn, failureFn)
+
+Gets the PlaceList object of the given *id*.
+
+```
+id: id of the Placelist object
+successFn(place): returns the PlaceList object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceListWithName(name, venueId, successFn, failureFn)
+
+Gets the PlaceList object of the given *name* and *venueId*.
+
+```
+name: name of the PlaceList object
+venueId: venueId of the PlaceList object
+successFn(place): returns the PlaceList object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceListWithAlias(alias, venueId, successFn, failureFn)
+
+Gets the PlaceList object of the given *alias* and *venueId*.
+
+```
+alias: alias of the PlaceList object
+venueId: venueId of the PlaceList object
+successFn(place): returns the PlaceList object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getPlaceListsWithFilter(filter, successFn, failureFn)
+
+Gets PlaceList object according to the *filter*.
+
+```
+filter: the filter (for more information pls. check the getVenuesWithFilter function)
+successFn(venues): returns an array of Places object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getUniverseWithId(id, successFn, failureFn) 
+
+Gets Universe object of the *id*.
+
+```
+id: id of the Universe object
+successFn(universe): returns the Universe object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getUniversesWithFilter(filter, successFn, failureFn)
+
+Gets Universe object according to the *filter*.
+
+```
+filter: the filter (for more information pls. check the getVenuesWithFilter function)
+successFn(venues): returns an array of Places object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getAccessibleUniversesWithVenue(venueId, successFn, failureFn)
+
+Gets the accessible Universes of the Venue.
+
+```
+venueId: id of the Venue
+successFn(universes): returns the array of Universes accessible for the Venue.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### searchWithParams(searchParams, successFn, failureFn)
+
+Search for Mapwize objects according to the search parameters.
+
+```
+searchParams: search parameters. For more info see below.
+successFn(objects): returns an array of Mapwize objects.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+##### Searh Parameters
+
+The "search parameters" is an object with the following optional fields:
+
+```
+{
+	query: <<query>>,
+	venueId: <<venueId>>,
+	venueIds: <<array of venueIds>>,
+	organizationId: <<organizationId>>,
+	universeId: <<universeId>>,
+	objectClass: <<objectClass>>
+}
+```
+
+#### getDirectionWithFrom(directionPointFrom, directionPointTo, isAccessible, successFn, failureFn)
+
+Gets a direction of the given parameters.
+
+```
+directionPointFrom: direction point of the starting point. For more info on direction points please see below.
+directionPointTo: direction point of the starting point. 
+isAccessible: if the direction to get is accessible.
+successFn(direction): returns the Direction object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+##### Direction points
+
+Direction point is used as interface in Mapwize.
+To get direction points use the following objects:
+1. Place 
+2. PlaceList
+3. LatLngFloor
+
+To get the above objects, use the respective getter functions documented above.
+
+#### getDirectionWithDirectionPointsFrom(directionPointFrom, directionPointsListTo, isAccessible, successFn, failureFn)
+
+Gets a direction according to the given parameters.
+
+```
+directionPointFrom: the starting direction point
+directionPointsListTo: the list of end direction points
+isAccessible: if the direction to get is accessible.
+successFn(direction): returns the Direction object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getDirectionWithWayPointsFrom(directionPointFrom, directionPointTo, waypointsList, isAccessible, successFn, failureFn)
+
+Gets a direction according to the given parameters.
+
+```
+directionPointFrom: the starting direction point
+directionPointTo: the end direction point
+waypointsList: the array of direction points to traverse
+isAccessible: if the direction to get is accessible.
+successFn(direction): returns the Direction object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getDirectionWithDirectionAndWayPointsFrom(directionPointFrom, directionpointsToList, waypointsList, isAccessible, successFn, failureFn)
+
+Gets a direction according to the given parameters.
+
+```
+directionPointFrom: the starting direction point
+directionpointsToList: the array of end direction points
+waypointsList: the array of direction points to traverse
+isAccessible: if the direction to get is accessible.
+successFn(direction): returns the Direction object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+#### getDistancesWithFrom(directionPointFrom, directionpointsToList, isAccessible, sortByTravelTime, successFn, failureFn)
+
+Gets the distance between the starting point and the end points according to the given parameters.
+
+```
+directionPointFrom: the starting direction point
+directionpointsToList: the array of end direction points
+isAccessible: if the direction to get is accessible.
+sortByTravelTime: sorting by travel time. true: travel time, false: travel length
+successFn(distance): returns the Distance object.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
+##### Distance object
+
+```
+{
+	from: <<Direction object>>>,
+	distances: <<array of DirectionAndDistance objects>>
+}
+```
+
+###### DirectionAndDistance object
+
+```
+{
+	distance: <<distance>>,
+	traveltime: <<traveltime>>,
+	to: {
+		floor: <<floor>>,
+		placeId: <<placeId of the end point>>,
+		venueId: <<venueId of the end point>>,
+		placeListId: <<placeListId of the end point>>
+	}
+	
+}
+```
+
 
 ## Contributions
 

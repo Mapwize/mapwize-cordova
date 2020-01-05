@@ -65,12 +65,129 @@ NSString* mCallbackId;
     BOOL showInformationButtonForPlaces = YES;
     BOOL showInformationButtonForPlaceLists = YES;
     
+    NSLog(@"arguments...size: %lu", [command.arguments count]);
     
     NSString *optionsStr = [command.arguments objectAtIndex:0];
-    NSData *data = [optionsStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"options...optionsStr...");
+    
+    MWZOptions* opts = [self jsonToOptions:optionsStr];
+    
+    NSLog(@"showCloseButton...");
+    showCloseButton =  [self getShowCloseButton:optionsStr];
+    
+    if (showCloseButton == YES) {
+        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
+    }
+    
+    NSLog(@"showCloseButton...");
+    [viewCtrl setOptions:opts showInformationButtonForPlaces:showInformationButtonForPlaces showInformationButtonForPlaceLists:showInformationButtonForPlaceLists];
+    
+    NSLog(@"uiSettings...");
+    NSString *uiSettingsStr = [command.arguments objectAtIndex:1];
+    NSLog(@"uiSettings...");
+    NSLog(@"uiSettings...uiSettingsStr: %@", uiSettingsStr);
+    MWZMapwizeViewUISettings* uiSettings = [self jsonToUiSettings:uiSettingsStr];
+    
+    NSLog(@"setUiSettings...");
+    [viewCtrl setUiSettings:uiSettings];
+    
+    NSLog(@"getting addChildViewController...");
+    NSLog(@"getting presentViewController...");
+    
+    if (showCloseButton == YES) {
+        [self.viewController presentViewController:navController
+                                          animated:NO completion:nil];
+    } else {
+        [self.viewController presentViewController:viewCtrl
+                                          animated:NO
+                                        completion:nil];
+    }
 
+    NSLog(@"createMapwizeView END...");
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+- (BOOL) getShowCloseButton:(NSString*)optionsStr {
+    NSLog(@"getShowCloseButton optionsStr...%@", optionsStr);
     NSError *jsonError;
-    NSLog(@"converting json...%@", optionsStr);
+    NSData *data = [optionsStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                 options:NSJSONReadingMutableContainers
+                                   error:&jsonError];
+    if(jsonError.code != 0) {
+        NSLog(@"getShowCloseButton, jsonError...%@", jsonError.localizedDescription);
+        return NO;
+    }
+    
+    NSLog(@"getting showCloseButton...");
+    if ([json objectForKey:@"showCloseButton"] != nil) {
+        NSLog(@"setting showCloseButton...");
+        return [[json valueForKey:@"showCloseButton"] boolValue];
+    } else {
+        NSLog(@"setting showCloseButton...no value, defaulting...");
+        return NO;
+    }
+}
+
+- (MWZMapwizeViewUISettings*) jsonToUiSettings:(NSString*)settingsStr {
+    NSLog(@"jsonToUiSettings optionsStr...%@", settingsStr);
+    NSError *jsonError;
+    NSData *data = [settingsStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *json = [NSJSONSerialization
+                          JSONObjectWithData:data
+                                     options:NSJSONReadingMutableContainers
+                                       error:&jsonError];
+    NSLog(@"creating settings...");
+    MWZMapwizeViewUISettings *settings = [[MWZMapwizeViewUISettings alloc] init];
+    
+    NSLog(@"getting UIOPT_MAINCOLOR...");
+    if ([json objectForKey:UIOPT_MAINCOLOR] != nil) {
+        NSLog(@"setting showInformationButtonForPlaces...");
+        NSLog(@"TODO, need to deserialize mainColor...");
+        NSString* colorStr = [json valueForKey:UIOPT_MAINCOLOR];
+        NSLog(@"TODO, need to deserialize mainColor...colorStr type: %@", [colorStr class]);
+        NSLog(@"TODO, need to deserialize mainColor...colorStr: %@", colorStr);
+        settings.mainColor = [Mapwize colorWithHexString:colorStr];
+    }
+    
+    NSLog(@"getting UIOPT_MENUBUTTONISHIDDEN...");
+    if ([json objectForKey:UIOPT_MENUBUTTONISHIDDEN] != nil) {
+        NSLog(@"setting UIOPT_MENUBUTTONISHIDDEN...");
+        settings.menuButtonIsHidden = [[json valueForKey:UIOPT_MENUBUTTONISHIDDEN] boolValue];
+        NSLog(@"setting UIOPT_MENUBUTTONISHIDDEN...%d: ", settings.menuButtonIsHidden);
+    }
+    
+    NSLog(@"getting UIOPT_FOLLOWUSERBUTTONISHIDDEN...");
+    if ([json objectForKey:UIOPT_FOLLOWUSERBUTTONISHIDDEN] != nil) {
+        NSLog(@"setting UIOPT_FOLLOWUSERBUTTONISHIDDEN...");
+        settings.followUserButtonIsHidden = [[json valueForKey:UIOPT_FOLLOWUSERBUTTONISHIDDEN] boolValue];
+    }
+    
+    NSLog(@"getting UIOPT_FLOORCONTROLLERISHIDDEN...");
+    if ([json objectForKey:UIOPT_FLOORCONTROLLERISHIDDEN] != nil) {
+        NSLog(@"setting UIOPT_FLOORCONTROLLERISHIDDEN...");
+        settings.floorControllerIsHidden = [[json valueForKey:UIOPT_FLOORCONTROLLERISHIDDEN] boolValue];
+    }
+    
+    NSLog(@"getting UIOPT_COMPASSISHIDDEN...");
+    if ([json objectForKey:UIOPT_COMPASSISHIDDEN] != nil) {
+        NSLog(@"setting UIOPT_COMPASSISHIDDEN...");
+        settings.compassIsHidden = [[json valueForKey:UIOPT_COMPASSISHIDDEN] boolValue];
+    }
+    return settings;
+}
+
+- (MWZUIOptions*) jsonToOptions:(NSString*)optionsStr {
+    NSLog(@"jsonToOptions optionsStr...%@", optionsStr);
+    NSLog(@"jsonToOptions optionsStr type...%@", [optionsStr class]);
+    NSError *jsonError;
+    
+    NSLog(@"jsonToOptions, data...");
+    NSData *data = [optionsStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"jsonToOptions, json...");
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                  options:NSJSONReadingMutableContainers
                                    error:&jsonError];
@@ -141,31 +258,308 @@ NSString* mCallbackId;
         opts.centerOnLocation = nil;
     }
     
-    NSLog(@"showCloseButton...");
-    showCloseButton =  [[json valueForKey:@"showCloseButton"] boolValue];
+    return opts;
+}
+
+- (MWZDirectionWrapper*) jsonToDirectionWrapper:(NSDictionary*)json {
+    NSLog(@"json2DirectionWrapper json...%@", json);
+    NSLog(@"json2DirectionWrapper json type...%@", [json class]);
+//    NSData *data = [json dataUsingEncoding:NSUTF8StringEncoding];
+//    NSError *jsonError;
     
-    if (showCloseButton == YES) {
-        navController = [[UINavigationController alloc] initWithRootViewController:viewCtrl];
+//    NSLog(@"json2DirectionWrapper, json...");
+//    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+//                                 options:NSJSONReadingMutableContainers
+//                                   error:&jsonError];
+    MWZDirectionWrapper *dw = [[MWZDirectionWrapper alloc] init];
+    
+    NSNumber* latitude = json[@"latitude"];
+    if (latitude != nil) {
+        NSLog(@"latitude...");
+        dw.latitude = latitude;
     }
     
-    [viewCtrl setOptions:opts showInformationButtonForPlaces:showInformationButtonForPlaces showInformationButtonForPlaceLists:showInformationButtonForPlaceLists];
+    NSNumber* longitude = json[@"longitude"];
+    if (longitude != nil) {
+        NSLog(@"longitude...");
+        dw.longitude = longitude;
+    }
     
-    NSLog(@"getting addChildViewController...");
-    NSLog(@"getting presentViewController...");
+    NSNumber* floor = json[@"floor"];
+    if (floor != nil) {
+        NSLog(@"floor...");
+        dw.floor = floor;
+    }
     
-    if (showCloseButton == YES) {
-        [self.viewController presentViewController:navController
-                                          animated:NO completion:nil];
-    } else {
-        [self.viewController presentViewController:viewCtrl
-                                          animated:NO
-                                        completion:nil];
+    NSString* placeId = json[@"placeId"];
+    if (placeId != nil) {
+        NSLog(@"placeId...");
+        dw.placeId = placeId;
+    }
+    
+    NSString* venueId = json[@"venueId"];
+    if (venueId != nil) {
+        NSLog(@"venueId...");
+        dw.venueId = venueId;
+    }
+    
+    NSString* placeListId = json[@"placeListId"];
+    if (placeListId != nil) {
+        NSLog(@"placeListId...");
+        dw.placeListId = placeListId;
+    }
+    
+    return dw;
+}
+
+- (NSArray<MWZLatLng *> *) jsonToMWZLatLngArr:(NSArray*)latLngArr {
+    NSMutableArray* arr = [[NSMutableArray alloc] init];
+    
+    int i = 0;
+    for (i = 0; i < [latLngArr count]; i++) {
+        NSDictionary* latLngDict = [latLngArr objectAtIndex:i];
+        NSLog(@"jsonToMWZLatLngArr...%@", [latLngDict description]);
+        MWZLatLng* latLng = [self jsonToLatLng:latLngDict];
+        [arr addObject:latLng];
+    }
+    
+    return arr;
+}
+
+- (MWZLatLng*) jsonToLatLng:(NSArray*)json {
+    MWZLatLng* latLong = [[MWZLatLng alloc] initWithLatitude:[[json objectAtIndex:1] doubleValue] longitude:[[json objectAtIndex:0] doubleValue]];
+    return latLong;
+}
+
+
+- (MWZRoute*) jsonToRouter:(NSDictionary*)json {
+    NSLog(@"jsonToRouter json...%@", json);
+    NSLog(@"jsonToRouter json type...%@", [json class]);
+    
+    NSNumber* floor = json[@"floor"];
+    NSNumber* fromFloor = json[@"fromFloor"];
+    NSNumber* toFloor = json[@"toFloor"];
+    
+    BOOL isStart = [json[@"isStart"] boolValue];
+    BOOL isEnd = [json[@"isEnd"] boolValue];
+    
+    double traveltime = [json[@"traveltime"] doubleValue];
+    double timeToEnd = [json[@"timeToEnd"] doubleValue];
+    double distance = [json[@"distance"] doubleValue];
+
+    NSString* connectorTypeTo = json[@"connectorTypeTo"];
+    NSString* connectorTypeFrom = json[@"connectorTypeFrom"];
+        
+    NSString* uniqId = json[@"uniqId"];
+    NSArray<MWZLatLng *> *latLngArr =[self jsonToMWZLatLngArr:json[@"path"]];
+    
+    NSString* boundsStr = json[@"bounds"];
+    NSLog(@"jsonToRouter boundsStr...%@", boundsStr);
+    NSLog(@"jsonToRouter boundsStr type...%@", [boundsStr class]);
+    
+    MGLCoordinateBounds bounds = [self jsonToCoordinateBounds:boundsStr];
+    
+    
+    
+    
+    MWZRoute *route = [[MWZRoute alloc] initWithFloor:floor
+            fromFloor:fromFloor
+              toFloor:toFloor
+              isStart:isStart
+                isEnd:isEnd
+           traveltime:traveltime
+            timeToEnd:timeToEnd
+               bounds:bounds
+             distance:distance
+      connectorTypeTo:connectorTypeTo
+    connectorTypeFrom:connectorTypeFrom
+                 path:latLngArr];
+        
+//    - (instancetype _Nonnull)initWithFloor:(NSNumber *_Nullable)floor
+//            fromFloor:(NSNumber *_Nullable)fromFloor
+//              toFloor:(NSNumber *_Nullable)toFloor
+//              isStart:(BOOL)isStart
+//                isEnd:(BOOL)isEnd
+//           traveltime:(double)traveltime
+//            timeToEnd:(double)timeToEnd
+//               bounds:(struct MGLCoordinateBounds)bounds
+//             distance:(double)distance
+//      connectorTypeTo:(NSString *_Nullable)connectorTypeTo
+//    connectorTypeFrom:(NSString *_Nullable)connectorTypeFrom
+//                 path:(NSArray<MWZLatLng *> *_Nonnull)path;
+    
+    return route;
+}
+
+
+
+
+
+- (NSArray<MWZRoute *> *) jsonToRouteArray:(NSArray*)routeArray {
+    NSMutableArray* raArray = [[NSMutableArray alloc] init];
+    NSLog(@"jsonToRouteArray...%@", [routeArray description]);
+    NSLog(@"jsonToRouteArray json type...%@", [routeArray class]);
+//    NSLog(@"jsonToRouteArray, data...");
+//    NSData *data = [routeArrayStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"jsonToRouteArray, json...");
+    
+    int i = 0;
+    for (i=0; i<[routeArray count]; i++) {
+        NSDictionary *arrayResult = [routeArray objectAtIndex:i];
+        NSLog(@"MWZRoute,  %@",[arrayResult description]);
+        MWZRoute* route = [self jsonToRouter:arrayResult];
+        [raArray addObject:route];
+    }
+    
+    return raArray;
+}
+
+- (NSArray<MWZDirectionWrapper *> *) jsonToDirectionWrapperArray:(NSArray*)directionWrapperArray {
+    NSArray* dwArray = [[NSArray alloc] init];
+    NSError *jsonError;
+    
+    NSLog(@"jsonToDirectionWrapperArray, data...%@", [directionWrapperArray description]);
+    NSLog(@"jsonToDirectionWrapperArray, data...%@", [directionWrapperArray class]);
+//    NSData *data = [directionWrapperArrayStr dataUsingEncoding:NSUTF8StringEncoding];
+//    id allKeys = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&jsonError];
+    int i = 0;
+    for (i=0; i<[directionWrapperArray count]; i++) {
+        NSDictionary *arrayResult = [directionWrapperArray objectAtIndex:i];
+        NSLog(@"MWZDirectionWrapper,  %@",[arrayResult description]);
+        
+//        NSLog(@"ID=%@",[arrayResult objectForKey:@"ID"]);
+    }
+    
+    return dwArray;
+}
+
+- (NSArray<MWZDirection *> *) jsonToDirectionArray:(NSArray*)directionArray {
+    NSArray* dArray = [[NSArray alloc] init];
+    NSError *jsonError;
+    
+    NSLog(@"jsonToDirectionArray, data...%@", [directionArray description]);
+    NSLog(@"jsonToDirectionArray, type...%@", [directionArray class]);
+//    NSData *data = [directionArrayStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+//    NSLog(@"jsonToDirectionArray, json...");
+    
+//    id allKeys = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&jsonError];
+    int i = 0;
+    for (i=0; i<[directionArray count]; i++) {
+        NSDictionary *arrayResult = [directionArray objectAtIndex:i];
+        NSLog(@"MWZDirectionWrapper,  %@",[arrayResult description]);
+        
+//        NSLog(@"ID=%@",[arrayResult objectForKey:@"ID"]);
+    }
+    
+    return dArray;
+}
+
+
+//- (CLLocationCoordinate2D) jsonToLocationCoord:(NSString*)coordStr {
+//
+//}
+
+- (MGLCoordinateBounds) jsonToCoordinateBounds:(NSArray*)coordBounds {
+    MGLCoordinateBounds cb;
+    CLLocationCoordinate2D ne;
+    CLLocationCoordinate2D sw;
+    ne.latitude = 12.4;
+    ne.longitude = 12.4;
+    sw.latitude = 12.4;
+    sw.longitude = 12.4;
+    
+    cb.ne = ne;
+    cb.sw = sw;
+
+    NSError *jsonError;
+    
+    NSLog(@"jsonToCoordinateBounds, data...");
+    NSLog(@"jsonToCoordinateBounds, data...%@", coordBounds);
+    NSLog(@"jsonToCoordinateBounds, data type...%@", [coordBounds class]);
+//    NSData *data = [coordBoundsStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"jsonToCoordinateBounds, json...");
+    
+//    id allKeys = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&jsonError];
+//    int i = 0;
+//
+//
+//    for (i=0; i<[coordBounds count]; i++) {
+//        NSDictionary *arrayResult = [coordBounds objectAtIndex:i];
+//        NSLog(@"MWZDirectionWrapper,  %@",[arrayResult description]);
+//        NSLog(@"MWZDirectionWrapper,  %@",[arrayResult class]);
+//    }
+    
+    if([coordBounds count] == 4) {
+        ne.longitude = [[coordBounds objectAtIndex:0] doubleValue];
+        ne.latitude = [[coordBounds objectAtIndex:1] doubleValue];
+        sw.longitude = [[coordBounds objectAtIndex:0] doubleValue];
+        sw.latitude = [[coordBounds objectAtIndex:1] doubleValue];
     }
 
-    NSLog(@"createMapwizeView END...");
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+    return cb;
 }
+
+
+
+
+
+
+- (MWZDirection*) jsonToDirection:(NSString*)directionStr {
+    NSLog(@"jsonToDirection directionStr...%@", directionStr);
+    NSLog(@"jsonToDirection directionStr type...%@", [directionStr class]);
+    NSError *jsonError;
+    
+    NSLog(@"jsonToDirection, data...");
+    NSData *data = [directionStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"jsonToDirection, json...");
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                 options:NSJSONReadingMutableContainers
+                                   error:&jsonError];
+    NSLog(@"creating dirs...");
+    
+    NSString* fromStr = json[@"from"];
+    MWZDirectionWrapper *from = [self jsonToDirectionWrapper:fromStr];
+    
+    NSString* toStr = json[@"to"];
+    MWZDirectionWrapper *to = [self jsonToDirectionWrapper:toStr];
+    
+    NSString* routesStr = json[@"routes"];
+    NSArray<MWZRoute *> *jsonToRouteArray = [self jsonToRouteArray:routesStr];
+    
+    
+    MGLCoordinateBounds coordBounds;
+    NSString* boundsStr = json[@"bounds"];
+    if (boundsStr != nil) {
+        coordBounds = [self jsonToCoordinateBounds:boundsStr];
+    }
+    
+    NSString* waypointsStr = json[@"waypoints"];
+    NSArray<MWZDirectionWrapper *> *waypointsArray = [self jsonToDirectionWrapperArray:waypointsStr];
+    
+    NSString* subdirectionsStr = json[@"subdirections"];
+    NSArray<MWZDirection *> *subdirectionsArray = [self jsonToDirectionArray:subdirectionsStr];
+    
+    MWZDirection* direction = [[MWZDirection alloc] initWithFrom:from
+               to:to
+         distance:0.0
+           routes:jsonToRouteArray
+       traveltime:0.0
+           bounds:coordBounds
+        waypoints:waypointsArray
+    subdirections:subdirectionsArray];
+
+    
+    return direction;
+}
+
+
+
+
 
 - (void)closeMapwizeView:(CDVInvokedUrlCommand*)command {
     NSLog(@"closeMapwizeView called...");
@@ -183,14 +577,12 @@ NSString* mCallbackId;
     NSString *identifier = [command.arguments objectAtIndex:0];
     NSString *styleStr = [command.arguments objectAtIndex:1];
     
-    NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
+    [[MWZMapwizeApiFactory getApi] getPlaceWithIdentifier:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
         [self->viewCtrl setPlaceStyle:place style:styleStr callbackId:command.callbackId];
     } failure:^(NSError *error) {
         NSLog(@"error...");
     }];
-    
-    [task resume];
 }
 
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
@@ -198,28 +590,24 @@ NSString* mCallbackId;
     NSString *identifier = [command.arguments objectAtIndex:0];
     BOOL    centerOn = [command.arguments objectAtIndex:1];
     
-    NSURLSessionDataTask* task = [MWZApi getPlaceWithId:identifier success:^(MWZPlace *place) {
+    [[MWZMapwizeApiFactory getApi] getPlaceWithIdentifier:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
         [viewCtrl selectPlace:place centerOn:centerOn callbackId:command.callbackId];
     } failure:^(NSError *error) {
-        NSLog(@"error...");
+        NSLog(@"error...%@", error.localizedDescription);
     }];
-    
-    [task resume];
 }
 
 - (void)selectPlaceList:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlaceList called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
     
-    NSURLSessionDataTask* task = [MWZApi getPlaceListWithId:identifier success:^(MWZPlaceList *placeList) {
+    [[MWZMapwizeApiFactory getApi] getPlacelistWithIdentifier:identifier success:^(MWZPlacelist *placeList) {
         NSLog(@"identifier...");
         [viewCtrl selectPlaceList:placeList callbackId:command.callbackId];
     } failure:^(NSError *error) {
-        NSLog(@"error...");
+        NSLog(@"error...%@", error.localizedDescription);
     }];
-    
-    [task resume];
 }
 
 - (void)grantAccess:(CDVInvokedUrlCommand*)command {
@@ -232,6 +620,29 @@ NSString* mCallbackId;
     NSLog(@"unselectContent...");
     BOOL closeInfo = [command.arguments objectAtIndex:0];
     [viewCtrl unselectContent:closeInfo callbackId:command.callbackId];
+}
+
+- (void)setDirection:(CDVInvokedUrlCommand*)command  {
+    NSLog(@"native setDirection...");
+    NSString* directionStr = [command.arguments objectAtIndex:0];
+    MWZDirection* direction = [self jsonToDirection:directionStr];
+    
+    NSString* fromStr = [command.arguments objectAtIndex:1];
+//    MWZDirectionWrapper* from = [self jsonToDirectionWrapper:fromStr];
+    id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:fromStr];
+    
+    NSString* toStr = [command.arguments objectAtIndex:2];
+//    MWZDirectionWrapper* to = [self jsonToDirectionWrapper:toStr];
+    id<MWZDirectionPoint> to = [MWZApiResponseParser parseDirectionPoint:toStr];
+    
+    BOOL isAccessible = [command.arguments objectAtIndex:3];
+    
+    [viewCtrl
+        setDirection:direction
+                from:from
+                  to:to
+        isAccessible:isAccessible
+          callbackId:command.callbackId];
 }
 
 - (NSArray<MWZUniverse*>*) getUniverses:( NSArray * )universesDict {
@@ -327,8 +738,11 @@ NSString* mCallbackId;
 - (void)getPlaceWithId:(CDVInvokedUrlCommand*)command {
     NSLog(@"getPlaceWithId called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
-    
     [ApiManager getPlaceWithId:identifier callbackId:command.callbackId];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)getPlaceWithName:(CDVInvokedUrlCommand*)command {
@@ -433,8 +847,7 @@ NSString* mCallbackId;
     NSString *directionPointTo = [command.arguments objectAtIndex:1];
     NSString *wayPointsList = [command.arguments objectAtIndex:2];
     BOOL     isAccessible = [command.arguments objectAtIndex:3];
-    BOOL     bool2 = [command.arguments objectAtIndex:4];
-    [ApiManager getDirectionWithWayPointsFrom:directionPointFrom to:directionPointTo waypointsList:wayPointsList bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+    [ApiManager getDirectionWithWayPointsFrom:directionPointFrom to:directionPointTo waypointsList:wayPointsList isAccessible:isAccessible callbackId:command.callbackId];
 }
 
 - (void)getDirectionWithDirectionAndWayPointsFrom:(CDVInvokedUrlCommand*)command {
@@ -443,19 +856,62 @@ NSString* mCallbackId;
     NSString *directionPointListTo = [command.arguments objectAtIndex:1];
     NSString *wayPointsList = [command.arguments objectAtIndex:2];
     BOOL     isAccessible = [command.arguments objectAtIndex:3];
-    BOOL     bool2 = [command.arguments objectAtIndex:4];
     
-    [ApiManager getDirectionWithDirectionAndWayPointsFrom:directionPointFrom tos:directionPointListTo waypointsList:wayPointsList bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+    [ApiManager getDirectionWithDirectionAndWayPointsFrom:directionPointFrom tos:directionPointListTo waypointsList:wayPointsList isAccessible:isAccessible callbackId:command.callbackId];
 }
 
 
-- (void)getDistanceWithFrom:(CDVInvokedUrlCommand*)command {
-    NSLog(@"getDistanceWithFrom called...");
+- (void)getDistancesWithFrom:(CDVInvokedUrlCommand*)command {
+    NSLog(@"getDistancesWithFrom called...");
     NSString *directionPointFrom = [command.arguments objectAtIndex:0];
     NSString *directionPointsListTo = [command.arguments objectAtIndex:1];
     BOOL     isAccessible = [command.arguments objectAtIndex:2];
     BOOL     bool2 = [command.arguments objectAtIndex:3];
-    [ApiManager getDistanceWithFrom:directionPointFrom directionpointsToListStr:directionPointsListTo bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+    [ApiManager getDistancesWithFrom:directionPointFrom directionpointsToListStr:directionPointsListTo bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+}
+
+
++ (UIColor* ) colorWithHexString: (NSString*)hexString {
+    NSString *colorString = [[hexString stringByReplacingOccurrencesOfString: @"#" withString: @""] uppercaseString];
+    CGFloat alpha, red, blue, green;
+    switch ([colorString length]) {
+        case 3: // #RGB
+            alpha = 1.0f;
+            red   = [self colorComponentFrom: colorString start: 0 length: 1];
+            green = [self colorComponentFrom: colorString start: 1 length: 1];
+            blue  = [self colorComponentFrom: colorString start: 2 length: 1];
+            break;
+        case 4: // #ARGB
+            alpha = [self colorComponentFrom: colorString start: 0 length: 1];
+            red   = [self colorComponentFrom: colorString start: 1 length: 1];
+            green = [self colorComponentFrom: colorString start: 2 length: 1];
+            blue  = [self colorComponentFrom: colorString start: 3 length: 1];
+            break;
+        case 6: // #RRGGBB
+            alpha = 1.0f;
+            red   = [self colorComponentFrom: colorString start: 0 length: 2];
+            green = [self colorComponentFrom: colorString start: 2 length: 2];
+            blue  = [self colorComponentFrom: colorString start: 4 length: 2];
+            break;
+        case 8: // #AARRGGBB
+            alpha = [self colorComponentFrom: colorString start: 0 length: 2];
+            red   = [self colorComponentFrom: colorString start: 2 length: 2];
+            green = [self colorComponentFrom: colorString start: 4 length: 2];
+            blue  = [self colorComponentFrom: colorString start: 6 length: 2];
+            break;
+        default:
+            [NSException raise:@"Invalid color value" format: @"Color value %@ is invalid.  It should be a hex value of the form #RBG, #ARGB, #RRGGBB, or #AARRGGBB", hexString];
+            break;
+    }
+    return [UIColor colorWithRed: red green: green blue: blue alpha: alpha];
+}
+
++ (CGFloat) colorComponentFrom: (NSString *) string start: (NSUInteger) start length: (NSUInteger) length {
+    NSString *substring = [string substringWithRange: NSMakeRange(start, length)];
+    NSString *fullHex = length == 2 ? substring : [NSString stringWithFormat: @"%@%@", substring, substring];
+    unsigned hexComponent;
+    [[NSScanner scannerWithString: fullHex] scanHexInt: &hexComponent];
+    return hexComponent / 255.0;
 }
 
 @end

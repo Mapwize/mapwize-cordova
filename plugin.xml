@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="mapwize-cordova-plugin"
-    version="1.1.0">
+    version="1.3.0">
     <name>Mapwize</name>
     <description>Use Mapwize Indoor Maps in your Cordova app</description>
     <license>MIT</license>
@@ -10,7 +10,11 @@
     <repo>https://github.com/Mapwize/mapwize-cordova</repo>
     <issue></issue>
 
-    <preference name="MWZMAPWIZEAPIKEY"/>
+    <preference name="MWZAPIKEY" />
+    <preference name="MWZSERVERURL" />
+    <preference name="MWZSTYLEURL" />
+    <preference name="MWZREFRESHINTERVAL" />
+
 
     <js-module src="www/Mapwize.js" name="Mapwize" >
         <clobbers target="window.Mapwize"/>
@@ -74,7 +78,7 @@
         <hook type="after_prepare" src="scripts/copy_android_locales.js" />
     </platform>
     <platform name="ios">
-        <dependency id="cordova-plugin-cocoapod-support"/>
+
         <config-file target="config.xml" parent="/*">
             <feature name="Mapwize" >
                 <param name="ios-package" value="Mapwize" onload="true"/>
@@ -82,9 +86,25 @@
             </feature>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="MWZMapwizeApiKey">
-          <string>$MWZMAPWIZEAPIKEY</string>
+        <config-file target="*-Info.plist" parent="MWZServerUrl">
+          <string>$MWZSERVERURL</string>
         </config-file>
+
+        <config-file target="*-Info.plist" parent="MWZApiKey">
+          <string>$MWZAPIKEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="MWZStyleUrl">
+          <string>$MWZSTYLEURL</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="MWZRefreshInterval">
+          <string>$MWZREFRESHINTERVAL</string>
+        </config-file>
+
+
+
+
 
         <config-file target="*-Info.plist" parent="MGLMapboxMetricsEnabledSettingShownInApp">
           <string>YES</string>
@@ -110,7 +130,16 @@
 
         <hook type="after_prepare" src="scripts/copy_io_locales.js" />
 
-        <pod id="MapwizeUI"  version="1.2.0"/>
+        <!-- <framework src="MapwizeUI"  type="podspec" spec="2.0.3"/> -->
+        <!-- <pod id="MapwizeUI"  version="1.2.0"/> -->
+        <podspec>
+          <config>
+            <source url="https://github.com/CocoaPods/Specs.git"/>
+          </config>
+          <pods use-frameworks="true">
+            <pod name="MapwizeUI" spec="~> 2.0.3" />
+          </pods>
+        </podspec>
     </platform>
     <!-- <dependency id="cordova-plugin-localization-strings" version="3.0.1"/> -->
 
