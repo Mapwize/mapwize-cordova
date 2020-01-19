@@ -12,12 +12,12 @@
 
 
 
-@interface ViewController () <MWZMapwizeViewDelegate, UINavigationBarDelegate>
+@interface ViewController () <MWZUIViewDelegate, UINavigationBarDelegate>
 
 //@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
-@property (nonatomic, retain) MWZMapwizeView* mapwizeView;
+@property (nonatomic, retain) MWZUIView* mapwizeView;
 @property (nonatomic, retain) MWZUIOptions* opts;
-@property (nonatomic, retain) MWZMapwizeViewUISettings* uiSettings;
+@property (nonatomic, retain) MWZUISettings* uiSettings;
 @property (nonatomic, retain) Mapwize* plugin;
 @property (nonatomic, retain) NSString* callbackId;
 
@@ -64,7 +64,7 @@ BOOL showInfoButtonForPlaceLists;
     return uiOptions;
 }
 
-- (void) setUiSettings:(MWZMapwizeViewUISettings*)uiSettings {
+- (void) setUiSettings:(MWZUISettings*)uiSettings {
     NSLog(@"setUiSettings, viewController...");
     _uiSettings = uiSettings;
 }
@@ -81,7 +81,7 @@ BOOL showInfoButtonForPlaceLists;
 
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId: (NSString*) callbackId {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.mapwizeView selectPlace:place centerOn:centerOn];
+        [self.mapwizeView selectPlace:place];
         NSDictionary *dict = @{ CBK_SELECT_PLACE_ID : place.identifier, CBK_SELECT_PLACE_CENTERON : centerOn ? @"true" : @"false"};
         [self sendCommandCallback:dict callbackId:callbackId];
     });
@@ -107,7 +107,7 @@ BOOL showInfoButtonForPlaceLists;
 
 - (void) unselectContent:(BOOL) closeInfo callbackId:(NSString*) callbackId {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.mapwizeView unselectContent:closeInfo];
+        [self.mapwizeView unselectContent];
         [self sendCommandCallbackOK:callbackId];
     });
 }
@@ -151,7 +151,7 @@ BOOL showInfoButtonForPlaceLists;
 //    settings.menuButtonIsHidden = NO;
     //settings.mainColor = [UIColor orangeColor];           // Change main color to Orange
     
-    self.mapwizeView = [[MWZMapwizeView alloc] initWithFrame:self.view.frame
+    self.mapwizeView = [[MWZUIView alloc] initWithFrame:self.view.frame
                                               mapwizeOptions:_opts
                                                   uiSettings:_uiSettings];
     self.mapwizeView.delegate = self;
@@ -212,34 +212,34 @@ BOOL showInfoButtonForPlaceLists;
     [self sendCallbackEvent:CBK_EVENT_CLOSE_BUTTON_CLICKED];
 }
 
-- (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place {
+- (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place {
     NSLog(@"didTapOnPlaceInformations");
     NSString* json = [place toJSONString];
     [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON arg:json];
 }
 
-- (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlacelist *)placeList {
+- (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlacelist *)placeList {
     NSLog(@"didTapOnPlaceListInformations");
     NSString* json = [placeList toJSONString];
     [self sendCallbackEvent:CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON arg:json];
 }
 
-- (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZMapwizeView *)mapwizeView {
+- (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZUIView *)mapwizeView {
     NSLog(@"mapwizeViewDidTapOnFollowWithoutLocation");
     [self sendCallbackEvent:CBK_EVENT_DID_TAP_ON_FOLLOW_WITHOUT_LOCATION];
 }
 
-- (void)mapwizeViewDidTapOnMenu:(MWZMapwizeView *)mapwizeView {
+- (void)mapwizeViewDidTapOnMenu:(MWZUIView *)mapwizeView {
     NSLog(@"mapwizeViewDidTapOnMenu");
     [self sendCallbackEvent:CBK_EVENT_DID_TAP_ON_MENU];
 }
 
-- (void) mapwizeViewDidLoad:(MWZMapwizeView*) mapwizeView {
+- (void) mapwizeViewDidLoad:(MWZUIView*) mapwizeView {
     NSLog(@"mapwizeViewDidLoad");
     [self sendCallbackEvent:CBK_EVENT_DID_LOAD];
 }
 
-- (BOOL) mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
+- (BOOL) mapwizeView:(MWZUIView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject {
     NSLog(@"shouldShowInformationButtonFor...");
     NSDictionary* data = [mapwizeObject data];
     

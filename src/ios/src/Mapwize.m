@@ -13,6 +13,7 @@
 #import "OfflineManager.h"
 #import "ApiManager.h"
 #import <MapwizeUI/MapwizeUI.h>
+#import <MapwizeUI/MWZUISettings.h>
 #import "Constants.h"
 
 @implementation Mapwize
@@ -86,7 +87,7 @@ NSString* mCallbackId;
     NSString *uiSettingsStr = [command.arguments objectAtIndex:1];
     NSLog(@"uiSettings...");
     NSLog(@"uiSettings...uiSettingsStr: %@", uiSettingsStr);
-    MWZMapwizeViewUISettings* uiSettings = [self jsonToUiSettings:uiSettingsStr];
+    MWZUISettings* uiSettings = [self jsonToUiSettings:uiSettingsStr];
     
     NSLog(@"setUiSettings...");
     [viewCtrl setUiSettings:uiSettings];
@@ -131,7 +132,7 @@ NSString* mCallbackId;
     }
 }
 
-- (MWZMapwizeViewUISettings*) jsonToUiSettings:(NSString*)settingsStr {
+- (MWZUISettings*) jsonToUiSettings:(NSString*)settingsStr {
     NSLog(@"jsonToUiSettings optionsStr...%@", settingsStr);
     NSError *jsonError;
     NSData *data = [settingsStr dataUsingEncoding:NSUTF8StringEncoding];
@@ -140,17 +141,7 @@ NSString* mCallbackId;
                                      options:NSJSONReadingMutableContainers
                                        error:&jsonError];
     NSLog(@"creating settings...");
-    MWZMapwizeViewUISettings *settings = [[MWZMapwizeViewUISettings alloc] init];
-    
-    NSLog(@"getting UIOPT_MAINCOLOR...");
-    if ([json objectForKey:UIOPT_MAINCOLOR] != nil) {
-        NSLog(@"setting showInformationButtonForPlaces...");
-        NSLog(@"TODO, need to deserialize mainColor...");
-        NSString* colorStr = [json valueForKey:UIOPT_MAINCOLOR];
-        NSLog(@"TODO, need to deserialize mainColor...colorStr type: %@", [colorStr class]);
-        NSLog(@"TODO, need to deserialize mainColor...colorStr: %@", colorStr);
-        settings.mainColor = [Mapwize colorWithHexString:colorStr];
-    }
+    MWZUISettings *settings = [[MWZUISettings alloc] init];
     
     NSLog(@"getting UIOPT_MENUBUTTONISHIDDEN...");
     if ([json objectForKey:UIOPT_MENUBUTTONISHIDDEN] != nil) {
@@ -256,6 +247,17 @@ NSString* mCallbackId;
         opts.centerOnLocation = latlng;
     } else {
         opts.centerOnLocation = nil;
+    }
+    
+    NSLog(@"getting UIOPT_MAINCOLOR...");
+    NSString* colorStr = [json valueForKey:UIOPT_MAINCOLOR];
+    if (colorStr != nil) {
+        NSLog(@"setting showInformationButtonForPlaces...");
+        NSLog(@"TODO, need to deserialize mainColor...");
+        
+        NSLog(@"TODO, need to deserialize mainColor...colorStr type: %@", [colorStr class]);
+        NSLog(@"TODO, need to deserialize mainColor...colorStr: %@", colorStr);
+        opts.mainColor = [Mapwize colorWithHexString:colorStr];
     }
     
     return opts;
@@ -588,7 +590,8 @@ NSString* mCallbackId;
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlace called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
-    BOOL    centerOn = [command.arguments objectAtIndex:1];
+    // BOOL    centerOn = [command.arguments objectAtIndex:1]; //TODO: need to wait for the decision on the centerOn param
+    BOOL    centerOn = true;
     
     [[MWZMapwizeApiFactory getApi] getPlaceWithIdentifier:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
@@ -618,8 +621,7 @@ NSString* mCallbackId;
 
 - (void)unselectContent:(CDVInvokedUrlCommand*)command  {
     NSLog(@"unselectContent...");
-    BOOL closeInfo = [command.arguments objectAtIndex:0];
-    [viewCtrl unselectContent:closeInfo callbackId:command.callbackId];
+    [viewCtrl unselectContent:command.callbackId];
 }
 
 - (void)setDirection:(CDVInvokedUrlCommand*)command  {

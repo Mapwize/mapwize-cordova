@@ -10,7 +10,7 @@
 
 #import <Cordova/CDV.h>
 
-
+@class MWZUISettings;
 @class MWZUniverse;
 
 
