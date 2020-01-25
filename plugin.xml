@@ -40,7 +40,7 @@
         </config-file>
 
         <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
-          <meta-data android:name="MWZMAPWIZEAPIKEY" android:value="$MWZMAPWIZEAPIKEY" />
+          <meta-data android:name="MWZMAPWIZEAPIKEY" android:value="$MWZAPIKEY" />
         </config-file>
         <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
             <activity android:name="io.mapwize.cordova.MapwizeActivity"
@@ -63,9 +63,11 @@
         <resource-file src="src/android/res/layout/mapwize_text_item.xml" target="res/layout/mapwize_text_item.xml" />
         <resource-file src="src/android/res/layout/mapwize_universes_alert.xml" target="res/layout/mapwize_universes_alert.xml" />
 
+        <resource-file src="src/android/res/values/colors.xml" target="res/values/attrs.xml" />
         <resource-file src="src/android/res/values/colors.xml" target="res/values/colors.xml" />
+        <resource-file src="src/android/res/values/colors.xml" target="res/values/dimens.xml" />
         <resource-file src="src/android/res/values/strings2.xml" target="res/values/strings2.xml" />
-        <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
+        <!-- <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" /> -->
         <resource-file src="src/android/res/drawable/ic_close_24dp.png" target="res/drawable/ic_close_24dp.png" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeActivity.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeCordovaPlugin.java" target-dir="src/io/mapwize/cordova/" />
@@ -130,8 +132,6 @@
 
         <hook type="after_prepare" src="scripts/copy_io_locales.js" />
 
-        <!-- <framework src="MapwizeUI"  type="podspec" spec="2.0.3"/> -->
-        <!-- <pod id="MapwizeUI"  version="1.2.0"/> -->
         <podspec>
           <config>
             <source url="https://github.com/CocoaPods/Specs.git"/>

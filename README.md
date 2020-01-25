@@ -84,11 +84,11 @@ this.mapwizeView = Mapwize.createMapwizeView(
         centerOnPlaceId: "xxxxxxxxxxxxxxxxxxxxxxxx",
         showCloseButton: true,
         showInformationButtonForPlaces: true,
-        showInformationButtonForPlaceLists: false
+        showInformationButtonForPlaceLists: false,
+        mainColor: #FF0000,
         
       },
       {
-      	mainColor: #FF0000,
 		menuButtonIsHidden: true, 
 		followUserButtonIsHidden: true,
 		floorControllerIsHidden: true,
@@ -111,11 +111,11 @@ showCloseButton: <<boolean>>, hide/show close button on MapwizeView (default: fa
 showInformationButtonForPlaces: <<boolean>>, hide/show Information button on selecting a 		Place in case the Place doesn't include the "cordovaShowInformationButton" flag.			(default: true)
 showInformationButtonForPlaceLists: <<boolean>>, hide/show Information button on selecting a 	 PlaceList in case the PlaceList doesn't include the "cordovaShowInformationButton" flag.
 	(default: true)
+mainColor: The main color of Mapwize in hex form either #FF0000 or #99FF0000,
 ```
 
 UISettings fields
 ```
-mainColor: The main color of Mapwize in hex form either #FF0000 or #99FF0000,
 menuButtonIsHidden: Is menu button hidden true/false
 followUserButtonIsHidden: Is follow user button hidden true/false
 floorControllerIsHidden: Is floor controller button hidden true/false
@@ -724,6 +724,7 @@ Gets a direction according to the given parameters.
 directionPointFrom: the starting direction point
 directionPointsListTo: the list of end direction points
 isAccessible: if the direction to get is accessible.
+waypointOptimize: if we need to optimze waypoint.
 successFn(direction): returns the Direction object.
 failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
 ```

@@ -1,5 +1,10 @@
 # Mapwize Cordova Changelog
 
+## 1.3.0
+
+- Upgrading to MapwizeUI iOS 2.0.3
+- Adding UISettings on iOS
+- Improving documentation
 ## 1.1.0
 
 - Fixing memory leaks on iOS and Android

@@ -1,7 +1,6 @@
 package io.mapwize.cordova;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import com.mapbox.mapboxsdk.Mapbox;
@@ -14,23 +13,27 @@ import org.json.JSONObject;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import io.mapwize.mapwizeformapbox.api.Api;
-import io.mapwize.mapwizeformapbox.api.ApiCallback;
-import io.mapwize.mapwizeformapbox.api.Universe;
-import io.mapwize.mapwizeformapbox.api.Venue;
+
+import io.mapwize.mapwizesdk.api.ApiCallback;
+import io.mapwize.mapwizesdk.api.Universe;
+import io.mapwize.mapwizesdk.api.Venue;
+import io.mapwize.mapwizesdk.api.MapwizeApiFactory;
+import io.mapwize.mapwizesdk.core.MapwizeConfiguration;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_FIELD_ARG;
 
 public class OfflineManager {
     private static final String TAG = "OfflineManager";
     Activity mActivity;
-    io.mapwize.mapwizeformapbox.api.OfflineManager mOfflineManager;
+    io.mapwize.mapwizesdk.api.OfflineManager mOfflineManager;
 
 
     public OfflineManager(Activity activity, String styleUrl) {
         Log.d(TAG, "OfflineManager, styleUrl: " + styleUrl);
         mActivity= activity;
-        mOfflineManager = new io.mapwize.mapwizeformapbox.api.OfflineManager(mActivity.getApplication().getApplicationContext(), styleUrl);
+
+        MapwizeConfiguration config = new MapwizeConfiguration.Builder(mActivity.getApplication().getApplicationContext(), styleUrl).build();
+        mOfflineManager = new io.mapwize.mapwizesdk.api.OfflineManager(config);
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -42,11 +45,11 @@ public class OfflineManager {
 
     public void removeDataForVenue(String venueId, String universeId, CallbackContext context) {
         Log.d(TAG, "removeDataForVenue...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        MapwizeApiFactory.getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
                 Log.d(TAG, "success, getting venue, removeDataForVenue...");
-                Api.getUniverse(universeId, new ApiCallback<Universe>() {
+                MapwizeApiFactory.getApi().getUniverse(universeId, new ApiCallback<Universe>() {
                     @Override
                     public void onSuccess(@Nullable Universe universe) {
                         Log.d(TAG, "success, getting universe, removeDataForVenue...");
@@ -72,15 +75,17 @@ public class OfflineManager {
 
     public void downloadDataForVenue(String venueId, String universeId, CallbackContext context) {
         Log.d(TAG, "downloadDataForVenue...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        MapwizeApiFactory.getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
                 Log.d(TAG, "success, getting venue, downloadDataForVenue...");
+                Log.d(TAG, "venue: universe: " + venue.getUniverses().toString() + ", all: " + venue.toJSONString());
+
                 getUniverse(venueId, universeId, new ApiCallback<Universe>() {
                     @Override
                     public void onSuccess(@Nullable Universe universe) {
                         Log.d(TAG, "success, getting universe, downloadDataForVenue...");
-                        mOfflineManager.downloadData(venue, universe, new io.mapwize.mapwizeformapbox.api.OfflineManager.DownloadTaskListener() {
+                        mOfflineManager.downloadData(venue, universe, new io.mapwize.mapwizesdk.api.OfflineManager.DownloadTaskListener() {
 
                             @Override
                             public void onSuccess() {
@@ -121,11 +126,11 @@ public class OfflineManager {
 
     public void isOfflineForVenue(String venueId, String universeId, CallbackContext context) {
         Log.d(TAG, "isOfflineForVenue...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        MapwizeApiFactory.getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
                 Log.d(TAG, "success, getting venue, isOfflineForVenue...");
-                Api.getUniverse(universeId, new ApiCallback<Universe>() {
+                MapwizeApiFactory.getApi().getUniverse(universeId, new ApiCallback<Universe>() {
                     @Override
                     public void onSuccess(@Nullable Universe universe) {
                         Log.d(TAG, "success, getting universe, isOfflineForVenue...");
@@ -158,7 +163,7 @@ public class OfflineManager {
 
     public void getOfflineUniversesForVenue(String venueId, CallbackContext context) {
         Log.d(TAG, "getOfflineUniversesForVenue...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        MapwizeApiFactory.getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
                 Log.d(TAG, "onSuccess...");
@@ -208,6 +213,7 @@ public class OfflineManager {
             }
 
             String venueStr = universe.toJSONString();
+            // String venueStr = universe.toString();
             sb.append(venueStr);
         }
 
@@ -216,21 +222,25 @@ public class OfflineManager {
     }
 
     private void getUniverse(String venueId, String universeId, ApiCallback<Universe> apiCallback) {
-        Api.getAccessibleUniversesForVenue(venueId, new ApiCallback<List<Universe>>() {
+        MapwizeApiFactory.getApi().getAccessibleUniversesForVenue(venueId, new ApiCallback<List<Universe>>() {
 
             @Override
             public void onSuccess(@Nullable List<Universe> universes) {
+                Log.d(TAG, "getAccessibleUniversesForVenue, onSuccess...");
                 for (Universe univ: universes) {
                     if (universeId.equals(univ.getId())) {
+                        Log.d(TAG, "getAccessibleUniversesForVenue, universe found...");
                         apiCallback.onSuccess(univ);
                         return;
                     }
                 }
+                Log.d(TAG, "Failed to get Universe...universes: " + universes.toString() + ", universeId: " + universeId);
                 apiCallback.onFailure(new Throwable("Failed to get Universe"));
             }
 
             @Override
             public void onFailure(@Nullable Throwable throwable) {
+                Log.d(TAG, "onFailure, Failed to get Universe...universes: " + throwable.getLocalizedMessage());
                 apiCallback.onFailure(throwable);
             }
         });

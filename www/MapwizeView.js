@@ -13,7 +13,7 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 	this.callbacks = callbacks;
 
 	exec(function(result) { 
-		console.log("MapwizeView: setCallback: SUCCESS");
+		console.log("MapwizeView: setCallback: SUCCESS, result: " + JSON.stringify(result));
 		switch(result.event) {
 			case "DidLoad":
 			case "DidTapOnFollowWithoutLocation":
@@ -24,8 +24,10 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 				console.log("Handling event " + JSON.stringify(result));
 				if (callbacks[result.event]) {
 					if(!!result && result.arg){
-						callbacks[result.event](result.arg);
+						console.log("Handling event has arg...");
+						callbacks[result.event](JSON.parse(result.arg));
 					} else{
+						console.log("Handling event has NO arg...");
 						callbacks[result.event](result);
 					}
 				} else {

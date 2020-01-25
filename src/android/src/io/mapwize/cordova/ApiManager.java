@@ -12,27 +12,30 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.mapwize.mapwizeformapbox.api.Api;
-import io.mapwize.mapwizeformapbox.api.ApiCallback;
-import io.mapwize.mapwizeformapbox.api.ApiFilter;
-import io.mapwize.mapwizeformapbox.api.Direction;
-import io.mapwize.mapwizeformapbox.api.DirectionPoint;
-import io.mapwize.mapwizeformapbox.api.DistanceResponse;
-import io.mapwize.mapwizeformapbox.api.MapwizeObject;
-import io.mapwize.mapwizeformapbox.api.Parser;
-import io.mapwize.mapwizeformapbox.api.Place;
-import io.mapwize.mapwizeformapbox.api.PlaceList;
-import io.mapwize.mapwizeformapbox.api.SearchParams;
-import io.mapwize.mapwizeformapbox.api.Universe;
-import io.mapwize.mapwizeformapbox.api.Venue;
+import io.mapwize.mapwizesdk.api.ApiCallback;
+import io.mapwize.mapwizesdk.api.ApiFilter;
+import io.mapwize.mapwizesdk.api.Direction;
+import io.mapwize.mapwizesdk.api.DirectionPoint;
+import io.mapwize.mapwizesdk.api.DistanceResponse;
+import io.mapwize.mapwizesdk.api.GeoJsonApiCallback;
+import io.mapwize.mapwizesdk.api.MapwizeApi;
+import io.mapwize.mapwizesdk.api.MapwizeApiFactory;
+import io.mapwize.mapwizesdk.api.MapwizeObject;
+import io.mapwize.mapwizesdk.api.Parser;
+import io.mapwize.mapwizesdk.api.Place;
+import io.mapwize.mapwizesdk.api.Placelist;
+import io.mapwize.mapwizesdk.api.SearchParams;
+import io.mapwize.mapwizesdk.api.Universe;
+import io.mapwize.mapwizesdk.api.Venue;
+import io.mapwize.mapwizesdk.core.MapwizeConfiguration;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_FIELD_ARG;
 
 public class ApiManager {
     private static final String TAG = "ApiManager";
     private static Activity sActivity;
-
 
     public ApiManager() {
     }
@@ -41,15 +44,19 @@ public class ApiManager {
         sActivity = activity;
     }
 
+    private static MapwizeApi getApi() {
+        return MapwizeApiFactory.getApi();
+    }
 
     public static void getVenueWithId(String identifier, CallbackContext context) {
         Log.d(TAG, "getVenueWithId...");
-        Api.getVenue(identifier, new ApiCallback<Venue>() {
+        getApi().getVenue(identifier, new ApiCallback<Venue>() {
             @Override
-            public void onSuccess(@Nullable Venue venue) {
+            public void onSuccess(@NonNull Venue venue) {
                 Log.d(TAG, "success, getting venue, getVenueWithId...");
                 String venueStr = venue.toJSONString();
                 sendCallbackCmd(venueStr, context);
+
             }
 
             @Override
@@ -60,12 +67,11 @@ public class ApiManager {
         });
     }
 
-
     public static void getVenuesWithFilter(String filterStr, CallbackContext context) {
         Log.d(TAG, "getVenuesWithFilter...");
         try {
             ApiFilter filter = Parser.parseApiFilter(filterStr);
-            Api.getVenues(filter, new ApiCallback<List<Venue>>() {
+            getApi().getVenues(filter, new ApiCallback<List<Venue>>() {
                 @Override
                 public void onSuccess(@Nullable List<Venue> venues) {
                     Log.d(TAG, "success, getting venue, getVenuesWithFilter...");
@@ -86,7 +92,7 @@ public class ApiManager {
 
     public static void getVenueWithName(String name, CallbackContext context) {
         Log.d(TAG, "getVenueWithName...");
-        Api.getVenueWithName(name, new ApiCallback<Venue>() {
+        getApi().getVenueWithName(name, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
                 Log.d(TAG, "success, getting venue, getVenueWithName...");
@@ -103,7 +109,7 @@ public class ApiManager {
 
     public static void getVenueWithAlias(String alias, CallbackContext context) {
         Log.d(TAG, "getVenueWithAlias...");
-        Api.getVenueWithAlias(alias, new ApiCallback<Venue>() {
+        getApi().getVenueWithAlias(alias, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
                 Log.d(TAG, "success, getting venue, getVenueWithAlias...");
@@ -120,11 +126,12 @@ public class ApiManager {
 
     public static void getPlaceWithId(String identifier, CallbackContext context) {
         Log.d(TAG, "getPlaceWithId...");
-        Api.getPlace(identifier, new ApiCallback<Place>() {
+        getApi().getPlace(identifier, new ApiCallback<Place>() {
             @Override
             public void onSuccess(@Nullable Place place) {
-                Log.d(TAG, "success, getting venue, getPlaceWithId...");
+                Log.d(TAG, "success, getPlaceWithId, new...");
                 String placeStr = place.toJSONString();
+                Log.d(TAG, "success, getPlaceWithId, laceStr..." + placeStr + ", id: " + place.getId());
                 sendCallbackCmd(placeStr, context);
             }
 
@@ -137,10 +144,10 @@ public class ApiManager {
 
     public static void getPlaceWithName(String name, String venueId, CallbackContext context) {
         Log.d(TAG, "getPlaceWithName...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
-                Api.getPlaceWithName(name, venue, new ApiCallback<Place>() {
+                getApi().getPlaceWithName(name, venue, new ApiCallback<Place>() {
                     @Override
                     public void onSuccess(@Nullable Place place) {
                         Log.d(TAG, "success, getting venue, getPlaceWithName...");
@@ -165,10 +172,10 @@ public class ApiManager {
 
     public static void getPlaceWithAlias(String alias, String venueId, CallbackContext context) {
         Log.d(TAG, "getPlaceWithAlias...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
-                Api.getPlaceWithAlias(alias, venue, new ApiCallback<Place>() {
+                getApi().getPlaceWithAlias(alias, venue, new ApiCallback<Place>() {
                     @Override
                     public void onSuccess(@Nullable Place place) {
                         Log.d(TAG, "success, getting venue, getPlaceWithAlias...");
@@ -178,7 +185,7 @@ public class ApiManager {
 
                     @Override
                     public void onFailure(@Nullable Throwable throwable) {
-                        Log.d(TAG, "failure, getting venue, removeDataForVenue...");
+                        Log.d(TAG, "failure, getting venue, getPlaceWithAlias...");
                         sendCallbackCmdError(context);
                     }
                 });
@@ -196,7 +203,7 @@ public class ApiManager {
         Log.d(TAG, "getPlacesWithFilter...");
         try {
             ApiFilter filter = Parser.parseApiFilter(filterStr);
-            Api.getPlaces(filter, new ApiCallback<List<Place>>() {
+            getApi().getPlaces(filter, new ApiCallback<List<Place>>() {
                 @Override
                 public void onSuccess(@Nullable List<Place> places) {
                     Log.d(TAG, "success, getting venue, getPlacesWithFilter...");
@@ -217,9 +224,9 @@ public class ApiManager {
 
     public static void getPlaceListWithId(String identifier, CallbackContext context) {
         Log.d(TAG, "getPlaceListWithId...");
-        Api.getPlaceList(identifier, new ApiCallback<PlaceList>() {
+        getApi().getPlacelist(identifier, new ApiCallback<Placelist>() {
             @Override
-            public void onSuccess(@Nullable PlaceList placeList) {
+            public void onSuccess(@Nullable Placelist placeList) {
                 Log.d(TAG, "success, getting placeList, getPlaceListWithId...");
                 String placeListStr = placeList.toJSONString();
                 sendCallbackCmd(placeListStr, context);
@@ -234,12 +241,12 @@ public class ApiManager {
 
     public static void getPlaceListWithName(String name, String venueId, CallbackContext context) {
         Log.d(TAG, "callbackId;getPlaceListWithName...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
-                Api.getPlaceListWithName(name, venue, new ApiCallback<PlaceList>() {
+                getApi().getPlacelistWithName(name, venue, new ApiCallback<Placelist>() {
                     @Override
-                    public void onSuccess(@Nullable PlaceList placeList) {
+                    public void onSuccess(@Nullable Placelist placeList) {
                         Log.d(TAG, "success, getting place, getPlaceListWithName...");
                         String placeListStr = placeList.toJSONString();
                         sendCallbackCmd(placeListStr, context);
@@ -262,12 +269,12 @@ public class ApiManager {
 
     public static void getPlaceListWithAlias(String alias, String venueId, CallbackContext context) {
         Log.d(TAG, "callbackId;getPlaceListsWithAlias...");
-        Api.getVenue(venueId, new ApiCallback<Venue>() {
+        getApi().getVenue(venueId, new ApiCallback<Venue>() {
             @Override
             public void onSuccess(@Nullable Venue venue) {
-                Api.getPlaceListWithAlias(alias, venue, new ApiCallback<PlaceList>() {
+                getApi().getPlacelistWithAlias(alias, venue, new ApiCallback<Placelist>() {
                     @Override
-                    public void onSuccess(@Nullable PlaceList placeList) {
+                    public void onSuccess(@Nullable Placelist placeList) {
                         Log.d(TAG, "success, getting venue, getPlaceWithAlias...");
                         String placeStr = placeList.toJSONString();
                         sendCallbackCmd(placeStr, context);
@@ -292,9 +299,9 @@ public class ApiManager {
         Log.d(TAG, "getPlaceListsWithFilter...");
         try {
             ApiFilter filter = Parser.parseApiFilter(filterStr);
-            Api.getPlaceLists(filter, new ApiCallback<List<PlaceList>>() {
+            getApi().getPlacelists(filter, new ApiCallback<List<Placelist>>() {
                 @Override
-                public void onSuccess(@Nullable List<PlaceList> placeLists) {
+                public void onSuccess(@Nullable List<Placelist> placeLists) {
                     Log.d(TAG, "success, getting venue, getPlaceListsWithFilter...");
                     String placeListStr = placeList2JsonArray(placeLists);
                     sendCallbackCmd(placeListStr, context);
@@ -316,12 +323,11 @@ public class ApiManager {
     public static void getUniverseWithId(String identifier, CallbackContext context) {
         Log.d(TAG, "getUniverseWithId...");
 
-        Api.getUniverse(identifier, new ApiCallback<Universe>() {
+        getApi().getUniverse(identifier, new ApiCallback<Universe>() {
             @Override
             public void onSuccess(@Nullable Universe universe) {
                 Log.d(TAG, "success, getting venue, getUniverseWithId...");
                 String universeStr = universe.toJSONString();
-                sendCallbackCmd(universeStr, context);
             }
 
             @Override
@@ -336,7 +342,7 @@ public class ApiManager {
         Log.d(TAG, "getUniversesWithFilter...");
         try {
             ApiFilter filter = Parser.parseApiFilter(filterStr);
-            Api.getUniverses(filter, new ApiCallback<List<Universe>>() {
+            getApi().getUniverses(filter, new ApiCallback<List<Universe>>() {
                 @Override
                 public void onSuccess(@Nullable List<Universe> universes) {
                     Log.d(TAG, "success, getting venue, getUniversesWithFilter...");
@@ -357,7 +363,7 @@ public class ApiManager {
 
     public static void getAccessibleUniversesWithVenue(String venueId, CallbackContext context) {
         Log.d(TAG, "getAccessibleUniversesWithVenue...");
-        Api.getAccessibleUniversesForVenue(venueId, new ApiCallback<List<Universe>>() {
+        getApi().getAccessibleUniversesForVenue(venueId, new ApiCallback<List<Universe>>() {
             @Override
             public void onSuccess(@Nullable List<Universe> universes) {
                 Log.d(TAG, "success, getting venue, getAccessibleUniversesWithVenue...");
@@ -379,10 +385,10 @@ public class ApiManager {
         try {
             DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             DirectionPoint to = Parser.parseDirectionPoint(directionPointTo);
-            Api.getDirection(from, to, isAccessible, new ApiCallback<Direction>() {
+            getApi().getDirection(from, to, isAccessible, new ApiCallback<Direction>() {
                 @Override
                 public void onSuccess(@Nullable Direction direction) {
-                    Log.d(TAG, "success, getting venue, searchWithParams...");
+                    Log.d(TAG, "success, getting direction, getDirectionWithFrom...");
                     String directionStr = direction.toJSONString();
                     sendCallbackCmd(directionStr, context);
                 }
@@ -398,20 +404,21 @@ public class ApiManager {
     }
 
     public static void getDirectionWithDirectionPointsFrom(String directionPointFrom, String directionPointsListTo, boolean isAccessible, CallbackContext context) {
-        Log.d(TAG, "getDirectionWithFrom...");
+        Log.d(TAG, "getDirectionWithDirectionPointsFrom...");
         try {
             DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             List<DirectionPoint> toList = stringList2DirectionPointList(directionPointsListTo);
-            Api.getDirection(from, toList, isAccessible, new ApiCallback<Direction>() {
+            getApi().getDirection(from, toList, isAccessible, new ApiCallback<Direction>() {
                 @Override
                 public void onSuccess(@Nullable Direction direction) {
-                    Log.d(TAG, "success, getting venue, getDirectionWithFrom...");
+                    Log.d(TAG, "success, getting venue, getDirectionWithDirectionPointsFrom...");
                     String directionStr = direction.toJSONString();
                     sendCallbackCmd(directionStr, context);
                 }
 
                 @Override
                 public void onFailure(@Nullable Throwable throwable) {
+                    Log.d(TAG, "failure, getting venue, getDirectionWithDirectionPointsFrom..." + throwable);
                     sendCallbackCmdError(context);
                 }
             });
@@ -421,16 +428,16 @@ public class ApiManager {
 
     }
 
-    public static void getDirectionWithWayPointsFrom(String directionPointFrom, String directionPointTo, String waypointsList, boolean bool1, boolean bool2, CallbackContext context) {
-        Log.d(TAG, "getDirectionWithFrom...");
+    public static void getDirectionWithWayPointsFrom(String directionPointFrom, String directionPointTo, String waypointsList, boolean isAccessible, CallbackContext context) {
+        Log.d(TAG, "getDirectionWithWayPointsFrom...");
         try {
             DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             DirectionPoint to = Parser.parseDirectionPoint(directionPointTo);
             List<DirectionPoint> waypointsObj = stringList2DirectionPointList(waypointsList);
-            Api.getDirection(from, to, waypointsObj, bool1, bool2, new ApiCallback<Direction>() {
+            getApi().getDirection(from, to, waypointsObj, isAccessible, true, new ApiCallback<Direction>() {
                 @Override
                 public void onSuccess(@Nullable Direction direction) {
-                    Log.d(TAG, "success, getting venue, getDirectionWithFrom...");
+                    Log.d(TAG, "success, getting venue, getDirectionWithWayPointsFrom...");
                     String directionStr = direction.toJSONString();
                     sendCallbackCmd(directionStr, context);
                 }
@@ -446,17 +453,17 @@ public class ApiManager {
 
     }
 
-    public static void getDirectionWithDirectionAndWayPointsFrom(String directionPointFrom, String directionpointsToList, String waypointsList, boolean bool1, boolean bool2, CallbackContext context) {
-        Log.d(TAG, "getDirectionWithFrom...");
+    public static void getDirectionWithDirectionAndWayPointsFrom(String directionPointFrom, String directionpointsToList, String waypointsList, boolean isAccessible, CallbackContext context) {
+        Log.d(TAG, "getDirectionWithDirectionAndWayPointsFrom...");
         try {
             DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             List<DirectionPoint> to = stringList2DirectionPointList(directionpointsToList);
             List<DirectionPoint> waypointsObj = stringList2DirectionPointList(waypointsList);
 
-            Api.getDirection(from, to, waypointsObj, bool1, bool2, new ApiCallback<Direction>() {
+            getApi().getDirection(from, to, waypointsObj, isAccessible, true, new ApiCallback<Direction>() {
                 @Override
                 public void onSuccess(@Nullable Direction direction) {
-                    Log.d(TAG, "success, getting venue, getDirectionWithFrom...");
+                    Log.d(TAG, "success, getting venue, getDirectionWithDirectionAndWayPointsFrom...");
                     String directionStr = direction.toJSONString();
                     sendCallbackCmd(directionStr, context);
                 }
@@ -472,16 +479,16 @@ public class ApiManager {
 
     }
 
-    public static void getDistanceWithFrom(String directionPointFrom, String directionpointsToList, boolean bool1, boolean bool2, CallbackContext context) {
-        Log.d(TAG, "getDistanceWithFrom...");
+    public static void getDistancesWithFrom(String directionPointFrom, String directionpointsToList, boolean isAccessible, boolean sortByTraveltime, CallbackContext context) {
+        Log.d(TAG, "...");
         try {
             DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
             List<DirectionPoint> to = stringList2DirectionPointList(directionpointsToList);
 
-            Api.getDistances(from, to, bool1, bool2, new ApiCallback<DistanceResponse>() {
+            getApi().getDistances(from, to, isAccessible, sortByTraveltime, new ApiCallback<DistanceResponse>() {
                 @Override
                 public void onSuccess(@Nullable DistanceResponse response) {
-                    Log.d(TAG, "success, getting venue, getDistanceWithFrom...");
+                    Log.d(TAG, "success, getting venue, getDistancesWithFrom...");
                     String responseStr = response.toJSONString();
                     sendCallbackCmd(responseStr, context);
                 }
@@ -501,7 +508,7 @@ public class ApiManager {
         Log.d(TAG, "searchWithParams..." + searchParamsStr);
         try {
             SearchParams searchParams = Parser.parseSearchParams(searchParamsStr);
-            Api.search(searchParams, new ApiCallback<List<MapwizeObject>>() {
+            getApi().search(searchParams, new ApiCallback<List<MapwizeObject>>() {
                 @Override
                 public void onSuccess(@Nullable List<MapwizeObject> mapwizeObjects) {
                     Log.d(TAG, "success, getting venue, searchWithParams...");
@@ -579,12 +586,12 @@ public class ApiManager {
         return sb.toString();
     }
 
-    private static String placeList2JsonArray(List<PlaceList> placeLists) {
+    private static String placeList2JsonArray(List<Placelist> placeLists) {
         StringBuffer sb = new StringBuffer();
         sb.append('[');
 
         boolean isFirst = true;
-        for (PlaceList placeList: placeLists) {
+        for (Placelist placeList: placeLists) {
             if (!isFirst) {
                 sb.append(',');
             } else {

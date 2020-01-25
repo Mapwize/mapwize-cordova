@@ -8,7 +8,6 @@
 #import "ApiManager.h"
 #import "Constants.h"
 
-
 @interface ApiManager ()
 + (NSString*) venues2JsonArray:(NSArray<MWZVenue*>*) array;
 + (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId;
@@ -299,11 +298,11 @@ static Mapwize* plugin;
     }];
 }
 
-+ (void)getDistancesWithFrom:(NSString*) directionPointFromStr directionpointsToListStr:(NSString*) directionpointsToListStr bool1:(BOOL)bool1 bool2:(BOOL)bool2 callbackId:(NSString*) callbackId {
++ (void)getDistancesWithFrom:(NSString*) directionPointFromStr directionpointsToListStr:(NSString*) directionpointsToListStr isAccessible:(BOOL)isAccessible sortByTravelTime:(BOOL)sortByTravelTime callbackId:(NSString*) callbackId {
     NSLog(@"getDistancesWithFrom...");
     id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
     NSArray<id<MWZDirectionPoint>>* toList = [MWZApiResponseParser parseDirectionPoints:directionpointsToListStr];
-    [[MWZMapwizeApiFactory getApi] getDistancesWithFrom:from tos:toList isAccessible:bool1 sortByTravelTime:bool2 success:^(MWZDistanceResponse *distance) {
+    [[MWZMapwizeApiFactory getApi] getDistancesWithFrom:from tos:toList isAccessible:isAccessible sortByTravelTime:sortByTravelTime success:^(MWZDistanceResponse *distance) {
         NSLog(@"getDistancesWithFrom returned...");
         NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
         NSString* json = [distance toJSONString];

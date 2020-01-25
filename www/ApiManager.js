@@ -28,7 +28,7 @@ ApiManager.prototype.getVenuesWithFilter = function(filter, success, failure) {
 ApiManager.prototype.getVenueWithName = function(name, success, failure) {
 	console.log("ApiManager: getVenueWithName...");
 	exec(function(result) {
-		console.log("ApiManager: getVenueWithName: SUCCESS");
+		console.log("ApiManager: getVenueWithName: SUCCESS, res: " + result.arg);
 		success(JSON.parse(result.arg));
 	}, function(err) {
 		console.log("ApiManager: getVenueWithName: FAILED");
@@ -227,7 +227,7 @@ ApiManager.prototype.getDirectionWithDirectionAndWayPointsFrom = function(direct
 	}, PLUGIN_NAME, "getDirectionWithDirectionAndWayPointsFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), JSON.stringify(waypointsList), isAccessible]);
 }
 
-ApiManager.prototype.getDistancesWithFrom = function(directionPointFrom, directionpointsToList, bool1, bool2, success, failure) {
+ApiManager.prototype.getDistancesWithFrom = function(directionPointFrom, directionpointsToList, isAccessible, sortByTraveltime, success, failure) {
 	console.log("ApiManager: getDistancesWithFrom...");
 	exec(function(result) {
 		console.log("ApiManager: getDistancesWithFrom: SUCCESS");
@@ -235,7 +235,7 @@ ApiManager.prototype.getDistancesWithFrom = function(directionPointFrom, directi
 	}, function(err) {
 		console.log("ApiManager: getDistancesWithFrom: FAILED");
 		failure(err);
-	}, PLUGIN_NAME, "getDistancesWithFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), bool1, bool2]);
+	}, PLUGIN_NAME, "getDistancesWithFrom", [JSON.stringify(directionPointFrom), JSON.stringify(directionpointsToList), isAccessible, sortByTraveltime]);
 }
 
 module.exports = ApiManager;

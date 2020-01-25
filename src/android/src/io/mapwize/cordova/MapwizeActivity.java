@@ -11,6 +11,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -19,28 +26,25 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-
 import io.indoorlocation.core.IndoorLocation;
 import io.indoorlocation.manual.ManualIndoorLocationProvider;
-import io.mapwize.mapwizecomponents.ui.MapwizeFragment;
-import io.mapwize.mapwizecomponents.ui.MapwizeFragmentUISettings;
-import io.mapwize.mapwizeformapbox.api.Api;
-import io.mapwize.mapwizeformapbox.api.ApiCallback;
-import io.mapwize.mapwizeformapbox.api.MapwizeObject;
-import io.mapwize.mapwizeformapbox.api.Parser;
-import io.mapwize.mapwizeformapbox.api.Place;
-import io.mapwize.mapwizeformapbox.api.PlaceList;
-import io.mapwize.mapwizeformapbox.api.Style;
-import io.mapwize.mapwizeformapbox.map.ClickEvent;
-import io.mapwize.mapwizeformapbox.map.MapOptions;
-import io.mapwize.mapwizeformapbox.map.MapwizePlugin;
-
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import io.mapwize.mapwizesdk.api.ApiCallback;
+import io.mapwize.mapwizesdk.api.Direction;
+import io.mapwize.mapwizesdk.api.DirectionPoint;
+import io.mapwize.mapwizesdk.api.Floor;
+import io.mapwize.mapwizesdk.api.MapwizeApi;
+import io.mapwize.mapwizesdk.api.MapwizeApiFactory;
+import io.mapwize.mapwizesdk.api.MapwizeObject;
+import io.mapwize.mapwizesdk.api.Parser;
+import io.mapwize.mapwizesdk.api.Place;
+import io.mapwize.mapwizesdk.api.Placelist;
+import io.mapwize.mapwizesdk.api.Style;
+import io.mapwize.mapwizesdk.api.Venue;
+import io.mapwize.mapwizesdk.map.ClickEvent;
+import io.mapwize.mapwizesdk.map.MapOptions;
+import io.mapwize.mapwizeui.MapwizeFragment;
+import io.mapwize.mapwizeui.MapwizeFragmentUISettings;
+import io.mapwize.mapwizesdk.map.MapwizeMap;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_ARGS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_CREATE_MAPWIZEVIEW;
@@ -59,11 +63,13 @@ import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SELECT_PLACELIST;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SELECT_PLACELIST_ID;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SELECT_PLACE_CENTERON;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SELECT_PLACE_ID;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SET_DIRECTION;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SET_PLACE_STYLE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_SUCCESS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_ARGS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_FIELD_ERR_LOCALIZED_MESSAGE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_FIELD_ERR_MESSAGE;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_GET_DIRECTION;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_GRANT_ACCESS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_GRANT_ACCESS_TOKEN;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SELECT_PLACE;
@@ -71,6 +77,11 @@ import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SELECT_PLACELIST;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SELECT_PLACELIST_ID;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SELECT_PLACE_CENTERON;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SELECT_PLACE_ID;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_DIRECTION;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_DIRECTION_DIRECTION;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_DIRECTION_FROM;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_DIRECTION_ISACCESSIBLE;
+import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_DIRECTION_TO;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_PLACE_STYLE;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_PLACE_STYLE_ID;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CMD_SET_PLACE_STYLE_STYLE;
@@ -91,16 +102,20 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     private static final String OPT_SHOW_INFO_BUTTON_FOR_PLACES = "showInformationButtonForPlaces";
     private static final String OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS = "showInformationButtonForPlaceLists";
 
+    private static final String UIS_MENUBUTTONHIDDEN = "menuButtonHidden";
+    private static final String UIS_COMPASSHIDDEN = "compassHidden";
+    private static final String UIS_FOLLOWUSERBUTTONHIDDEN = "followUserButtonHidden";
+    private static final String UIS_FLOORCONTROLLERHIDDEN = "floorControllerHidden";
+
     private static final String CORDOVA_SHOW_INFO_BUTTON = "cordovaShowInformationButton";
 
     private static final String STYLE_MARKERURL = "markerUrl";
     boolean showInformationButtonForPlaces;
     boolean showInformationButtonForPlaceLists;
 
-
     MapwizeFragment mapwizeFragment;
-    MapboxMap mapboxMap;
-    MapwizePlugin mapwizePlugin;
+    MapwizeMap mMapwizeMap;
+
     ManualIndoorLocationProvider locationProvider;
     BroadcastReceiver mCbkReceiver;
     Activity          mActivity;
@@ -111,37 +126,48 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         Log.d(TAG, "onCreate...");
         String package_name = getApplication().getPackageName();
         setContentView(getApplication().getResources().getIdentifier("activity_mapwize", "layout", package_name));
-        // setContentView(R.layout.activity_mapwize);
 
         Intent intent = getIntent();
         String optStr = intent.getStringExtra(MapwizeCordovaPlugin.OPTIONS_STR);
+        String uiSettingsStr = intent.getStringExtra(MapwizeCordovaPlugin.UISETTINGS_STR);
+
         boolean showClose = false;
         MapOptions opts = null;
-        try {
+        JSONObject optJson = null;
+        JSONObject uiSettingsJson = null;
 
-            JSONObject optJson = new JSONObject(optStr);
+        try {
+            optJson = new JSONObject(optStr);
             Log.d(TAG, "onCreate...optStr: " + optStr);
+            Log.d(TAG, "onCreate...optJson string: " + optJson.toString());
             opts = getOptionsFromStr(optJson);
 
+            Log.d(TAG, "onCreate...uiSettingsStr: " + uiSettingsStr);
             showClose = optJson.optBoolean(OPT_SHOW_CLOSE_BUTTON, false);
             Log.d(TAG, "showClose: " + showClose);
 
             showInformationButtonForPlaces = optJson.optBoolean(OPT_SHOW_INFO_BUTTON_FOR_PLACES, true);
             showInformationButtonForPlaceLists = optJson.optBoolean(OPT_SHOW_INFO_BUTTON_FOR_PLACELISTS, true);
+
+            uiSettingsJson = new JSONObject(uiSettingsStr);
         } catch (JSONException e) {
             e.printStackTrace();
             sendCmdEventErr(CBK_CREATE_MAPWIZEVIEW, "");
             return;
         }
 
-        MapwizeFragmentUISettings uiSettings = new MapwizeFragmentUISettings.Builder().build();
+        MapwizeFragmentUISettings uiSettings = new MapwizeFragmentUISettings.Builder()
+        .menuButtonHidden(uiSettingsJson.optBoolean(UIS_MENUBUTTONHIDDEN, true))
+        .compassHidden(uiSettingsJson.optBoolean(UIS_COMPASSHIDDEN, true))
+        .followUserButtonHidden(uiSettingsJson.optBoolean(UIS_FOLLOWUSERBUTTONHIDDEN, true))
+        .floorControllerHidden(uiSettingsJson.optBoolean(UIS_FLOORCONTROLLERHIDDEN, true))
+        .build();
 
         mapwizeFragment = MapwizeFragment.newInstance(opts, uiSettings);
         FragmentManager fm = getSupportFragmentManager();
 
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(getApplication().getResources().getIdentifier("fragmentContainer", "id", package_name), mapwizeFragment);
-        // ft.add(R.id.fragmentContainer, mapwizeFragment);
         ft.commit();
 
         mCbkReceiver = new CbkReceiver();
@@ -151,6 +177,8 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         filter.addAction(CMD_SELECT_PLACE);
         filter.addAction(CMD_SET_PLACE_STYLE);
         filter.addAction(CMD_SELECT_PLACELIST);
+        filter.addAction(CMD_SET_DIRECTION);
+        filter.addAction(CMD_GET_DIRECTION);
         filter.addAction(CMD_GRANT_ACCESS);
         filter.addAction(CMD_UNSELECT_CONTENT);
 
@@ -171,7 +199,6 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
         }
 
-        // ImageButton button = findViewById(R.id.imageButton);
         ImageButton button = findViewById(getApplication().getResources().getIdentifier("imageButton", "id", package_name));
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -192,45 +219,60 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
      * @param json the json object that holds the options
      * @return
      */
-    private MapOptions getOptionsFromStr(JSONObject json) {
-        Log.d(TAG, "getOptionsFromStr...");
+    private MapOptions getOptionsFromStr(JSONObject json) throws JSONException {
+        Log.d(TAG, "getOptionsFromStr...json: " + json.toString());
         MapOptions.Builder builder = new MapOptions.Builder();
+        try {
+            Double floor = json.optDouble(OPT_FLOOR);
+            if (floor != null) {
+                Log.d(TAG, "added floor: " + floor);
+                builder.floor(floor);
+            }
 
-        Double floor = json.optDouble(OPT_FLOOR);
-        if (floor != null) {
-            builder.floor(floor);
-        }
+            String lang = json.optString(OPT_LANG);
+            if (!TextUtils.isEmpty(lang)) {
+                Log.d(TAG, "added lang: " + lang);
+                builder.language(lang);
+            }
 
-        String lang = json.optString(OPT_LANG);
-        if (!TextUtils.isEmpty(lang)) {
-            builder.language(lang);
-        }
+            Log.d(TAG, "getting universeId...");
+            String universeId = json.optString(OPT_UNIVERSE_ID); //TODO: is it and ID???
+            if (!TextUtils.isEmpty(universeId)) {
+                Log.d(TAG, "added universeId: " + universeId);
+                builder.universe(universeId);
+            }
 
-        String universeId = json.optString(OPT_UNIVERSE_ID); //TODO: is it and ID???
-        if (!TextUtils.isEmpty(universeId)) {
-            builder.universe(universeId);
-        }
+            Log.d(TAG, "getting restrictToVenue...");
+            String restrictToVenue = json.optString(OPT_RESTRICT_CONTENT_TO_VENUE_ID);
+            if (!TextUtils.isEmpty(restrictToVenue)) {
+                Log.d(TAG, "added restrictToVenue: " + restrictToVenue);
+                Venue venue = Parser.parseVenue(restrictToVenue);
+                builder.restrictContentToVenue(venue);
+            }
 
-        String restrictToVenue = json.optString(OPT_RESTRICT_CONTENT_TO_VENUE_ID);
-        if (!TextUtils.isEmpty(restrictToVenue)) {
-            builder.restrictContentToVenue(restrictToVenue);
-        }
+            Log.d(TAG, "getting restrictToOrg...");
+            String restrictToOrg = json.optString(OPT_RESTRICT_CONTENT_TO_ORG_ID);
+            if (!TextUtils.isEmpty(restrictToOrg)) {
+                Log.d(TAG, "added restrictToOrg: " + restrictToOrg);
+                builder.restrictContentToOrganization(restrictToOrg);
+            }
 
-        String restrictToOrg = json.optString(OPT_RESTRICT_CONTENT_TO_ORG_ID);
-        if (!TextUtils.isEmpty(restrictToOrg)) {
-            builder.restrictContentToOrganization(restrictToOrg);
-        }
+            Log.d(TAG, "getting centerOnVenueId...");
+            String centerOnVenueId = json.optString(OPT_CENTER_ON_VENUE_ID); //TODO: is it and ID???
+            if (!TextUtils.isEmpty(centerOnVenueId)) {
+                Log.d(TAG, "added centerOnVenueId: " + centerOnVenueId);
+                builder.centerOnVenue(centerOnVenueId);
+            }
 
-        String centerOnVenueId = json.optString(OPT_CENTER_ON_VENUE_ID); //TODO: is it and ID???
-        if (!TextUtils.isEmpty(centerOnVenueId)) {
-            Log.d(TAG, "added centerOnVenueId: " + centerOnVenueId);
-            builder.centerOnVenue(centerOnVenueId);
-        }
-
-        String centerOnPlaceId = json.optString(OPT_CENTER_ON_PLACE_ID); //TODO: is it and ID???
-        if (!TextUtils.isEmpty(centerOnPlaceId)) {
-            Log.d(TAG, "added centerOnPlaceId: " +centerOnPlaceId);
-            builder.centerOnPlace(centerOnPlaceId);
+            Log.d(TAG, "getting centerOnPlaceId...");
+            String centerOnPlaceId = json.optString(OPT_CENTER_ON_PLACE_ID); //TODO: is it and ID???
+            if (!TextUtils.isEmpty(centerOnPlaceId)) {
+                Log.d(TAG, "added centerOnPlaceId: " + centerOnPlaceId);
+                builder.centerOnPlace(centerOnPlaceId);
+            }
+        } catch (JSONException e) {
+            Log.d(TAG, "getOptionsFromStr, JSON exception:: " + e.getLocalizedMessage());
+            throw e;
         }
 
         MapOptions opt = builder.build();
@@ -261,37 +303,35 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     }
 
     @Override
-    public void onInformationButtonClick(MapwizeObject mapwizeObject) {
+    public void onInformationButtonClick(io.mapwize.mapwizesdk.api.MapwizeObject mapwizeObject) {
         Log.d(TAG, "onInformationButtonClick...class: " + mapwizeObject.getClass() + ", className: " + mapwizeObject.getClass().getName() + ", Place.class: " + Place.class + ", Place.className: " + Place.class.getName());
 
         if (mapwizeObject instanceof Place) {
             sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACE_INFORMATION_BUTTON, mapwizeObject.toJSONString());
-        } else if (mapwizeObject instanceof PlaceList) {
+        } else if (mapwizeObject instanceof Placelist) {
             sendCallbackEventOK(CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON, mapwizeObject.toJSONString());
         } else {
             Log.d(TAG, "onInformationButtonClick, Object is not recognized...");
         }
-
     }
 
     @Override
-    public void onFragmentReady(MapboxMap mapboxMap, MapwizePlugin mapwizePlugin) {
+    public void onFragmentReady(MapwizeMap mapwizeMap) {
         Log.d(TAG, "onFragmentReady...");
-        this.mapboxMap = mapboxMap;
-        this.mapwizePlugin = mapwizePlugin;
         this.locationProvider = new ManualIndoorLocationProvider();
+        this.mMapwizeMap = mapwizeMap;
         Log.d(TAG, "onFragmentReady...1");
-        // this.mapwizePlugin.setLocationProvider(this.locationProvider);
-        // Log.d(TAG, "onFragmentReady...2");
-        this.mapwizePlugin.addOnLongClickListener(new MapwizePlugin.OnLongClickListener() {
-            @Override
-            public void onLongClickEvent(@NonNull ClickEvent clickEvent) {
-                Log.d(TAG, "onLongClickEvent...");
-                IndoorLocation indoorLocation = new IndoorLocation("manual_provider",
-                        clickEvent.getLatLngFloor().getLatitude(), clickEvent.getLatLngFloor().getLongitude(),
-                        clickEvent.getLatLngFloor().getFloor(), System.currentTimeMillis());
-                locationProvider.setIndoorLocation(indoorLocation);
-            }
+        mapwizeMap.setIndoorLocationProvider(this.locationProvider);
+        Log.d(TAG, "onFragmentReady...2");
+        mapwizeMap.addOnLongClickListener(new MapwizeMap.OnLongClickListener() {
+           @Override
+           public void onLongClickEvent(@NonNull ClickEvent clickEvent) {
+               Log.d(TAG, "onLongClickEvent...");
+               IndoorLocation indoorLocation = new IndoorLocation("manual_provider",
+                       clickEvent.getLatLngFloor().getLatitude(), clickEvent.getLatLngFloor().getLongitude(),
+                       clickEvent.getLatLngFloor().getFloor(), System.currentTimeMillis());
+               locationProvider.setIndoorLocation(indoorLocation);
+           }
         });
         sendCallbackEventOK(CBK_EVENT_DID_LOAD, "");
         Log.d(TAG, "onFragmentReady...3");
@@ -314,7 +354,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
         if (mapwizeObject instanceof Place) {
             return showInformationButtonForPlaces;
-        } else if (mapwizeObject instanceof PlaceList) {
+        } else if (mapwizeObject instanceof Placelist) {
             return showInformationButtonForPlaceLists;
         } else {
             Log.d(TAG, "shouldDisplayInformationButton, Object is not recognized...");
@@ -323,7 +363,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
     }
 
     @Override
-    public boolean shouldDisplayFloorController(List<Double> floors) {
+    public boolean shouldDisplayFloorController(List<Floor> floors) {
         return floors != null && floors.size() > 1;
     }
 
@@ -458,11 +498,11 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         mCbkReceiver = null;
         this.locationProvider = null;
         mapwizeFragment = null;
-        this.mapboxMap = null;
-        this.mapwizePlugin = null;
         this.locationProvider = null;
+    }
 
-
+    private MapwizeApi getApi() {
+        return MapwizeApiFactory.getApi();
     }
 
 
@@ -480,7 +520,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                 String id = intent.getStringExtra(CMD_SELECT_PLACE_ID);
                 boolean centerOn = intent.getBooleanExtra(CMD_SELECT_PLACE_CENTERON, false);
                 Log.d(TAG, "Received: CMD_SELECT_PLACE, id: " + id + " centerOn: " + centerOn);
-                Api.getPlace(id, new ApiCallback<Place>() {
+                getApi().getPlace(id, new ApiCallback<Place>() {
                     @Override
                     public void onSuccess(@Nullable Place place) {
                         Log.d(TAG, "receiver, CMD_SELECT_PLACE...");
@@ -512,14 +552,18 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                 String id = intent.getStringExtra(CMD_SET_PLACE_STYLE_ID);
                 String style = intent.getStringExtra(CMD_SET_PLACE_STYLE_STYLE);
                 Log.d(TAG, "Received: CMD_SET_PLACE_STYLE, id: " + id);
-                Api.getPlace(id, new ApiCallback<Place>() {
+                getApi().getPlace(id, new ApiCallback<Place>() {
                     @Override
                     public void onSuccess(@Nullable Place place) {
                         Log.d(TAG, "receiver, CMD_SET_PLACE_STYLE...");
                         mActivity.runOnUiThread(new Runnable() {
                             public void run() {
                                 Style mapwizeStyle = getStyleFromStr(style);
-                                mapwizePlugin.setPlaceStyle(place, mapwizeStyle);
+
+                                if (mMapwizeMap != null) {
+                                    mMapwizeMap.setPlaceStyle(place, mapwizeStyle);                                    
+                                }
+
                                 try {
                                     JSONObject json = new JSONObject();
                                     json.put(CMD_SET_PLACE_STYLE_ID, id);
@@ -539,18 +583,57 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                     }
                 });
 
+            } else if (CMD_SET_DIRECTION.equals(action)) {
+                Log.d(TAG, "Received: CMD_SET_DIRECTION");
+
+                try {
+                    String directionStr = intent.getStringExtra(CMD_SET_DIRECTION_DIRECTION);
+                    Log.d(TAG, "CMD_SET_DIRECTION, parsing directionStr..." + directionStr);
+                    JSONObject var1 = new JSONObject(directionStr);
+
+                    Log.d(TAG, "CMD_SET_DIRECTION, parsing CMD_SET_DIRECTION_DIRECTION...");
+                    Direction direction = Parser.parseDirection(directionStr);
+                    Log.d(TAG, "CMD_SET_DIRECTION, getting CMD_SET_DIRECTION_FROM...");
+                    String fromStr = intent.getStringExtra(CMD_SET_DIRECTION_FROM);
+                    DirectionPoint from = Parser.parseDirectionPoint(fromStr);
+                    Log.d(TAG, "CMD_SET_DIRECTION, getting CMD_SET_DIRECTION_TO...");
+                    String toStr = intent.getStringExtra(CMD_SET_DIRECTION_TO);
+                    DirectionPoint to = Parser.parseDirectionPoint(toStr);
+                    Log.d(TAG, "CMD_SET_DIRECTION, getting CMD_SET_DIRECTION_ISACCESSIBLE...");
+                    boolean isAccessible = intent.getBooleanExtra(CMD_SET_DIRECTION_ISACCESSIBLE, false);
+
+                    Log.d(TAG, "Received: CMD_SET_DIRECTION...");
+                    mActivity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Log.d(TAG, "CMD_SET_DIRECTION, calling setDirection...");
+                            mapwizeFragment.setDirection(direction, from, to, isAccessible);
+                            Log.d(TAG, "CMD_SET_DIRECTION, sendCmdEventOK...");
+                            sendCmdEventOK(CBK_SET_DIRECTION, null);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    Log.d(TAG, "CMD_SET_DIRECTION JSONException...e:  " + e.getLocalizedMessage());
+                    sendCmdEventErr(CBK_SET_DIRECTION, (String) e.getLocalizedMessage());
+                }  catch (NullPointerException e) {
+                    Log.d(TAG, "CMD_SET_DIRECTION NullPointerException...");
+                    sendCmdEventErr(CBK_SET_DIRECTION, (String) e.getLocalizedMessage());
+                }
+
             } else if (CMD_SELECT_PLACELIST.equals(action)) {
                 Log.d(TAG, "Received: CBK_SELECT_PLACELIST");
 
                 String id = intent.getStringExtra(CMD_SELECT_PLACELIST_ID);
                 Log.d(TAG, "Received: CMD_SELECT_PLACELIST_ID, id: " + id);
-                Api.getPlaceList(id, new ApiCallback<PlaceList>() {
+                getApi().getPlacelist(id, new ApiCallback<Placelist>() {
                     @Override
-                    public void onSuccess(@Nullable PlaceList placeList) {
+                    public void onSuccess(@Nullable Placelist placeList) {
                         Log.d(TAG, "receiver, CMD_SELECT_PLACELIST_ID...");
                         mActivity.runOnUiThread(new Runnable() {
                             public void run() {
-                                mapwizeFragment.selectPlaceList(placeList);
+                                Log.d(TAG, "receiver, CMD_SELECT_PLACELIST_ID, run...");
+                                mapwizeFragment.selectPlacelist(placeList);
+                                Log.d(TAG, "receiver, CMD_SELECT_PLACELIST_ID, end...");
                                 try {
                                     JSONObject json = new JSONObject();
                                     json.put(CBK_SELECT_PLACELIST_ID, id);
@@ -576,7 +659,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                 Log.d(TAG, "Received: CMD_GRANT_ACCESS_TOKEN: " + token);
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        mapwizePlugin.grantAccess(token, new ApiCallback<Boolean>() {
+                        mapwizeFragment.grantAccess(token, new ApiCallback<Boolean>() {
 
                             @Override
                             public void onSuccess(@Nullable Boolean aBoolean) {
@@ -598,8 +681,6 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
                         });
                     }
                 });
-
-
             } else if (CMD_UNSELECT_CONTENT.equals(action)) {
                 Log.d(TAG, "Received: CMD_UNSELECT_CONTENT");
                 mActivity.runOnUiThread(new Runnable() {
