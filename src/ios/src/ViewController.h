@@ -33,7 +33,7 @@
 
 - (void)viewDidLoad;
 - (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place;
-- (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlacelist *)placeList;
+- (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlacelistInformationButton:(MWZPlacelist *)placeList;
 - (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZUIView *)mapwizeView;
 - (void)mapwizeViewDidTapOnMenu:(MWZUIView *)mapwizeView;
 - (void)mapwizeViewDidLoad:(MWZUIView*) mapwizeView;
