@@ -96,9 +96,12 @@ NSString* mCallbackId;
     NSLog(@"getting presentViewController...");
     
     if (showCloseButton == YES) {
+        NSLog(@"showCloseButton == YES...");
         [self.viewController presentViewController:navController
                                           animated:NO completion:nil];
     } else {
+        NSLog(@"showCloseButton else...");
+        self.viewController.modalPresentationStyle = UIModalPresentationFullScreen;
         [self.viewController presentViewController:viewCtrl
                                           animated:NO
                                         completion:nil];
@@ -590,12 +593,11 @@ NSString* mCallbackId;
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlace called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
-    // BOOL    centerOn = [command.arguments objectAtIndex:1]; //TODO: need to wait for the decision on the centerOn param
-    BOOL    centerOn = true;
+    BOOL    centerOn = [command.arguments objectAtIndex:1]; //TODO: need to wait for the decision on the centerOn param
     
     [[MWZMapwizeApiFactory getApi] getPlaceWithIdentifier:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
-        [viewCtrl selectPlace:place centerOn:centerOn callbackId:command.callbackId];
+        [self->viewCtrl selectPlace:place centerOn:centerOn callbackId:command.callbackId];
     } failure:^(NSError *error) {
         NSLog(@"error...%@", error.localizedDescription);
     }];
@@ -868,8 +870,8 @@ NSString* mCallbackId;
     NSString *directionPointFrom = [command.arguments objectAtIndex:0];
     NSString *directionPointsListTo = [command.arguments objectAtIndex:1];
     BOOL     isAccessible = [command.arguments objectAtIndex:2];
-    BOOL     bool2 = [command.arguments objectAtIndex:3];
-    [ApiManager getDistancesWithFrom:directionPointFrom directionpointsToListStr:directionPointsListTo bool1:isAccessible bool2:bool2 callbackId:command.callbackId];
+    BOOL     sortByTravelTime = [command.arguments objectAtIndex:3];
+    [ApiManager getDistancesWithFrom:directionPointFrom directionpointsToListStr:directionPointsListTo isAccessible:(BOOL)isAccessible sortByTravelTime:(BOOL)sortByTravelTime callbackId:command.callbackId];
 }
 
 

@@ -105,9 +105,6 @@
         </config-file>
 
 
-
-
-
         <config-file target="*-Info.plist" parent="MGLMapboxMetricsEnabledSettingShownInApp">
           <string>YES</string>
         </config-file>
@@ -137,7 +134,7 @@
             <source url="https://github.com/CocoaPods/Specs.git"/>
           </config>
           <pods use-frameworks="true">
-            <pod name="MapwizeUI" spec="~> 2.1.0" />
+            <pod name="MapwizeUI" spec="~> 2.1.2" />
           </pods>
         </podspec>
     </platform>
