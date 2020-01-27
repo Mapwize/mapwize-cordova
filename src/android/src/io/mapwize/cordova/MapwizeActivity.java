@@ -11,13 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -26,6 +19,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+
 import io.indoorlocation.core.IndoorLocation;
 import io.indoorlocation.manual.ManualIndoorLocationProvider;
 import io.mapwize.mapwizesdk.api.ApiCallback;
@@ -45,6 +41,11 @@ import io.mapwize.mapwizesdk.map.MapOptions;
 import io.mapwize.mapwizeui.MapwizeFragment;
 import io.mapwize.mapwizeui.MapwizeFragmentUISettings;
 import io.mapwize.mapwizesdk.map.MapwizeMap;
+
+import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_ARGS;
 import static io.mapwize.cordova.MapwizeCordovaPlugin.CBK_CREATE_MAPWIZEVIEW;
@@ -183,11 +184,7 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
         filter.addAction(CMD_UNSELECT_CONTENT);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mCbkReceiver, filter);
-
         mActivity = this;
-
-        // Always cast your custom Toolbar here, and set it as the ActionBar.
-        // Toolbar tb = (Toolbar) findViewById(R.id.imgtoolbar);
         Toolbar tb = findViewById(getApplication().getResources().getIdentifier("imgtoolbar", "id", package_name));
         setSupportActionBar(tb);
 
@@ -588,20 +585,12 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
 
                 try {
                     String directionStr = intent.getStringExtra(CMD_SET_DIRECTION_DIRECTION);
-                    Log.d(TAG, "CMD_SET_DIRECTION, parsing directionStr..." + directionStr);
-                    JSONObject var1 = new JSONObject(directionStr);
-
-                    Log.d(TAG, "CMD_SET_DIRECTION, parsing CMD_SET_DIRECTION_DIRECTION...");
                     Direction direction = Parser.parseDirection(directionStr);
-                    Log.d(TAG, "CMD_SET_DIRECTION, getting CMD_SET_DIRECTION_FROM...");
                     String fromStr = intent.getStringExtra(CMD_SET_DIRECTION_FROM);
                     DirectionPoint from = Parser.parseDirectionPoint(fromStr);
-                    Log.d(TAG, "CMD_SET_DIRECTION, getting CMD_SET_DIRECTION_TO...");
                     String toStr = intent.getStringExtra(CMD_SET_DIRECTION_TO);
                     DirectionPoint to = Parser.parseDirectionPoint(toStr);
-                    Log.d(TAG, "CMD_SET_DIRECTION, getting CMD_SET_DIRECTION_ISACCESSIBLE...");
                     boolean isAccessible = intent.getBooleanExtra(CMD_SET_DIRECTION_ISACCESSIBLE, false);
-
                     Log.d(TAG, "Received: CMD_SET_DIRECTION...");
                     mActivity.runOnUiThread(new Runnable() {
                         public void run() {
@@ -694,6 +683,5 @@ public class MapwizeActivity extends AppCompatActivity implements MapwizeFragmen
             }
         }
     }
-
 
 }
