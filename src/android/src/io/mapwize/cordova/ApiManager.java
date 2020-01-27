@@ -381,15 +381,18 @@ public class ApiManager {
     }
 
     public static void getDirectionWithFrom(String directionPointFrom, String directionPointTo, boolean isAccessible, CallbackContext context) {
-        Log.d(TAG, "searchWithParams...");
+        Log.d(TAG, "getDirectionWithFrom...");
         try {
             DirectionPoint from = Parser.parseDirectionPoint(directionPointFrom);
+            Log.d(TAG, "getDirectionWithFrom...from: " + from.toJSONString());
             DirectionPoint to = Parser.parseDirectionPoint(directionPointTo);
+            Log.d(TAG, "getDirectionWithFrom...to: " + to.toJSONString());
             getApi().getDirection(from, to, isAccessible, new ApiCallback<Direction>() {
                 @Override
                 public void onSuccess(@Nullable Direction direction) {
-                    Log.d(TAG, "success, getting direction, getDirectionWithFrom...");
+                    Log.d(TAG, "success, getting direction, getDirectionWithFrom..." + direction.toString());
                     String directionStr = direction.toJSONString();
+                    Log.d(TAG, "success, getting direction, JSON done..");
                     sendCallbackCmd(directionStr, context);
                 }
 
