@@ -1,6 +1,6 @@
 # Mapwize Cordova Changelog
 
-## 1.4.0
+## 2.0.0
 
 - Upgrading to MapwizeUI iOS 2.1.3
 - Upgrading to MapwizeUI Android 2.1.2
