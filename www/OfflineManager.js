@@ -1,7 +1,6 @@
 var exec = cordova.exec;
 var PLUGIN_NAME = "Mapwize"
 
-
 OfflineManager.prototype.styleURL;
 
 function OfflineManager(styleURL) {

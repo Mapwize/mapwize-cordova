@@ -11,7 +11,6 @@
 #import <MapwizeSDK/MWZPlacelist.h>
 
 @interface ViewController () <MWZUIViewDelegate>
-//@interface ViewController () <MWZUIViewDelegate, UINavigationBarDelegate>
 
 @property (nonatomic, retain) MWZUIView* mapwizeView;
 @property (nonatomic, retain) MWZUIOptions* opts;
@@ -129,11 +128,7 @@ BOOL showInfoButtonForPlaceLists;
 
 - (void)viewWillAppear:(BOOL)animated {
     self.modalPresentationStyle = UIModalPresentationFullScreen;
-
-//    [self presentViewController:sel animated:YES completion:nil];
-
 }
-
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -164,8 +159,6 @@ BOOL showInfoButtonForPlaceLists;
                                 action:@selector(onTapDone:)];
     
     self.navigationItem.rightBarButtonItem = doneBtn;
-
-    
     [self.view addSubview:self.mapwizeView];
 
     [[NSLayoutConstraint constraintWithItem:self.mapwizeView
@@ -196,9 +189,7 @@ BOOL showInfoButtonForPlaceLists;
                                   attribute:NSLayoutAttributeRight
                                  multiplier:1.0f
                                    constant:0.0f] setActive:YES];
-    
     NSLog(@"viewDidLoad...END");
-    
 }
 
 - (void)onTapDone:(id)sender {

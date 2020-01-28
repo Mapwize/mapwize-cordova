@@ -1,5 +1,4 @@
 var exec = cordova.exec;
-
 var PLUGIN_NAME = "Mapwize"
 
 function Mapwize() {

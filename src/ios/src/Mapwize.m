@@ -269,13 +269,6 @@ NSString* mCallbackId;
 - (MWZDirectionWrapper*) jsonToDirectionWrapper:(NSDictionary*)json {
     NSLog(@"json2DirectionWrapper json...%@", json);
     NSLog(@"json2DirectionWrapper json type...%@", [json class]);
-//    NSData *data = [json dataUsingEncoding:NSUTF8StringEncoding];
-//    NSError *jsonError;
-    
-//    NSLog(@"json2DirectionWrapper, json...");
-//    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
-//                                 options:NSJSONReadingMutableContainers
-//                                   error:&jsonError];
     MWZDirectionWrapper *dw = [[MWZDirectionWrapper alloc] init];
     
     NSNumber* latitude = json[@"latitude"];
@@ -363,10 +356,6 @@ NSString* mCallbackId;
     NSLog(@"jsonToRouter boundsStr type...%@", [boundsStr class]);
     
     MGLCoordinateBounds bounds = [self jsonToCoordinateBounds:boundsStr];
-    
-    
-    
-    
     MWZRoute *route = [[MWZRoute alloc] initWithFloor:floor
             fromFloor:fromFloor
               toFloor:toFloor
@@ -379,19 +368,6 @@ NSString* mCallbackId;
       connectorTypeTo:connectorTypeTo
     connectorTypeFrom:connectorTypeFrom
                  path:latLngArr];
-        
-//    - (instancetype _Nonnull)initWithFloor:(NSNumber *_Nullable)floor
-//            fromFloor:(NSNumber *_Nullable)fromFloor
-//              toFloor:(NSNumber *_Nullable)toFloor
-//              isStart:(BOOL)isStart
-//                isEnd:(BOOL)isEnd
-//           traveltime:(double)traveltime
-//            timeToEnd:(double)timeToEnd
-//               bounds:(struct MGLCoordinateBounds)bounds
-//             distance:(double)distance
-//      connectorTypeTo:(NSString *_Nullable)connectorTypeTo
-//    connectorTypeFrom:(NSString *_Nullable)connectorTypeFrom
-//                 path:(NSArray<MWZLatLng *> *_Nonnull)path;
     
     return route;
 }
@@ -403,10 +379,7 @@ NSString* mCallbackId;
 - (NSArray<MWZRoute *> *) jsonToRouteArray:(NSArray*)routeArray {
     NSMutableArray* raArray = [[NSMutableArray alloc] init];
     NSLog(@"jsonToRouteArray...%@", [routeArray description]);
-    NSLog(@"jsonToRouteArray json type...%@", [routeArray class]);
-//    NSLog(@"jsonToRouteArray, data...");
-//    NSData *data = [routeArrayStr dataUsingEncoding:NSUTF8StringEncoding];
-    
+    NSLog(@"jsonToRouteArray json type...%@", [routeArray class]);   
     NSLog(@"jsonToRouteArray, json...");
     
     int i = 0;
@@ -426,14 +399,10 @@ NSString* mCallbackId;
     
     NSLog(@"jsonToDirectionWrapperArray, data...%@", [directionWrapperArray description]);
     NSLog(@"jsonToDirectionWrapperArray, data...%@", [directionWrapperArray class]);
-//    NSData *data = [directionWrapperArrayStr dataUsingEncoding:NSUTF8StringEncoding];
-//    id allKeys = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&jsonError];
     int i = 0;
     for (i=0; i<[directionWrapperArray count]; i++) {
         NSDictionary *arrayResult = [directionWrapperArray objectAtIndex:i];
         NSLog(@"MWZDirectionWrapper,  %@",[arrayResult description]);
-        
-//        NSLog(@"ID=%@",[arrayResult objectForKey:@"ID"]);
     }
     
     return dwArray;
@@ -445,26 +414,15 @@ NSString* mCallbackId;
     
     NSLog(@"jsonToDirectionArray, data...%@", [directionArray description]);
     NSLog(@"jsonToDirectionArray, type...%@", [directionArray class]);
-//    NSData *data = [directionArrayStr dataUsingEncoding:NSUTF8StringEncoding];
-    
-//    NSLog(@"jsonToDirectionArray, json...");
-    
-//    id allKeys = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&jsonError];
     int i = 0;
     for (i=0; i<[directionArray count]; i++) {
         NSDictionary *arrayResult = [directionArray objectAtIndex:i];
         NSLog(@"MWZDirectionWrapper,  %@",[arrayResult description]);
         
-//        NSLog(@"ID=%@",[arrayResult objectForKey:@"ID"]);
     }
     
     return dArray;
 }
-
-
-//- (CLLocationCoordinate2D) jsonToLocationCoord:(NSString*)coordStr {
-//
-//}
 
 - (MGLCoordinateBounds) jsonToCoordinateBounds:(NSArray*)coordBounds {
     MGLCoordinateBounds cb;
@@ -483,20 +441,8 @@ NSString* mCallbackId;
     NSLog(@"jsonToCoordinateBounds, data...");
     NSLog(@"jsonToCoordinateBounds, data...%@", coordBounds);
     NSLog(@"jsonToCoordinateBounds, data type...%@", [coordBounds class]);
-//    NSData *data = [coordBoundsStr dataUsingEncoding:NSUTF8StringEncoding];
-    
     NSLog(@"jsonToCoordinateBounds, json...");
-    
-//    id allKeys = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&jsonError];
-//    int i = 0;
-//
-//
-//    for (i=0; i<[coordBounds count]; i++) {
-//        NSDictionary *arrayResult = [coordBounds objectAtIndex:i];
-//        NSLog(@"MWZDirectionWrapper,  %@",[arrayResult description]);
-//        NSLog(@"MWZDirectionWrapper,  %@",[arrayResult class]);
-//    }
-    
+        
     if([coordBounds count] == 4) {
         ne.longitude = [[coordBounds objectAtIndex:0] doubleValue];
         ne.latitude = [[coordBounds objectAtIndex:1] doubleValue];
@@ -504,14 +450,8 @@ NSString* mCallbackId;
         sw.latitude = [[coordBounds objectAtIndex:1] doubleValue];
     }
 
-    
     return cb;
 }
-
-
-
-
-
 
 - (MWZDirection*) jsonToDirection:(NSString*)directionStr {
     NSLog(@"jsonToDirection directionStr...%@", directionStr);
@@ -593,7 +533,7 @@ NSString* mCallbackId;
 - (void)selectPlace:(CDVInvokedUrlCommand*)command {
     NSLog(@"selectPlace called...");
     NSString *identifier = [command.arguments objectAtIndex:0];
-    BOOL    centerOn = [command.arguments objectAtIndex:1]; //TODO: need to wait for the decision on the centerOn param
+    BOOL    centerOn = [command.arguments objectAtIndex:1];
     
     [[MWZMapwizeApiFactory getApi] getPlaceWithIdentifier:identifier success:^(MWZPlace *place) {
         NSLog(@"identifier...");
@@ -632,11 +572,9 @@ NSString* mCallbackId;
     MWZDirection* direction = [self jsonToDirection:directionStr];
     
     NSString* fromStr = [command.arguments objectAtIndex:1];
-//    MWZDirectionWrapper* from = [self jsonToDirectionWrapper:fromStr];
     id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:fromStr];
     
     NSString* toStr = [command.arguments objectAtIndex:2];
-//    MWZDirectionWrapper* to = [self jsonToDirectionWrapper:toStr];
     id<MWZDirectionPoint> to = [MWZApiResponseParser parseDirectionPoint:toStr];
     
     BOOL isAccessible = [command.arguments objectAtIndex:3];

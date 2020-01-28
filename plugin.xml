@@ -9,13 +9,10 @@
     <keywords>cordova,ionic,mapwize,indoor,building,map,maps</keywords>
     <repo>https://github.com/Mapwize/mapwize-cordova</repo>
     <issue></issue>
-
     <preference name="MWZAPIKEY" />
     <preference name="MWZSERVERURL" />
     <preference name="MWZSTYLEURL" />
     <preference name="MWZREFRESHINTERVAL" />
-
-
     <js-module src="www/Mapwize.js" name="Mapwize" >
         <clobbers target="window.Mapwize"/>
     </js-module>
@@ -49,7 +46,6 @@
                 android:launchMode="singleInstance">
             </activity>
         </config-file>
-
         <resource-file src="src/android/res/layout/activity_mapwize.xml" target="res/layout/activity_mapwize.xml" />
         <resource-file src="src/android/res/layout/mapwize_bottom_view.xml" target="res/layout/mapwize_bottom_view.xml" />
         <resource-file src="src/android/res/layout/mapwize_direction_button.xml" target="res/layout/mapwize_direction_button.xml" />
@@ -62,25 +58,21 @@
         <resource-file src="src/android/res/layout/mapwize_search_results_list.xml" target="res/layout/mapwize_search_results_list.xml" />
         <resource-file src="src/android/res/layout/mapwize_text_item.xml" target="res/layout/mapwize_text_item.xml" />
         <resource-file src="src/android/res/layout/mapwize_universes_alert.xml" target="res/layout/mapwize_universes_alert.xml" />
-
         <resource-file src="src/android/res/values/colors.xml" target="res/values/attrs.xml" />
         <resource-file src="src/android/res/values/colors.xml" target="res/values/colors.xml" />
         <resource-file src="src/android/res/values/colors.xml" target="res/values/dimens.xml" />
         <resource-file src="src/android/res/values/strings2.xml" target="res/values/strings2.xml" />
-        <!-- <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" /> -->
         <resource-file src="src/android/res/drawable/ic_close_24dp.png" target="res/drawable/ic_close_24dp.png" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeActivity.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MapwizeCordovaPlugin.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/MarshMallowPermission.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/ApiManager.java" target-dir="src/io/mapwize/cordova/" />
         <source-file src="src/android/src/io/mapwize/cordova/OfflineManager.java" target-dir="src/io/mapwize/cordova/" />
-
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <hook type="after_prepare" src="scripts/after_prepare.js" />
         <hook type="after_prepare" src="scripts/copy_android_locales.js" />
     </platform>
     <platform name="ios">
-
         <config-file target="config.xml" parent="/*">
             <feature name="Mapwize" >
                 <param name="ios-package" value="Mapwize" onload="true"/>
@@ -103,7 +95,6 @@
         <config-file target="*-Info.plist" parent="MWZRefreshInterval">
           <string>$MWZREFRESHINTERVAL</string>
         </config-file>
-
 
         <config-file target="*-Info.plist" parent="MGLMapboxMetricsEnabledSettingShownInApp">
           <string>YES</string>
@@ -138,7 +129,6 @@
           </pods>
         </podspec>
     </platform>
-    <!-- <dependency id="cordova-plugin-localization-strings" version="3.0.1"/> -->
 
     <engines>
       <engine name="cordova-ios" version=">=4.5.0" />

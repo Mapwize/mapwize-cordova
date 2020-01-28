@@ -31,8 +31,6 @@ public class OfflineManager {
     public OfflineManager(Activity activity, String styleUrl) {
         Log.d(TAG, "OfflineManager, styleUrl: " + styleUrl);
         mActivity= activity;
-
-        // MapwizeConfiguration config = new MapwizeConfiguration.Builder(mActivity.getApplication().getApplicationContext(), styleUrl).build();
         MapwizeConfiguration config = MapwizeConfiguration.getInstance();
         mOfflineManager = new io.mapwize.mapwizesdk.api.OfflineManager(config);
         mActivity.runOnUiThread(new Runnable() {

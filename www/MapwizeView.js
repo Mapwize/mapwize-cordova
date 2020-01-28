@@ -7,7 +7,6 @@ function MapwizeView() {
 
 MapwizeView.prototype.callbacks;
 
-
 MapwizeView.prototype.setCallback = function(callbacks) {
 	console.log("MapwizeView: setCallback");
 	this.callbacks = callbacks;
@@ -71,21 +70,6 @@ MapwizeView.prototype.setDirection = function(direction, from, to, isAccessible,
 				console.log("MapwizeView: setDirection: FAILED");
 				failure(err);
 			}, PLUGIN_NAME, "setDirection", [JSON.stringify(direction), JSON.stringify(from), JSON.stringify(to), isAccessible]);
-}
-
-MapwizeView.prototype.getDirection = function(from, to, isAccessible, success, failure) {
-	console.log("MapwizeView: getDirection");
-	exec(function(result) { 
-				console.log("MapwizeView: getDirection: SUCCESS");
-				if(!!result && result.arg){
-					success(result.arg);
-				} else{
-					success(result);
-				}
-			}, function(err) {
-				console.log("MapwizeView: getDirection: FAILED");
-				failure(err);
-			}, PLUGIN_NAME, "getDirection", [JSON.stringify(from), JSON.stringify(to), isAccessible]);
 }
 
 MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
