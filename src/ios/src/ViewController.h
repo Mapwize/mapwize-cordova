@@ -10,6 +10,9 @@
 
 #import <Cordova/CDV.h>
 #import <MapwizeUI/MapwizeUI.h>
+#import <MapwizeUI/MWZUISettings.h>
+#import <MapwizeUI/MWZUIView.h>
+
 
 @class Mapwize;
 
@@ -18,23 +21,23 @@
 
 @interface ViewController : UIViewController
 -(void)deinit;
-- (void)setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists;
-- (void) setUiSettings:(MWZMapwizeViewUISettings*)uiSettings;
+- (void) setOptions:(MWZOptions*)opts showInformationButtonForPlaces:(BOOL)showInformationButtonForPlaces showInformationButtonForPlaceLists:(BOOL)showInformationButtonForPlaceLists;
+- (void) setUiSettings:(MWZUISettings*)uiSettings;
 - (void) setPlaceStyle:(MWZPlace*) place style:(NSString*) style callbackId:(NSString*) callbackId;
 - (void) selectPlace:(MWZPlace*) place centerOn:(BOOL) centerOn callbackId:(NSString*) callbackId;
 - (void) selectPlaceList:(MWZPlacelist*) placeList callbackId:(NSString*) callbackId;
 - (void) setPlugin:(Mapwize*) mapwize callbackId:(NSString*) callbackId;
 - (void) grantAccess:(NSString*) accessKey callbackId:(NSString*) callbackId;
-- (void) unselectContent:(BOOL) closeInfo callbackId:(NSString*) callbackId;
+- (void) unselectContent:(NSString*) callbackId;
 - (void) setDirection:(MWZDirection*) direction from:(id<MWZDirectionPoint>) from to:(id<MWZDirectionPoint>) to isAccessible:(BOOL) isAccessible callbackId:(NSString*) callbackId;
 
 - (void)viewDidLoad;
-- (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place;
-- (void)mapwizeView:(MWZMapwizeView *)mapwizeView didTapOnPlaceListInformationButton:(MWZPlacelist *)placeList;
-- (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZMapwizeView *)mapwizeView;
-- (void)mapwizeViewDidTapOnMenu:(MWZMapwizeView *)mapwizeView;
-- (void)mapwizeViewDidLoad:(MWZMapwizeView*) mapwizeView;
-- (BOOL)mapwizeView:(MWZMapwizeView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject;
+- (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlaceInformationButton:(MWZPlace *)place;
+- (void)mapwizeView:(MWZUIView *)mapwizeView didTapOnPlacelistInformationButton:(MWZPlacelist *)placeList;
+- (void)mapwizeViewDidTapOnFollowWithoutLocation:(MWZUIView *)mapwizeView;
+- (void)mapwizeViewDidTapOnMenu:(MWZUIView *)mapwizeView;
+- (void)mapwizeViewDidLoad:(MWZUIView*) mapwizeView;
+- (BOOL)mapwizeView:(MWZUIView *)mapwizeView shouldShowInformationButtonFor:(id<MWZObject>)mapwizeObject;
 - (void) dealloc;
 
 @end

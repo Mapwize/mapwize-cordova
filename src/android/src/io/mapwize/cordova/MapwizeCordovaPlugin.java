@@ -11,9 +11,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import io.mapwize.mapwizeformapbox.api.Api;
-
 import com.onehilltech.metadata.ManifestMetadata;
+
+import io.mapwize.mapwizesdk.core.MapwizeConfiguration;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
@@ -33,6 +33,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private static final String ACTION_MAPWIZE_SETCALLBACK = "setCallback";
     private static final String ACTION_MAPWIZE_SELECTPLACE = "selectPlace";
     private static final String ACTION_MAPWIZE_SELECTPLACELIST = "selectPlaceList";
+    private static final String ACTION_MAPWIZE_GET_DIRECTION = "getDirection";
+    private static final String ACTION_MAPWIZE_SET_DIRECTION = "setDirection";
+
     private static final String ACTION_MAPWIZE_GRANTACCESS = "grantAccess";
     private static final String ACTION_MAPWIZE_UNSELECT_CONTENT = "unselectContent";
     private static final String ACTION_MAPWIZE_CLOSE = "closeMapwizeView";
@@ -68,11 +71,10 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private static final String ACTION_API_GETDIRECTIONWITHDIRECTIONPOINTSFROM = "getDirectionWithDirectionPointsFrom";
     private static final String ACTION_API_GETDIRECTIONWITHWAYPOINTSFROM = "getDirectionWithWayPointsFrom";
     private static final String ACTION_API_GETDIRECTIONWITHDIRECTIONANDWAYPOINTSFROM = "getDirectionWithDirectionAndWayPointsFrom";
-    private static final String ACTION_API_GETDISTANCEWITHFROM = "getDistanceWithFrom";
-
-
+    private static final String ACTION_API_GETDISTANCESWITHFROM = "getDistancesWithFrom";
 
     public static final String OPTIONS_STR = "optionStr";
+    public static final String UISETTINGS_STR = "uiSettingsStr";
 
     public static final String CMD = "cmd";
     public static final String CMD_SELECT_PLACE = "selectPlace";
@@ -85,6 +87,17 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
     public static final String CMD_SELECT_PLACELIST = "selectPlaceList";
     public static final String CMD_SELECT_PLACELIST_ID = "identifier";
+
+    public static final String CMD_GET_DIRECTION = "getDirection";
+    public static final String CMD_GET_DIRECTION_FROM = "getDirectionFrom";
+    public static final String CMD_GET_DIRECTION_TO = "getDirectionTo";
+    public static final String CMD_GET_DIRECTION_ISACCESSIBLE = "getDirectionIsAccessible";
+
+    public static final String CMD_SET_DIRECTION = "setDirection";
+    public static final String CMD_SET_DIRECTION_DIRECTION = "setDirectionDirection";
+    public static final String CMD_SET_DIRECTION_FROM = "setDirectionFrom";
+    public static final String CMD_SET_DIRECTION_TO = "setDirectionTo";
+    public static final String CMD_SET_DIRECTION_ISACCESSIBLE = "setDirectionIsAccessible";
 
     public static final String CMD_GRANT_ACCESS = "grantAccess";
     public static final String CMD_GRANT_ACCESS_TOKEN = "token";
@@ -123,6 +136,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_SELECT_PLACELIST = "selectPlaceListCbk";
     public static final String CBK_SELECT_PLACELIST_ID = "identifier";
 
+    public static final String CBK_SET_DIRECTION = "setDirectionCbk";
+
+    public static final String CBK_DIRECTION = "directionCbk";
+    public static final String CBK_DIRECTION_ID = "directionCbkId";
+
     public static final String CBK_GRANT_ACCESS = "grantAccessCbk";
     public static final String CBK_GRANT_ACCESS_TOKEN = "token";
     public static final String CBK_GRANT_ACCESS_SUCCESS = "success";
@@ -136,7 +154,6 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     public static final String CBK_EVENT_TAP_ON_PLACES_INFORMATION_BUTTON = "TapOnPlaceListInformationButton";
     public static final String CBK_EVENT_CLOSE_BUTTON_CLICKED = "TapOnCloseButton";
 
-
     public static final int MAPWIZEVIEW_REQUEST_ID = 12122; // Number random enough
 
     BroadcastReceiver mCbkReceiver;
@@ -145,6 +162,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     private CallbackContext mGrantAccessCallback = null;
     private CallbackContext mSelectPlaceCallback = null;
     private CallbackContext mSelectPlaceListCallback = null;
+
+    private CallbackContext mGetDirectionCallback = null;
+
     private CallbackContext mCreateMapwizeViewCallback = null;
     private CallbackContext mSetPlaceStyleCallback = null;
     private Intent mMapwizeViewIntent = null;
@@ -170,8 +190,10 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         String value = getApiKey();
         Log.d(TAG, "MapwizeCordovaPlugin, initialize MWZMAPWIZEAPIKEY: " + value);
+
         if (value != null) {
-            io.mapwize.mapwizeformapbox.AccountManager.start(cordova.getActivity().getApplication(), value);
+            MapwizeConfiguration config = new MapwizeConfiguration.Builder(cordova.getActivity().getApplication(), value).build();
+            MapwizeConfiguration.start(config);
         }
 
         mCbkReceiver = new CbkReceiver();
@@ -246,6 +268,13 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_SELECTPLACELIST received: ");
             selectPlaceList(args, callbackContext);
 
+        } else if (ACTION_MAPWIZE_GET_DIRECTION.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_GET_DIRECTION received: ");
+            getDirection(args, callbackContext);
+        } else if (ACTION_MAPWIZE_SET_DIRECTION.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_SET_DIRECTION received: ");
+            setDirection(args, callbackContext);
+
         } else if (ACTION_MAPWIZE_GRANTACCESS.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_GRANTACCESS received: ");
             grantAccess(args, callbackContext);
@@ -256,7 +285,7 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
         } else if (ACTION_MAPWIZE_CLOSE.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_CLOSE received: ");
-            closeMapwizeView(args, callbackContext);
+            closeMapwizeView();
 
         } else if (ACTION_MAPWIZE_SETPLACESTYLE.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_MAPWIZE_SETPLACESTYLE received: ");
@@ -278,7 +307,7 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
         } else if (ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_GET_OFFLINE_VENUES received: ");
-            getOfflineVenues(args, callbackContext);
+            getOfflineVenues(callbackContext);
 
         } else if (ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE.equals(action)) {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_OFFLINEMANAGER_GET_OFFLINE_UNIVERSES_FOR_VENUE received: ");
@@ -368,9 +397,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDIRECTIONWITHDIRECTIONANDWAYPOINTSFROM received: ");
             getDirectionWithDirectionAndWayPointsFrom(args, callbackContext);
 
-        } else if (ACTION_API_GETDISTANCEWITHFROM.equals(action)) {
-            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDISTANCEWITHFROM received: ");
-            getDistanceWithFrom(args, callbackContext);
+        } else if (ACTION_API_GETDISTANCESWITHFROM.equals(action)) {
+            Log.d(TAG, "MapwizeCordovaPlugin::ACTION_API_GETDISTANCESWITHFROM received: ");
+            getDistancesWithFrom(args, callbackContext);
             
         } else {
             Log.d(TAG, String.format("Action is not handled %s ", action));
@@ -388,10 +417,14 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         try {
             String apiKey = getApiKey();
             String optionsStr = args.getString(0);
+            String uiSettingsStr = args.getString(1);
+
             mCreateMapwizeViewCallback = context;
 
             mMapwizeViewIntent = new Intent(cordova.getActivity().getApplication().getApplicationContext(), MapwizeActivity.class);
             mMapwizeViewIntent.putExtra(OPTIONS_STR, optionsStr);
+            mMapwizeViewIntent.putExtra(UISETTINGS_STR, uiSettingsStr);
+
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
@@ -420,9 +453,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * Delegates selectPlace function to MapwizeView
-     * @param args
-     * @param context
+     * Select place
+     * @param args          array of arguments: 
+     *                      [0]: id of the place string
+     *                      [1]: if the selection assign to the center of the screen boolean
+     * @param context       callback context
      */
     void selectPlace(JSONArray args, CallbackContext context) {
         try {
@@ -442,9 +477,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * Delegates selectPlace function to MapwizeView
-     * @param args
-     * @param context
+     * Sets the place style
+     * @param args          array of arguments: 
+     *                      [0]: id of the place string
+     *                      [1]: serialized style string
+     * @param context       callback context
      */
     void setPlaceStyle(JSONArray args, CallbackContext context) {
         try {
@@ -464,9 +501,10 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * Delegates selectPlaceList function to MapwizeView
-     * @param args
-     * @param context
+     * Selects the placelist
+     * @param args          array of arguments: 
+     *                      [0]: id of the placelist string
+     * @param context       callback context
      */
     void selectPlaceList(JSONArray args, CallbackContext context) {
         try {
@@ -479,6 +517,51 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     * Gets the direction
+     * @param args          array of arguments: 
+     *                      [0]: serialized directionpoint from string
+     *                      [1]: serialized directionpoint to string
+     *                      [2]: considers accessibility boolean
+     * @param context       callback context
+     */
+    void getDirection(JSONArray args, CallbackContext context) {
+        String from = args.optString(0, "");
+        String to = args.optString(1, "");
+        boolean isAccessible = args.optBoolean(2, false);
+        mGetDirectionCallback = context;
+        Intent intent = new Intent(CMD_GET_DIRECTION);
+        intent.putExtra(CMD_GET_DIRECTION_FROM, from);
+        intent.putExtra(CMD_GET_DIRECTION_TO, to);
+        intent.putExtra(CMD_GET_DIRECTION_ISACCESSIBLE, isAccessible);
+        LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
+    }
+
+    /**
+     * Displays the direction
+     * @param args          array of arguments: 
+     *                      [0]: serialized direction string
+     *                      [1]: serialized directionpoint from string
+     *                      [2]: serialized directionpoint to string
+     *                      [3]: considers accessibility boolean
+     * @param context       callback context
+     */
+    void setDirection(JSONArray args, CallbackContext context) {
+        String directionStr = args.optString(0, "");
+        Log.d(TAG, "The directionStr: " + directionStr);
+        String fromStr = args.optString(1, "");
+        String toStr = args.optString(2, "");
+        boolean isAccessible = args.optBoolean(3, false);
+        mGetDirectionCallback = context;
+        Intent intent = new Intent(CMD_SET_DIRECTION);
+        intent.putExtra(CMD_SET_DIRECTION_DIRECTION, directionStr);
+        intent.putExtra(CMD_SET_DIRECTION_FROM, fromStr);
+        intent.putExtra(CMD_SET_DIRECTION_TO, toStr);
+        intent.putExtra(CMD_SET_DIRECTION_ISACCESSIBLE, isAccessible);
+        LocalBroadcastManager.getInstance(cordova.getActivity()).sendBroadcast(intent);
     }
 
     /**
@@ -502,10 +585,8 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
     /**
      * Delegates the unselectContent function to MapwizeView
-     * @param args
-     * @param context
      */
-    void closeMapwizeView(JSONArray args, CallbackContext context) {
+    void closeMapwizeView() {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
@@ -741,8 +822,9 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
 
     /**
      * Delegates the initOfflineManager function to OfflineManager
-     * @param args
-     * @param context
+     * @param  args          array of arguments: 
+     *                       [0]: styleUrl string
+     * @param  context       callback context
      */
     void initOfflineManager(JSONArray args, CallbackContext context) {
         try {
@@ -751,9 +833,15 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         } catch (JSONException e) {
             sendCallbackCmdErr("Init failed", "Init failed", context);
         }
-
     }
 
+    /**
+     * Removes data for the venue of the universe
+     * @param  args          array of arguments: 
+     *                       [0]: venueId string
+     *                       [1]: universeId string
+     * @param  context       callback context
+     */
     void removeDataForVenue(JSONArray args, CallbackContext context) {
         try {
             String venueId = args.getString(0);
@@ -765,10 +853,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * [downloadDataForVenue description]
-     * @param  {[type]} JSONArray       args          [description]
-     * @param  {[type]} CallbackContext context       [description]
-     * @return {[type]}                 [description]
+     * Download data for the venue of the given universe
+     * @param  args          array of arguments: 
+     *                       [0]: venueId string
+     *                       [1]: universeId string
+     * @param  context       callback context
      */
     void downloadDataForVenue(JSONArray args, CallbackContext context) {
         try {
@@ -781,10 +870,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * [downloadDataForVenue description]
-     * @param  {[type]} JSONArray       args          [description]
-     * @param  {[type]} CallbackContext context       [description]
-     * @return {[type]}                 [description]
+     * Check if the venue is offline
+     * @param args          array of arguments: 
+     *                      [0]: venueId string
+     *                      [1]: universeId string
+     * @param context       callback context
      */
     void isOfflineForVenue(JSONArray args, CallbackContext context) {
         try {
@@ -797,20 +887,18 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * [downloadDataForVenue description]
-     * @param  {[type]} JSONArray       args          [description]
-     * @param  {[type]} CallbackContext context       [description]
-     * @return {[type]}                 [description]
+     * Gets the offline venues
+     * @param context       callback context
      */
-    void getOfflineVenues(JSONArray args, CallbackContext context) {
+    void getOfflineVenues(CallbackContext context) {
         mOfflineManager.getOfflineVenues(context);
     }
 
     /**
-     * [downloadDataForVenue description]
-     * @param  {[type]} JSONArray       args          [description]
-     * @param  {[type]} CallbackContext context       [description]
-     * @return {[type]}                 [description]
+     * Gets the list of offline universes for the venue
+     * @param args          array of arguments: 
+     *                      [0]: venueId string
+     * @param context       callback context
      */
     void getOfflineUniversesForVenue(JSONArray args, CallbackContext context) {
         try {
@@ -822,10 +910,11 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
     }
 
     /**
-     * [getPlaceWithAlias description]
-     * @param  {[type]} JSONArray       args          [description]
-     * @param  {[type]} CallbackContext context       [description]
-     * @return {[type]}                 [description]
+     * Gets the place for an alias
+     * @param args          array of arguments: 
+     *                      [0]: alias string
+     *                      [1]: venueId string
+     * @param context       callback context
      */
     void getPlaceWithAlias(JSONArray args, CallbackContext context) {
         try {
@@ -837,6 +926,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the venue with an id
+     * @param args          array of arguments: 
+     *                      [0]: venueId string
+     * @param context       callback context
+     */
     void getVenueWithId(JSONArray args, CallbackContext context) {
         try {
             String venueId = args.getString(0);
@@ -846,6 +941,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the venues fulfilling the api filter
+     * @param args          array of arguments: 
+     *                      [0]: serialized api filter string
+     * @param context       callback context
+     */
     void getVenuesWithFilter(JSONArray args, CallbackContext context) {
         try {
             String filterStr = args.getString(0);
@@ -855,6 +956,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the venue for a name
+     * @param args          array of arguments: 
+     *                      [0]: name of the venue string
+     * @param context       callback context
+     */
     void getVenueWithName(JSONArray args, CallbackContext context) {
         try {
             String name = args.getString(0);
@@ -864,6 +971,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the venue for a name
+     * @param args          array of arguments: 
+     *                      [0]: name of the venue string
+     * @param context       callback context
+     */
     void getVenueWithAlias(JSONArray args, CallbackContext context) {
         try {
             String alias = args.getString(0);
@@ -873,8 +986,15 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the place with an id
+     * @param args          array of arguments:
+     *                      [0]: place id string
+     * @param context       callback context
+     */
     void getPlaceWithId(JSONArray args, CallbackContext context) {
         try {
+            Log.d(TAG, "getPlaceWithId: " + args.toString());
             String placeId = args.getString(0);
             ApiManager.getPlaceWithId(placeId, context);
         } catch(JSONException e) {
@@ -882,6 +1002,13 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the place with a name
+     * @param args          array of arguments: 
+     *                      [0]: name string 
+     *                      [1]: venue id string
+     * @param context       callback context
+     */
     void getPlaceWithName(JSONArray args, CallbackContext context) {
         try {
             String name = args.getString(0);
@@ -892,6 +1019,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the places fulfilling the api filter
+     * @param args          array of arguments:
+     *                      [0]: serialized api filter string
+     * @param context       callback context
+     */
     void getPlacesWithFilter(JSONArray args, CallbackContext context) {
         try {
             String filterStr = args.getString(0);
@@ -901,6 +1034,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the place list with the id
+     * @param args          array of arguments: 
+     *                      [0]: id string
+     * @param context       callback context
+     */
     void getPlaceListWithId(JSONArray args, CallbackContext context) {
         try {
             String placeListId = args.getString(0);
@@ -910,6 +1049,13 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the place list with the name
+     * @param args          array of arguments:
+     *                      [0]: name of the placelist string
+     *                      [1]: venueId of the placelist string
+     * @param context       callback context
+     */
     void getPlaceListWithName(JSONArray args, CallbackContext context) {
         try {
             String name = args.getString(0);
@@ -920,6 +1066,13 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the place list with the alias
+     * @param args          array of arguments: 
+     *                      [0]: alias string 
+     *                      [1]: venue id string
+     * @param context       callback context
+     */
     void getPlaceListWithAlias(JSONArray args, CallbackContext context) {
         try {
             String alias = args.getString(0);
@@ -930,6 +1083,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the list of placelists fulfills the api filter
+     * @param args          array of arguments: 
+     *                      [0]: serialized api filter string
+     * @param context       callback context
+     */
     void getPlaceListsWithFilter(JSONArray args, CallbackContext context) {
         try {
             String fileStr = args.getString(0);
@@ -939,6 +1098,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the universe with id
+     * @param args          array of arguments: 
+     *                      [0]: universe id string
+     * @param context       callback context
+     */
     void getUniverseWithId(JSONArray args, CallbackContext context) {
         try {
             String universeId = args.getString(0);
@@ -948,6 +1113,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the list of universes fulfills the api filter
+     * @param args          array of arguments:
+     *                      [0]: serialized api filter string
+     * @param context       callback context
+     */
     void getUniversesWithFilter(JSONArray args, CallbackContext context) {
         try {
             String filterStr = args.getString(0);
@@ -957,6 +1128,12 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the list of accessible universes of a venue
+     * @param args          array of arguments:
+     *                      [0]: venue id string
+     * @param context       callback context
+     */
     void getAccessibleUniversesWithVenue(JSONArray args, CallbackContext context) {
         try {
             String venueId = args.getString(0);
@@ -966,17 +1143,29 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Search with params
+     * @param args          array of arguments:
+     *                      [0]: serialized search params string
+     * @param context       callback context
+     */
     void searchWithParams(JSONArray args, CallbackContext context) {
         try {
             String searchWithParams = args.getString(0);
             ApiManager.searchWithParams(searchWithParams, context);
         } catch(JSONException e) {
             sendCallbackCmdErr("Error", "error", context);
-
         }
     }
 
-
+    /**
+     * Gets a direction from two direction points
+     * @param args          array of arguments:
+     *                      [0]: serialized from direction point string
+     *                      [1]: serialized to direction point string
+     *                      [2]: considers accessibility
+     * @param context       callback context
+     */
     void getDirectionWithFrom(JSONArray args, CallbackContext context) {
         try {
             String directionPointFrom = args.getString(0);
@@ -984,10 +1173,20 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
             boolean isAccessible = args.getBoolean(2);
             ApiManager.getDirectionWithFrom(directionPointFrom, directionPointTo, isAccessible, context);
         } catch(JSONException e) {
+            Log.d(TAG, "getDirectionWithFrom, error: " + e.getLocalizedMessage());
             sendCallbackCmdErr("Error", "error", context);
         }
     }
 
+    /**
+     * Gets the list of directions starts from a direction point 
+     * ends with one of the direction points a list contains.
+     * @param args          array of arguments:
+     *                      [0]: serialized from direction point string
+     *                      [1]: serialized to list of direction point string
+     *                      [2]: considers accessibility
+     * @param context       callback context
+     */
     void getDirectionWithDirectionPointsFrom(JSONArray args, CallbackContext context) {
         try {
             String directionPointFrom = args.getString(0);
@@ -999,44 +1198,72 @@ public class MapwizeCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    /**
+     * Gets the list of directions starts from a direction point 
+     * ends with the to direction point and reaching one of the waypoints.
+     * @param args          array of arguments:
+     *                      [0]: serialized from direction point string
+     *                      [1]: serialized to direction point string
+     *                      [2]: serialized list of waypoints string
+     *                      [3]: considers accessibility
+     * @param context       callback context
+     */
     void getDirectionWithWayPointsFrom(JSONArray args, CallbackContext context) {
+        Log.d(TAG, "getDirectionWithWayPointsFrom...");
         try {
             String directionPointFrom = args.getString(0);
             String directionPointTo = args.getString(1);
             String wayPointToList = args.getString(2);
-            boolean bool1 = args.getBoolean(3);
-            boolean bool2 = args.getBoolean(4);
-            ApiManager.getDirectionWithWayPointsFrom(directionPointFrom, directionPointTo, wayPointToList, bool1, bool2, context);
+            boolean isAccessible = args.getBoolean(3);
+            Log.d(TAG, "calling, ApiManager.getDirectionWithWayPointsFrom...");
+            ApiManager.getDirectionWithWayPointsFrom(directionPointFrom, directionPointTo, wayPointToList, isAccessible, context);
         } catch(JSONException e) {
+            Log.d(TAG, "getDirectionWithWayPointsFrom...JSONException: " + e.getLocalizedMessage());
             sendCallbackCmdErr("Error", "error", context);
         }
     }
 
+    /**
+     * Gets the list of directions starts from a direction point 
+     * ends with one of the direction points and reaching one of the waypoints.
+     * @param args          array of arguments:
+     *                      [0]: serialized from direction point string
+     *                      [1]: serialized list of "to" direction points string
+     *                      [2]: serialized list of waypoints string
+     *                      [3]: considers accessibility
+     * @param context       callback context
+     */
     void getDirectionWithDirectionAndWayPointsFrom(JSONArray args, CallbackContext context) {
         try {
             String directionPointFrom = args.getString(0);
             String directionPointToList = args.getString(1);
             String wayPointToList = args.getString(2);
-            boolean bool1 = args.getBoolean(3);
-            boolean bool2 = args.getBoolean(4);
-            ApiManager.getDirectionWithDirectionAndWayPointsFrom(directionPointFrom, directionPointToList, wayPointToList, bool1, bool2, context);
+            boolean isAccessible = args.getBoolean(3);
+            ApiManager.getDirectionWithDirectionAndWayPointsFrom(directionPointFrom, directionPointToList, wayPointToList, isAccessible, context);
         } catch(JSONException e) {
             sendCallbackCmdErr("Error", "error", context);
         }
     }
 
-    void getDistanceWithFrom(JSONArray args, CallbackContext context) {
+    /**
+     * Gets the list of distances for all the directions starts from a direction point 
+     * ends with one of the direction points
+     * @param args          array of arguments:
+     *                      [0]: serialized from direction point string
+     *                      [1]: serialized list of "to" direction points string
+     *                      [2]: considers accessibility
+     *                      [4]: the list is sorted by travel time
+     * @param context       callback context
+     */
+    void getDistancesWithFrom(JSONArray args, CallbackContext context) {
         try {
             String directionPointFrom = args.getString(0);
             String directionPointToList = args.getString(1);
-            boolean bool1 = args.getBoolean(2);
-            boolean bool2 = args.getBoolean(3);
-            ApiManager.getDistanceWithFrom(directionPointFrom, directionPointToList, bool1, bool2, context);
+            boolean isAccessible = args.getBoolean(2);
+            boolean sortByTraveltime = args.getBoolean(3);
+            ApiManager.getDistancesWithFrom(directionPointFrom, directionPointToList, isAccessible, sortByTraveltime, context);
         } catch(JSONException e) {
             sendCallbackCmdErr("Error", "error", context);
         }
     }
-
-
-
 }

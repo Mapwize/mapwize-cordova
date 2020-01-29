@@ -84,11 +84,11 @@ this.mapwizeView = Mapwize.createMapwizeView(
         centerOnPlaceId: "xxxxxxxxxxxxxxxxxxxxxxxx",
         showCloseButton: true,
         showInformationButtonForPlaces: true,
-        showInformationButtonForPlaceLists: false
+        showInformationButtonForPlaceLists: false,
+        mainColor: #FF0000,
         
       },
       {
-      	mainColor: #FF0000,
 		menuButtonIsHidden: true, 
 		followUserButtonIsHidden: true,
 		floorControllerIsHidden: true,
@@ -111,11 +111,11 @@ showCloseButton: <<boolean>>, hide/show close button on MapwizeView (default: fa
 showInformationButtonForPlaces: <<boolean>>, hide/show Information button on selecting a 		Place in case the Place doesn't include the "cordovaShowInformationButton" flag.			(default: true)
 showInformationButtonForPlaceLists: <<boolean>>, hide/show Information button on selecting a 	 PlaceList in case the PlaceList doesn't include the "cordovaShowInformationButton" flag.
 	(default: true)
+mainColor: The main color of Mapwize in hex form either #FF0000 or #99FF0000,
 ```
 
 UISettings fields
 ```
-mainColor: The main color of Mapwize in hex form either #FF0000 or #99FF0000,
 menuButtonIsHidden: Is menu button hidden true/false
 followUserButtonIsHidden: Is follow user button hidden true/false
 floorControllerIsHidden: Is floor controller button hidden true/false
@@ -484,7 +484,7 @@ Configure and run the ionic project the usual way. The localization takes the de
 
 ## API Manager
 
-### Creating API Manager
+#### Creating API Manager
 To use API Manager functions you need to create an API Manager instance
 
 ```
@@ -493,7 +493,7 @@ this.apiManager = Mapwize.createApiManager();
 
 
 
-#### #### getVenueWithId(id, successFn, failureFn)
+#### getVenueWithId(id, successFn, failureFn)
 
 Gets venue with the given *id*.
 
@@ -724,6 +724,7 @@ Gets a direction according to the given parameters.
 directionPointFrom: the starting direction point
 directionPointsListTo: the list of end direction points
 isAccessible: if the direction to get is accessible.
+waypointOptimize: if we need to optimze waypoint.
 successFn(direction): returns the Direction object.
 failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
 ```
@@ -767,6 +768,19 @@ successFn(distance): returns the Distance object.
 failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
 ```
 
+#### setDirection(direction, directionpointFrom, directionpointTo, isAccessible, successFn, failureFn)
+
+Shows the direction on the map.
+
+```
+direction: The direction to display.
+directionPointFrom: the starting direction point
+directionPointFrom: the ending direction point
+isAccessible: if the direction is accessible (e.g. using wheelchair).
+successFn: called on successful display.
+failureFn(err): returns the error object. {messsage: <<error message>>, locMessage: <<localized error message>>}
+```
+
 ##### Distance object
 
 ```
@@ -790,6 +804,70 @@ failureFn(err): returns the error object. {messsage: <<error message>>, locMessa
 	}
 	
 }
+```
+
+## Offline Manager
+#### Creating Offline Manager
+To use Offline Manager functions you need to create an Offline Manager instance
+
+#### createOfflineManager(styleURL)
+Creates an offline manager.
+
+```
+styleURL: The style of the offline manager.
+```
+
+Example:
+```
+this.offlineManager = Mapwize.createOfflineManager("https://outdoor.mapwize.io/styles/mapwize/style.json?key=<<MWZAPIKEY>>");
+```
+
+#### downloadDataForVenue(venueId, universeId, successFn, failureFn, progress)
+Downloads a venue of a universe.
+
+```
+venueId: The id of the venue to download data for.
+universeId: The universe the venue belongs to.
+successFn: Callback that is called on successfull download.
+failureFn: Callback that is called on failureFn.
+progress: Callback for progress. It returns an int as percentage of the progress.
+```
+
+#### isOfflineForVenue(venueId, universeId, successFn, failureFn)
+Check if the venue of a universe is offline.
+
+```
+venueId: The id of the venue to download data for.
+universeId: The universe the venue belongs to.
+successFn(arg): Callback to get the result. true: the venue is offline.
+failureFn(err): Callback that is called on failureFn.
+```
+
+#### getOfflineVenues(successFn, failureFn)
+Returns all the offline venues.
+
+```
+successFn(arg): Callback to get the result as an array of venues.
+failureFn(err): Callback that is called on failureFn.
+```
+
+#### getOfflineUniversesForVenue(venueId, successFn, failureFn)
+Returns all the offline universes for a venue.
+
+```
+venueId: The venue to get universes for
+successFn(arg): Callback to get the result as an array of universes.
+failureFn(err): Callback that is called on failureFn.
+```
+
+#### removeDataForVenue(venueId, universeId, successFn, failureFn)
+Removes all the data that belong to a venue of the universe.
+
+```
+venueId: The venue to get universes for
+universeId: The venue to get universes for
+successFn(arg): Callback to get the result.
+failureFn(err): Callback that is called on failureFn.
 ```
 
 

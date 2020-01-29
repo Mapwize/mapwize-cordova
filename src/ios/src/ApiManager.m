@@ -8,7 +8,6 @@
 #import "ApiManager.h"
 #import "Constants.h"
 
-
 @interface ApiManager ()
 + (NSString*) venues2JsonArray:(NSArray<MWZVenue*>*) array;
 + (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId;
@@ -299,11 +298,11 @@ static Mapwize* plugin;
     }];
 }
 
-+ (void)getDistancesWithFrom:(NSString*) directionPointFromStr directionpointsToListStr:(NSString*) directionpointsToListStr bool1:(BOOL)bool1 bool2:(BOOL)bool2 callbackId:(NSString*) callbackId {
++ (void)getDistancesWithFrom:(NSString*) directionPointFromStr directionpointsToListStr:(NSString*) directionpointsToListStr isAccessible:(BOOL)isAccessible sortByTravelTime:(BOOL)sortByTravelTime callbackId:(NSString*) callbackId {
     NSLog(@"getDistancesWithFrom...");
     id<MWZDirectionPoint> from = [MWZApiResponseParser parseDirectionPoint:directionPointFromStr];
     NSArray<id<MWZDirectionPoint>>* toList = [MWZApiResponseParser parseDirectionPoints:directionpointsToListStr];
-    [[MWZMapwizeApiFactory getApi] getDistancesWithFrom:from tos:toList isAccessible:bool1 sortByTravelTime:bool2 success:^(MWZDistanceResponse *distance) {
+    [[MWZMapwizeApiFactory getApi] getDistancesWithFrom:from tos:toList isAccessible:isAccessible sortByTravelTime:sortByTravelTime success:^(MWZDistanceResponse *distance) {
         NSLog(@"getDistancesWithFrom returned...");
         NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
         NSString* json = [distance toJSONString];
@@ -373,40 +372,14 @@ static Mapwize* plugin;
 
  + (void) sendCommandDictCallback:(NSMutableDictionary*)dict callbackId:(NSString*)callbackId {
      NSLog(@"ApiManager::sendCommandDictCallback...");
-     
-     
      dispatch_async(dispatch_get_main_queue(), ^{
            NSError *error;
-//           NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
-//                                                              options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
-//                                                                error:&error];
-//           NSString *jsonString;
-//           if (! jsonData) {
-//               NSLog(@"Got an error: %@", error);
-//           } else {
-//               jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-//           }
-           
-//           NSLog(@"ApiManager::sendCommandDictCallback...jsonString: %@", jsonString);
-//           CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-//                                                         messageAsString:jsonString];
-         
            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
            messageAsDictionary:dict];
          
-      //     [pluginResult setKeepCallback: [NSNumber numberWithBool:NO]];
            NSLog(@"ApiManager::sendCommandDictCallback...callbackId: %@", callbackId);
            [plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
-          
-          
-    //         NSString* payload = nil;
-    //         // Some blocking logic...
-    //         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
-    //         // The sendPluginResult method is thread-safe.
-    //         [plugin.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
      });
-         
-     
  }
 
 + (void) sendCommandCallbackOK:(NSString*)callbackId  {

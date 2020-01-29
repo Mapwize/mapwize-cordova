@@ -4,15 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="io.mapwize.mapwizecomponents.ui.MapwizeFragment"
+    tools:context="io.mapwize.mapwizeui.MapwizeFragment"
     android:animateLayoutChanges="true"
-    android:id="@+id/mapwizeFragmentLayout">
+    android:id="@+id/mapwizeFragmentLayout"
+    android:paddingBottom="@dimen/mapwize_ui_padding_bottom"
+    android:paddingStart="@dimen/mapwize_ui_padding_start"
+    android:paddingEnd="@dimen/mapwize_ui_padding_end">
 
     <FrameLayout
         android:id="@+id/mapViewContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:layout_height="match_parent"/>
 
     <FrameLayout
         android:id="@+id/headerFrameLayout"
@@ -23,17 +25,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:elevation="10dp">
 
-        <io.mapwize.mapwizecomponents.ui.SearchBarView
+        <io.mapwize.mapwizeui.SearchBarView
             android:id="@+id/mapwizeSearchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/mapwize_ui_padding_top"
+            android:visibility="visible"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="24dp"
             android:elevation="10dp"/>
 
-        <io.mapwize.mapwizecomponents.ui.SearchDirectionView
+        <io.mapwize.mapwizeui.SearchDirectionView
             android:id="@+id/mapwizeDirectionSearchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,20 +49,20 @@
 
     </FrameLayout>
 
-    <io.mapwize.mapwizecomponents.ui.CompassView
+    <io.mapwize.mapwizeui.CompassView
         android:id="@+id/mapwizeCompassView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="4dp"
         android:layout_marginEnd="22dp"
         android:elevation="6dp"
-        android:src="@drawable/mapbox_compass_icon"
+        android:src="@drawable/mapwize_compass"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerFrameLayout"
         app:layout_goneMarginEnd="16dp"
         android:visibility="gone"/>
 
-    <io.mapwize.mapwizecomponents.ui.FollowUserButton
+    <io.mapwize.mapwizeui.FollowUserButton
         android:id="@+id/mapwizeFollowUserButton"
         android:layout_width="52dp"
         android:layout_height="52dp"
@@ -71,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-    <io.mapwize.mapwizecomponents.ui.LanguagesButton
+    <io.mapwize.mapwizeui.LanguagesButton
         android:id="@+id/mapwizeLanguagessButton"
         android:layout_width="52dp"
         android:layout_height="52dp"
@@ -85,7 +89,7 @@
         app:layout_constraintBottom_toTopOf="@+id/mapwizeBottomCardView"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <io.mapwize.mapwizecomponents.ui.UniversesButton
+    <io.mapwize.mapwizeui.UniversesButton
         android:id="@+id/mapwizeUniversesButton"
         android:layout_width="52dp"
         android:layout_height="52dp"
@@ -100,7 +104,7 @@
         app:layout_constraintBottom_toTopOf="@+id/mapwizeBottomCardView"
         app:layout_constraintStart_toEndOf="@+id/mapwizeLanguagessButton"/>
 
-    <io.mapwize.mapwizecomponents.ui.FloorControllerView
+    <io.mapwize.mapwizeui.FloorControllerView
         android:id="@+id/mapwizeFloorController"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,7 +123,7 @@
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <io.mapwize.mapwizecomponents.ui.BottomCardView
+    <io.mapwize.mapwizeui.BottomCardView
         android:id="@+id/mapwizeBottomCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,7 +140,7 @@
         app:layout_constraintVertical_bias="1.0"
         android:clickable="true"/>
 
-    <io.mapwize.mapwizecomponents.ui.SearchResultList
+    <io.mapwize.mapwizeui.SearchResultList
         android:id="@+id/mapwizeSearchResultList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -144,6 +148,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:elevation="10dp"/>
+        android:elevation="10dp"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

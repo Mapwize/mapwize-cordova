@@ -1,5 +1,16 @@
 # Mapwize Cordova Changelog
 
+## 2.0.0
+
+- Upgrading to MapwizeUI iOS 2.1.3
+- Upgrading to MapwizeUI Android 2.1.2
+- Added uisettings argument to Mapwize.createMapwizeView
+- setDirection method added
+- Moving mainColor to MWZUIOptions
+- getDistanceWithFrom renamed to getDistancesWithFrom
+- getDirectionWithDirectionAndWayPointsFrom, getDirectionWithWayPointsFrom, argumentum changes
+- Improved documentation
+
 ## 1.3.0
 
 - Upgrading to MapwizeUI iOS 2.0.3

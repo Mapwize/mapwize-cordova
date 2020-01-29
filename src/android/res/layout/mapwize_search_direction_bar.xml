@@ -8,6 +8,7 @@
     android:focusableInTouchMode="true"
     android:clickable="true"
     android:animateLayoutChanges="true"
+    android:paddingTop="@dimen/mapwize_ui_padding_top"
     android:id="@+id/mapwizeDirectionMainLayout">
 
     <androidx.cardview.widget.CardView
@@ -18,7 +19,7 @@
         app:cardCornerRadius="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="24dp"
+            android:id="@+id/mapwizeDirectionBarCardViewConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="true"

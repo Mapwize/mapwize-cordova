@@ -7,13 +7,12 @@ function MapwizeView() {
 
 MapwizeView.prototype.callbacks;
 
-
 MapwizeView.prototype.setCallback = function(callbacks) {
 	console.log("MapwizeView: setCallback");
 	this.callbacks = callbacks;
 
 	exec(function(result) { 
-		console.log("MapwizeView: setCallback: SUCCESS");
+		console.log("MapwizeView: setCallback: SUCCESS, result: " + JSON.stringify(result));
 		switch(result.event) {
 			case "DidLoad":
 			case "DidTapOnFollowWithoutLocation":
@@ -24,8 +23,10 @@ MapwizeView.prototype.setCallback = function(callbacks) {
 				console.log("Handling event " + JSON.stringify(result));
 				if (callbacks[result.event]) {
 					if(!!result && result.arg){
-						callbacks[result.event](result.arg);
+						console.log("Handling event has arg...");
+						callbacks[result.event](JSON.parse(result.arg));
 					} else{
+						console.log("Handling event has NO arg...");
 						callbacks[result.event](result);
 					}
 				} else {
@@ -69,21 +70,6 @@ MapwizeView.prototype.setDirection = function(direction, from, to, isAccessible,
 				console.log("MapwizeView: setDirection: FAILED");
 				failure(err);
 			}, PLUGIN_NAME, "setDirection", [JSON.stringify(direction), JSON.stringify(from), JSON.stringify(to), isAccessible]);
-}
-
-MapwizeView.prototype.getDirection = function(from, to, isAccessible, success, failure) {
-	console.log("MapwizeView: getDirection");
-	exec(function(result) { 
-				console.log("MapwizeView: getDirection: SUCCESS");
-				if(!!result && result.arg){
-					success(result.arg);
-				} else{
-					success(result);
-				}
-			}, function(err) {
-				console.log("MapwizeView: getDirection: FAILED");
-				failure(err);
-			}, PLUGIN_NAME, "getDirection", [JSON.stringify(from), JSON.stringify(to), isAccessible]);
 }
 
 MapwizeView.prototype.selectPlace = function(id, centerOn, success, failure) {
