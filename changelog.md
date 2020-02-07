@@ -1,5 +1,9 @@
 # Mapwize Cordova Changelog
 
+## 2.0.1
+
+- MWZSERVERURL, MWZSTYLEURL and MWZREFRESHINTERVAL plugin parameters are removed.
+
 ## 2.0.0
 
 - Upgrading to MapwizeUI iOS 2.1.3

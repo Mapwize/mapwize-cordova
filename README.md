@@ -20,10 +20,7 @@ A simple Ionic app using the plugin is available in this repository [mapwize-cor
 
 ```
 cordova plugin add mapwize-cordova-plugin \
- --variable MWZAPIKEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
- --variable MWZSERVERURL="https://api.mapwize.io/" \
- --variable MWZSTYLEURL="https://outdoor.mapwize.io/styles/mapwize/style.json?key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
- --variable MWZREFRESHINTERVAL=100
+ --variable MWZAPIKEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 ```
 
@@ -31,10 +28,7 @@ or from github
 
 ```
 cordova plugin add https://github.com/Mapwize/mapwize-cordova.git \
- --variable MWZAPIKEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
- --variable MWZSERVERURL="https://api.mapwize.io/" \
- --variable MWZSTYLEURL="https://outdoor.mapwize.io/styles/mapwize/style.json?key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
- --variable MWZREFRESHINTERVAL=100
+ --variable MWZAPIKEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ```
 
 ### Setting up your ionic project
