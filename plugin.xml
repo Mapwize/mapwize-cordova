@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="mapwize-cordova-plugin"
-    version="2.0.0">
+    version="2.0.1">
     <name>Mapwize</name>
     <description>Use Mapwize Indoor Maps in your Cordova app</description>
     <license>MIT</license>
@@ -10,9 +10,6 @@
     <repo>https://github.com/Mapwize/mapwize-cordova</repo>
     <issue></issue>
     <preference name="MWZAPIKEY" />
-    <preference name="MWZSERVERURL" />
-    <preference name="MWZSTYLEURL" />
-    <preference name="MWZREFRESHINTERVAL" />
     <js-module src="www/Mapwize.js" name="Mapwize" >
         <clobbers target="window.Mapwize"/>
     </js-module>
@@ -80,20 +77,8 @@
             </feature>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="MWZServerUrl">
-          <string>$MWZSERVERURL</string>
-        </config-file>
-
         <config-file target="*-Info.plist" parent="MWZApiKey">
           <string>$MWZAPIKEY</string>
-        </config-file>
-
-        <config-file target="*-Info.plist" parent="MWZStyleUrl">
-          <string>$MWZSTYLEURL</string>
-        </config-file>
-
-        <config-file target="*-Info.plist" parent="MWZRefreshInterval">
-          <string>$MWZREFRESHINTERVAL</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="MGLMapboxMetricsEnabledSettingShownInApp">
